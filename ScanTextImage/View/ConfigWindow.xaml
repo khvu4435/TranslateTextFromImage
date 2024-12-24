@@ -1,0 +1,208 @@
+﻿<Window x:Class="ScanTextImage.View.ConfigWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ScanTextImage.View"
+        mc:Ignorable="d"
+        Title="ConfigWindow"
+        Height="450"
+        Width="400"
+        ResizeMode="NoResize">
+
+    <Window.Resources>
+        <Style TargetType="Button">
+            <Setter Property="VerticalContentAlignment"
+                    Value="Center" />
+            <Setter Property="HorizontalContentAlignment"
+                    Value="Center" />
+            <Setter Property="FontSize"
+                    Value="13" />
+            <Setter Property="Margin"
+                    Value="5" />
+            <Setter Property="HorizontalAlignment"
+                    Value="Right" />
+            <Setter Property="Width"
+                    Value="50" />
+            <Setter Property="Height"
+                    Value="25" />
+        </Style>
+    </Window.Resources>
+
+    <Grid>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="3*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <ListView Grid.Row="0"
+                  Name="lvConfigShortcut">
+
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="Focusable"
+                            Value="false" />
+                </Style>
+            </ListView.ItemContainerStyle>
+
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="Name"
+                                    Width="120">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding DisplayName}" />
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+
+                    <GridViewColumn Width="50">
+                        <GridViewColumn.Header>
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+
+                                <TextBlock Grid.Row="0"
+                                           Text="Ctrl" />
+                                <CheckBox  Grid.Row="1"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           Name="cbCtrlAll"
+                                           Checked="cbCtrlAll_Checked"
+                                           Unchecked="cbCtrlAll_Unchecked"
+                                           IsThreeState="True"
+                                           Click="cbAll_Click" />
+                            </Grid>
+                        </GridViewColumn.Header>
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <Grid HorizontalAlignment="Center"
+                                      Width="{Binding Path=ActualWidth, RelativeSource={RelativeSource AncestorType=GridViewColumnHeader}}">
+                                    <CheckBox HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"
+                                              Name="cbCtrlKey"
+                                              IsChecked="{Binding IsControlKey}"
+                                              Click="cbKey_Click" />
+                                </Grid>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+
+                    <GridViewColumn Width="50">
+                        <GridViewColumn.Header>
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+
+                                <TextBlock Grid.Row="0"
+                                           Text="Shift" />
+                                <CheckBox  Grid.Row="1"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           Name="cbShiftAll"
+                                           IsThreeState="True"
+                                           Click="cbAll_Click"
+                                           Checked="cbShiftAll_Checked"
+                                           Unchecked="cbShiftAll_Unchecked" />
+                            </Grid>
+                        </GridViewColumn.Header>
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <Grid HorizontalAlignment="Center"
+                                      Width="{Binding Path=ActualWidth, RelativeSource={RelativeSource AncestorType=GridViewColumnHeader}}">
+                                    <CheckBox HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"
+                                              Name="cbShiftKey"
+                                              IsChecked="{Binding IsShiftKey}"
+                                              Click="cbKey_Click" />
+                                </Grid>
+                            </DataTemplate>
+
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+
+                    <GridViewColumn Width="50">
+                        <GridViewColumn.Header>
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+
+                                <TextBlock Grid.Row="0"
+                                           Text="Alt" />
+                                <CheckBox  Grid.Row="1"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           Name="cbAltAll"
+                                           IsThreeState="True"
+                                           Click="cbAll_Click"
+                                           Checked="cbAltAll_Checked"
+                                           Unchecked="cbAltAll_Unchecked" />
+                            </Grid>
+                        </GridViewColumn.Header>
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <Grid HorizontalAlignment="Center"
+                                      Width="{Binding Path=ActualWidth, RelativeSource={RelativeSource AncestorType=GridViewColumnHeader}}">
+                                    <CheckBox HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"
+                                              Name="cbAltKey"
+                                              IsChecked="{Binding IsAltKey}"
+                                              Click="cbKey_Click" />
+                                </Grid>
+
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+
+                    <GridViewColumn Header="Key"
+                                    Width="50">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <Grid HorizontalAlignment="Center"
+                                      Width="{Binding Path=ActualWidth, RelativeSource={RelativeSource AncestorType=GridViewColumnHeader}}">
+                                    <TextBox x:Name="tbxKey"
+                                             BorderThickness="0"
+                                             Text="{Binding Key}"
+                                             HorizontalAlignment="Center"
+                                             HorizontalContentAlignment="Center"
+                                             PreviewKeyDown="tbxKey_PreviewKeyDown"
+                                             Background="Transparent"
+                                             CaretBrush="Transparent"
+                                             GotFocus="tbxKey_GotFocus"
+                                             LostFocus="tbxKey_LostFocus"
+                                             Margin="3" />
+                                </Grid>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                </GridView>
+            </ListView.View>
+        </ListView>
+        <Grid Grid.Row="1"
+              Margin="10"
+              HorizontalAlignment="Right">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <Button Grid.Column="0"
+                    Content="Save"
+                    Name="btnSaveConfigShortcut"
+                    Click="btnSaveConfigShortcut_Click" />
+
+            <Button Grid.Column="1"
+                    Content="Cancel"
+                    Name="btnCancelConfigShortcut"
+                    Click="btnCancelConfigShortcut_Click" />
+
+        </Grid>
+    </Grid>
+</Window>

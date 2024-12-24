@@ -1,0 +1,285 @@
+﻿<Window x:Class="ScanTextImage.View.MiniWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ScanTextImage.View"
+        xmlns:data="clr-namespace:ScanTextImage.ConstData"
+        xmlns:customCommand="clr-namespace:ScanTextImage.View.Command"
+        mc:Ignorable="d"
+        Title="MiniWindow"
+        Height="235"
+        Width="658"
+        ResizeMode="NoResize"
+        WindowStyle="None"
+        Background="Transparent"
+        AllowsTransparency="True"
+        Topmost="True">
+
+    <Window.CommandBindings>
+        <CommandBinding x:Name="Free_selection"
+                        Command="customCommand:CustomCommand.freeSelectionCommand"
+                        Executed="CommandBindingFreeSelection_Executed" />
+
+        <CommandBinding x:Name="Translate_text"
+                        Command="customCommand:CustomCommand.translateTextCommand"
+                        Executed="CommandBindingtranslateText_Executed" />
+
+        <CommandBinding x:Name="Translate_image"
+                        Command="customCommand:CustomCommand.translateImageCommand"
+                        Executed="CommandBindingtranslateImage_Executed" />
+        
+        <CommandBinding x:Name="Clear"
+                        Command="customCommand:CustomCommand.clearCommand"
+                        Executed="CommandBindingClear_Executed" />
+
+        <CommandBinding x:Name="loadSave1"
+                        Command="customCommand:CustomCommand.loadData1Command"
+                        Executed="CommandBindingLoadData_Executed" />
+        <CommandBinding x:Name="loadSave2"
+                        Command="customCommand:CustomCommand.loadData2Command"
+                        Executed="CommandBindingLoadData_Executed" />
+        <CommandBinding x:Name="loadSave3"
+                        Command="customCommand:CustomCommand.loadData3Command"
+                        Executed="CommandBindingLoadData_Executed" />
+        <CommandBinding x:Name="loadSave4"
+                        Command="customCommand:CustomCommand.loadData4Command"
+                        Executed="CommandBindingLoadData_Executed" />
+        <CommandBinding x:Name="loadSave5"
+                        Command="customCommand:CustomCommand.loadData5Command"
+                        Executed="CommandBindingLoadData_Executed" />
+        <CommandBinding x:Name="loadSave6"
+                        Command="customCommand:CustomCommand.loadData6Command"
+                        Executed="CommandBindingLoadData_Executed" />
+        <CommandBinding x:Name="loadSave7"
+                        Command="customCommand:CustomCommand.loadData7Command"
+                        Executed="CommandBindingLoadData_Executed" />
+        <CommandBinding x:Name="loadSave8"
+                        Command="customCommand:CustomCommand.loadData8Command"
+                        Executed="CommandBindingLoadData_Executed" />
+        <CommandBinding x:Name="loadSave9"
+                        Command="customCommand:CustomCommand.loadData9Command"
+                        Executed="CommandBindingLoadData_Executed" />
+    </Window.CommandBindings>
+
+    <Window.Resources>
+
+
+        <!--A Style that affects all Border-->
+        <Style TargetType="Button">
+            <Setter Property="Background"
+                    Value="GhostWhite" />
+            <Setter Property="BorderBrush"
+                    Value="Black" />
+            <Setter Property="BorderThickness"
+                    Value="1" />
+            <Setter Property="Width"
+                    Value="25" />
+            <Setter Property="Height"
+                    Value="25" />
+            <Style.Resources>
+                <Style TargetType="Border">
+                    <Setter Property="CornerRadius"
+                            Value="3" />
+                </Style>
+            </Style.Resources>
+        </Style>
+
+        <Style TargetType="ComboBox">
+            <Setter Property="Background"
+                    Value="GhostWhite" />
+            <Setter Property="BorderBrush"
+                    Value="Black" />
+            <Setter Property="BorderThickness"
+                    Value="1" />
+            <Setter Property="IsEditable"
+                    Value="True" />
+            <Setter Property="IsTextSearchEnabled"
+                    Value="True" />
+        </Style>
+
+        <!--A Style that affects all TextBox-->
+        <Style TargetType="TextBox">
+            <Setter Property="TextWrapping"
+                    Value="Wrap" />
+            <Setter Property="Background"
+                    Value="GhostWhite" />
+            <Setter Property="AcceptsReturn"
+                    Value="True" />
+            <Setter Property="ScrollViewer.HorizontalScrollBarVisibility"
+                    Value="Disabled" />
+            <Setter Property="ScrollViewer.VerticalScrollBarVisibility"
+                    Value="Auto" />
+            <Setter Property="Padding"
+                    Value="10" />
+            <Setter Property="FontSize"
+                    Value="12" />
+
+            <Style.Resources>
+                <Style TargetType="Border">
+                    <Setter Property="CornerRadius"
+                            Value="3" />
+                </Style>
+            </Style.Resources>
+        </Style>
+
+    </Window.Resources>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="3*" />
+        </Grid.ColumnDefinitions>
+
+        <Grid Grid.Column="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <Button Grid.Row="0"
+                    Name="btnCloseMiniWindow"
+                    Click="btnCloseMiniWindow_Click"
+                    ToolTip="Exist mini mode">
+
+                <Image Width="15"
+                       Height="15">
+                    <Image.Source>
+                        <BitmapImage UriSource="../Image/close.png" />
+                    </Image.Source>
+                </Image>
+            </Button>
+
+            <Button Grid.Row="1"
+                    Name="btnCollapse"
+                    Click="btnCollapse_Click"
+                    ToolTip="Collapse window of mini mode">
+
+                <Image Width="15"
+                       Height="15"
+                       Name="imgBtnCollapse">
+                    <Image.Source>
+                        <BitmapImage x:Name="bitImgBtnCollapse"
+                                     UriSource="../Image/left-arrow.png" />
+                    </Image.Source>
+                </Image>
+            </Button>
+
+            <Button Grid.Row="2"
+                    Name="btnDragMove"
+                    PreviewMouseDown="btnDragMove_PreviewMouseDown"
+                    ToolTip="Hold the button to move the window">
+
+                <Image Width="15"
+                       Height="15">
+                    <Image.Source>
+                        <BitmapImage UriSource="../Image/move.png" />
+                    </Image.Source>
+                </Image>
+            </Button>
+
+            <Button Grid.Row="3"
+                    x:Name="btnSelectionRange"
+                    Click="btnSelectionRange_Click"
+                    ToolTip="Capture the image in the range">
+
+                <Image Width="15"
+                       Height="15">
+                    <Image.Source>
+                        <BitmapImage UriSource="../Image/crop.png" />
+                    </Image.Source>
+                </Image>
+            </Button>
+
+            <Button Grid.Row="4"
+                    x:Name="btnTranslateText"
+                    Click="btnTranslateText_Click"
+                    ToolTip="Click to translate only text">
+
+                <Image Width="15"
+                       Height="15">
+                    <Image.Source>
+                        <BitmapImage UriSource="../Image/language.png" />
+                    </Image.Source>
+                </Image>
+            </Button>
+
+            <Button Grid.Row="5"
+                    x:Name="btnTranslateImage"
+                    Click="btnTranslateImage_Click"
+                    ToolTip="Translate text from image just capture from the previous range">
+
+                <Image Width="15"
+                       Height="15">
+                    <Image.Source>
+                        <BitmapImage UriSource="../Image/insert-picture-icon.png" />
+                    </Image.Source>
+                </Image>
+            </Button>
+
+            <Button Grid.Row="6"
+                    x:Name="btnClear"
+                    Click="btnClear_Click"
+                    ToolTip="Clear text">
+
+                <Image Width="15"
+                       Height="15">
+                    <Image.Source>
+                        <BitmapImage UriSource="../Image/clean.png" />
+                    </Image.Source>
+                </Image>
+            </Button>
+
+        </Grid>
+
+        <Grid Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <Grid Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <ComboBox Grid.Column="0"
+                          x:Name="cmbLoadSaveData"
+                          SelectionChanged="cmbLoadSaveData_SelectionChanged" />
+                <ComboBox Grid.Column="1"
+                          x:Name="cmbLanguageFrom"
+                          SelectionChanged="cmbLanguageFrom_SelectionChanged" />
+
+                <Button Grid.Column="2"
+                        x:Name="btnSwap"
+                        Click="btnSwap_Click">
+                    <Image Name="swapBtnImg">
+                        <Image.Source>
+                            <BitmapImage UriSource="../Image/swap.png" />
+                        </Image.Source>
+                    </Image>
+                </Button>
+
+                <ComboBox Grid.Column="3"
+                          x:Name="cmbLanguageTo"
+                          SelectionChanged="cmbLanguageTo_SelectionChanged" />
+            </Grid>
+
+            <TextBox Grid.Row="1"
+                     x:Name="tbxFrom" />
+            <TextBox Grid.Row="2"
+                     x:Name="tbxTo"
+                     IsReadOnly="true" />
+        </Grid>
+
+    </Grid>
+</Window>

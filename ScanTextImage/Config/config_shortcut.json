@@ -1,0 +1,122 @@
+[
+    {
+        "DisplayName": "Free selection",
+        "Name": "Free_selection",
+        "IsControlKey": true,
+        "IsShiftKey": true,
+        "IsAltKey": false,
+        "Key": "F1"
+    },
+    {
+        "DisplayName": "Translate text",
+        "Name": "Translate_text",
+        "IsControlKey": true,
+        "IsShiftKey": true,
+        "IsAltKey": false,
+        "Key": "F2"
+    },
+    {
+        "DisplayName": "Translate image",
+        "Name": "Translate_image",
+        "IsControlKey": true,
+        "IsShiftKey": true,
+        "IsAltKey": false,
+        "Key": "F3"
+    },
+    {
+        "DisplayName": "View image",
+        "Name": "View_image",
+        "IsControlKey": true,
+        "IsShiftKey": true,
+        "IsAltKey": false,
+        "Key": "F4"
+    },
+    {
+        "DisplayName": "Save",
+        "Name": "Save",
+        "IsControlKey": true,
+        "IsShiftKey": true,
+        "IsAltKey": false,
+        "Key": "F5"
+    },
+    {
+        "DisplayName": "Clear",
+        "Name": "Clear",
+        "IsControlKey": true,
+        "IsShiftKey": true,
+        "IsAltKey": false,
+        "Key": "F6"
+    },
+    {
+        "DisplayName": "loadSave1",
+        "Name": "loadSave1",
+        "IsControlKey": true,
+        "IsShiftKey": true,
+        "IsAltKey": false,
+        "Key": "1"
+    },
+    {
+        "DisplayName": "loadSave2",
+        "Name": "loadSave2",
+        "IsControlKey": true,
+        "IsShiftKey": true,
+        "IsAltKey": false,
+        "Key": "2"
+    },
+    {
+        "DisplayName": "loadSave3",
+        "Name": "loadSave3",
+        "IsControlKey": true,
+        "IsShiftKey": true,
+        "IsAltKey": false,
+        "Key": "3"
+    },
+    {
+        "DisplayName": "loadSave4",
+        "Name": "loadSave4",
+        "IsControlKey": true,
+        "IsShiftKey": true,
+        "IsAltKey": false,
+        "Key": "4"
+    },
+    {
+        "DisplayName": "loadSave5",
+        "Name": "loadSave5",
+        "IsControlKey": true,
+        "IsShiftKey": true,
+        "IsAltKey": false,
+        "Key": "5"
+    },
+    {
+        "DisplayName": "loadSave6",
+        "Name": "loadSave6",
+        "IsControlKey": true,
+        "IsShiftKey": true,
+        "IsAltKey": false,
+        "Key": "6"
+    },
+    {
+        "DisplayName": "loadSave7",
+        "Name": "loadSave7",
+        "IsControlKey": true,
+        "IsShiftKey": true,
+        "IsAltKey": false,
+        "Key": "7"
+    },
+    {
+        "DisplayName": "loadSave8",
+        "Name": "loadSave8",
+        "IsControlKey": true,
+        "IsShiftKey": true,
+        "IsAltKey": false,
+        "Key": "8"
+    },
+    {
+        "DisplayName": "loadSave9",
+        "Name": "loadSave9",
+        "IsControlKey": true,
+        "IsShiftKey": true,
+        "IsAltKey": false,
+        "Key": "9"
+    }
+]

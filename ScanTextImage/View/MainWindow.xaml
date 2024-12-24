@@ -1,0 +1,360 @@
+﻿<Window x:Class="ScanTextImage.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ScanTextImage"
+        xmlns:customCommand="clr-namespace:ScanTextImage.View.Command"
+        xmlns:data="clr-namespace:ScanTextImage.ConstData"
+        mc:Ignorable="d"
+        Title="MainWindow"
+        WindowState="Normal"
+        Height="500"
+        Width="1250"
+        Loaded="Window_Loaded">
+
+    <Window.CommandBindings>
+        <CommandBinding x:Name="Free_selection"
+                        Command="customCommand:CustomCommand.freeSelectionCommand"
+                        Executed="CommandBindingFreeSelection_Executed" />
+
+        <CommandBinding x:Name="Translate_text"
+                        Command="customCommand:CustomCommand.translateTextCommand"
+                        Executed="CommandBindingtranslateText_Executed" />
+
+        <CommandBinding x:Name="Translate_image"
+                        Command="customCommand:CustomCommand.translateImageCommand"
+                        Executed="CommandBindingtranslateImage_Executed" />
+
+        <CommandBinding x:Name="View_image"
+                        Command="customCommand:CustomCommand.viewImageCommand"
+                        Executed="CommandBindingViewImage_Executed" />
+
+        <CommandBinding x:Name="Save"
+                        Command="customCommand:CustomCommand.saveDataCommand"
+                        Executed="CommandBindingCreateDataSave_Executed" />
+
+        <CommandBinding x:Name="Clear"
+                        Command="customCommand:CustomCommand.clearCommand"
+                        Executed="CommandBindingClear_Executed" />
+        
+        <CommandBinding x:Name="loadSave1"
+                        Command="customCommand:CustomCommand.loadData1Command"
+                        Executed="CommandBindingLoadData_Executed" />
+        <CommandBinding x:Name="loadSave2"
+                        Command="customCommand:CustomCommand.loadData2Command"
+                        Executed="CommandBindingLoadData_Executed" />
+        <CommandBinding x:Name="loadSave3"
+                        Command="customCommand:CustomCommand.loadData3Command"
+                        Executed="CommandBindingLoadData_Executed" />
+        <CommandBinding x:Name="loadSave4"
+                        Command="customCommand:CustomCommand.loadData4Command"
+                        Executed="CommandBindingLoadData_Executed" />
+        <CommandBinding x:Name="loadSave5"
+                        Command="customCommand:CustomCommand.loadData5Command"
+                        Executed="CommandBindingLoadData_Executed" />
+        <CommandBinding x:Name="loadSave6"
+                        Command="customCommand:CustomCommand.loadData6Command"
+                        Executed="CommandBindingLoadData_Executed" />
+        <CommandBinding x:Name="loadSave7"
+                        Command="customCommand:CustomCommand.loadData7Command"
+                        Executed="CommandBindingLoadData_Executed" />
+        <CommandBinding x:Name="loadSave8"
+                        Command="customCommand:CustomCommand.loadData8Command"
+                        Executed="CommandBindingLoadData_Executed" />
+        <CommandBinding x:Name="loadSave9"
+                        Command="customCommand:CustomCommand.loadData9Command"
+                        Executed="CommandBindingLoadData_Executed" />
+    </Window.CommandBindings>
+
+    <Window.Resources>
+        <!--A Style that affects all Border-->
+        <Style TargetType="GroupBox">
+            <Setter Property="Background"
+                    Value="GhostWhite" />
+            <Setter Property="BorderBrush"
+                    Value="Gainsboro" />
+            <Setter Property="BorderThickness"
+                    Value="1" />
+        </Style>
+
+        <!--A Style that affects all TextBox-->
+        <Style TargetType="TextBox">
+            <Setter Property="TextWrapping"
+                    Value="Wrap" />
+            <Setter Property="AcceptsReturn"
+                    Value="True" />
+            <Setter Property="ScrollViewer.HorizontalScrollBarVisibility"
+                    Value="Disabled" />
+            <Setter Property="ScrollViewer.VerticalScrollBarVisibility"
+                    Value="Auto" />
+            <Setter Property="Padding"
+                    Value="10" />
+            <Setter Property="FontSize"
+                    Value="14" />
+        </Style>
+
+        <!--A Style that affects all Menu-->
+        <Style TargetType="Menu">
+            <Setter Property="BorderThickness"
+                    Value="1" />
+        </Style>
+        <!--A Style that affects all MenuItem-->
+        <Style TargetType="MenuItem">
+            <Setter Property="FontSize"
+                    Value="14" />
+        </Style>
+    </Window.Resources>
+
+    <DockPanel>
+
+        <Menu DockPanel.Dock="Top"
+              Name="appMenu">
+        </Menu>
+
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="0.5*" />
+                <ColumnDefinition Width="1.5*" />
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Grid.Column="0"
+                        Grid.Row="0">
+                <Grid Margin="10">
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <GroupBox Grid.Row="0"
+                              Header="Save Data">
+
+                        <Grid Margin="10">
+
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+
+                            <StackPanel Grid.Column="0"
+                                        Margin="5"
+                                        Name="saveDataStackPanel">
+                                <Button ToolTip="Create, edit or delete a save file that contains selected range; language translate from, to"
+                                        Padding="10"
+                                        Height="{Binding ElementName=saveDataStackPanel,Path=ActualHeight}"
+                                        Name="saveDataBtn"
+                                        Click="saveDataBtn_Click">
+                                    <TextBlock Text="Create Save Data"
+                                               TextWrapping="Wrap"
+                                               TextAlignment="Center" />
+                                </Button>
+                            </StackPanel>
+
+                            <Grid Grid.Column="1"
+                                  Margin="5">
+
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="*" />
+                                </Grid.RowDefinitions>
+
+                                <ComboBox Grid.Row="0"
+                                          IsEditable="True"
+                                          IsTextSearchEnabled="True"
+                                          Name="cmbDataSave"
+                                          Margin="0 0 0 5"
+                                          SelectionChanged="cmbDataSave_SelectionChanged"
+                                          PreviewMouseDown="cmbDataSave_PreviewMouseDown"
+                                          ToolTip="Load save data that contains selected range; language translate from, to " />
+
+                                <Button Grid.Row="1"
+                                        ToolTip="Select range image want to translate"
+                                        Name="freeSelection"
+                                        Content="Free Selection"
+                                        Click="freeSelection_Click" />
+
+
+                            </Grid>
+
+
+                        </Grid>
+
+                    </GroupBox>
+
+                    <GroupBox Grid.Row="2"
+                              Header="Translate Language">
+
+                        <Grid Margin="10">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+
+                            <Grid Grid.Row="0">
+
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="1.5*" />
+                                </Grid.RowDefinitions>
+
+                                <Grid Grid.Row="0">
+
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <Label Grid.Column="0"
+                                           Content="Language from: "
+                                           HorizontalAlignment="Left"
+                                           VerticalAlignment="Center" />
+
+                                    <ComboBox Grid.Column="1"
+                                              Margin="10"
+                                              Name="languageExtract"
+                                              SelectionChanged="languageExtract_SelectionChanged"
+                                              IsEditable="True"
+                                              IsTextSearchEnabled="True" />
+                                </Grid>
+                            </Grid>
+
+                            <Line Grid.Row="1"
+                                  X1="0"
+                                  Y1="0"
+                                  X2="300"
+                                  Y2="0"
+                                  Stroke="Gainsboro"
+                                  StrokeThickness="1"
+                                  VerticalAlignment="Center"
+                                  HorizontalAlignment="Left" />
+
+                            <Button Grid.Row="1"
+                                    Name="swapBtn"
+                                    Background="GhostWhite"
+                                    BorderBrush="Transparent"
+                                    BorderThickness="0"
+                                    Click="swapBtn_Click"
+                                    Width="30"
+                                    Height="30"
+                                    Panel.ZIndex="1">
+
+                                <Image Name="swapBtnImg"
+                                       Width="20"
+                                       Height="20">
+                                    <Image.Source>
+                                        <BitmapImage UriSource="../Image/swap.png"
+                                                     Rotation="Rotate90" />
+                                    </Image.Source>
+                                </Image>
+                            </Button>
+
+                            <Grid Grid.Row="2">
+
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="1.5*" />
+                                </Grid.RowDefinitions>
+
+                                <Grid Grid.Row="0">
+
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <Label Grid.Column="0"
+                                           Content="Language to: "
+                                           HorizontalAlignment="Left"
+                                           VerticalAlignment="Center" />
+
+                                    <ComboBox Grid.Column="1"
+                                              Margin="10"
+                                              Name="languageTranslateTo"
+                                              SelectionChanged="languageTranslateTo_SelectionChanged"
+                                              IsEditable="True"
+                                              IsTextSearchEnabled="True" />
+                                </Grid>
+                            </Grid>
+                        </Grid>
+                    </GroupBox>
+
+                    <GroupBox Grid.Row="4"
+                              Header="Action">
+
+                        <Grid Margin="10">
+
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+
+                            <Button Margin="10"
+                                    Grid.Row="0"
+                                    Grid.Column="0"
+                                    Name="translate"
+                                    Content="Translate Text"
+                                    Click="translate_Click"
+                                    ToolTip="Click to translate the text again" />
+
+                            <Button Margin="10"
+                                    Grid.Row="0"
+                                    Grid.Column="1"
+                                    Name="translateImage"
+                                    Content="Translate Image"
+                                    Click="translateImage_Click"
+                                    ToolTip="Click to translate the range of image that you have been selected before" />
+
+                            <Button Margin="10"
+                                    Grid.Row="1"
+                                    Grid.Column="0"
+                                    Name="viewImageBtn"
+                                    Content="View Image"
+                                    Click="viewImageBtn_Click"
+                                    ToolTip="Click to see image that just selected" />
+
+                            <Button Margin="10"
+                                    Grid.Row="1"
+                                    Grid.Column="1"
+                                    Name="clearBtn"
+                                    Content="Clear"
+                                    Click="clearBtn_Click"
+                                    ToolTip="Click to clear all text and image that has been selected, extract text or translated" />
+                        </Grid>
+                    </GroupBox>
+
+                </Grid>
+            </StackPanel>
+
+
+            <Grid Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="1*" />
+                    <RowDefinition Height="1*" />
+                </Grid.RowDefinitions>
+
+                <TextBox Grid.Row="0"
+                         Name="textFromImage"
+                         Margin="10">
+                </TextBox>
+
+                <TextBox Grid.Row="2"
+                         Name="textTranslateTo"
+                         IsReadOnly="True"
+                         Margin="10">
+                </TextBox>
+            </Grid>
+
+        </Grid>
+    </DockPanel>
+</Window>
