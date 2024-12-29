@@ -27,6 +27,34 @@
             <Setter Property="Height"
                     Value="25" />
         </Style>
+
+        <Style TargetType="{x:Type GridViewColumnHeader}">
+            <Setter Property="VerticalContentAlignment"
+                    Value="Center" />
+            <Setter Property="HorizontalContentAlignment"
+                    Value="Center" />
+            <Setter Property="FontSize"
+                    Value="13" />
+        </Style>
+
+
+        <Style x:Key="ListViewWithStaticHeader"
+               TargetType="{x:Type ListView}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ListView}">
+                        <Border BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                Background="{TemplateBinding Background}">
+                            <ScrollViewer Style="{DynamicResource {x:Static GridView.GridViewScrollViewerStyleKey}}">
+                                <ItemsPresenter />
+                            </ScrollViewer>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
     </Window.Resources>
 
     <Grid>
@@ -68,8 +96,6 @@
                                 <TextBlock Grid.Row="0"
                                            Text="Ctrl" />
                                 <CheckBox  Grid.Row="1"
-                                           HorizontalAlignment="Center"
-                                           VerticalAlignment="Center"
                                            Name="cbCtrlAll"
                                            Checked="cbCtrlAll_Checked"
                                            Unchecked="cbCtrlAll_Unchecked"
@@ -80,7 +106,8 @@
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <Grid HorizontalAlignment="Center"
-                                      Width="{Binding Path=ActualWidth, RelativeSource={RelativeSource AncestorType=GridViewColumnHeader}}">
+                                      Width="{Binding Path=ActualWidth, RelativeSource={RelativeSource AncestorType=GridViewColumnHeader}}"
+                                      Margin="8 0 0 0">
                                     <CheckBox HorizontalAlignment="Center"
                                               VerticalAlignment="Center"
                                               Name="cbCtrlKey"
@@ -102,8 +129,6 @@
                                 <TextBlock Grid.Row="0"
                                            Text="Shift" />
                                 <CheckBox  Grid.Row="1"
-                                           HorizontalAlignment="Center"
-                                           VerticalAlignment="Center"
                                            Name="cbShiftAll"
                                            IsThreeState="True"
                                            Click="cbAll_Click"
@@ -115,9 +140,8 @@
                             <DataTemplate>
                                 <Grid HorizontalAlignment="Center"
                                       Width="{Binding Path=ActualWidth, RelativeSource={RelativeSource AncestorType=GridViewColumnHeader}}">
-                                    <CheckBox HorizontalAlignment="Center"
-                                              VerticalAlignment="Center"
-                                              Name="cbShiftKey"
+                                    <CheckBox Name="cbShiftKey"
+                                              Margin="8 0 0 0"
                                               IsChecked="{Binding IsShiftKey}"
                                               Click="cbKey_Click" />
                                 </Grid>
@@ -137,8 +161,6 @@
                                 <TextBlock Grid.Row="0"
                                            Text="Alt" />
                                 <CheckBox  Grid.Row="1"
-                                           HorizontalAlignment="Center"
-                                           VerticalAlignment="Center"
                                            Name="cbAltAll"
                                            IsThreeState="True"
                                            Click="cbAll_Click"
@@ -148,11 +170,9 @@
                         </GridViewColumn.Header>
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
-                                <Grid HorizontalAlignment="Center"
-                                      Width="{Binding Path=ActualWidth, RelativeSource={RelativeSource AncestorType=GridViewColumnHeader}}">
-                                    <CheckBox HorizontalAlignment="Center"
-                                              VerticalAlignment="Center"
-                                              Name="cbAltKey"
+                                <Grid Width="{Binding Path=ActualWidth, RelativeSource={RelativeSource AncestorType=GridViewColumnHeader}}">
+                                    <CheckBox Name="cbAltKey"
+                                              Margin="8 0 0 0"
                                               IsChecked="{Binding IsAltKey}"
                                               Click="cbKey_Click" />
                                 </Grid>

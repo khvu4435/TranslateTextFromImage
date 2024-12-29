@@ -12,5 +12,8 @@ namespace ScanTextImage.Interface
     {
         public string ExtractTextFromImage(Bitmap bitmap, string langCode);
         public List<LanguageModel> GetLanguageUsingTesseract();
+        public Task<List<LanguageModel>> GetLanguageUsingTesseractFromGit();
+        public void DeleteTesseractLanguage(List<string> nameFiles);
+        public Task DownloadTesseractLanguageFromGit(DownloadItem item);
     }
 }

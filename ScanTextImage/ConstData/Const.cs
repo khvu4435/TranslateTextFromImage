@@ -187,7 +187,16 @@ namespace ScanTextImage.ConstData
                         headerMenu = "Config Shortcut",
                         eventNames = new List<string>
                         {
-                            "configBtn_Click"
+                            "configShortcutBtn_Click"
+                        },
+                        shortCutMenuDisplay = ""
+                    },
+                                        new MenuModel()
+                    {
+                        headerMenu = "Config Language",
+                        eventNames = new List<string>
+                        {
+                            "configLanguageBtn_Click"
                         },
                         shortCutMenuDisplay = ""
                     },
@@ -209,5 +218,17 @@ namespace ScanTextImage.ConstData
 
         public static readonly string placeholderTextFrom = "From...";
         public static readonly string placeholderTextTo = "To...";
+
+        public static readonly string repositoryGit = "tessdata";
+        public static readonly string owner = "tesseract-ocr";
+        public static readonly string branchGit = "main";
+        public static readonly string regexFileTessdata = @"(?'nameLanguage'\w+).traineddata";
+        public static readonly string rawUrlGit = @"https://raw.githubusercontent.com/{owner}/{repo}/{branch}/{nameFile}.traineddata";
+        public static readonly string templateOwner = "{owner}";
+        public static readonly string templateRepo = "{repo}";
+        public static readonly string templateBranch = "{branch}";
+        public static readonly string templateNameFile = "{nameFile}";
+
+        public static string[] suffixes = { "B", "KB", "MB", "GB", "TB" };
     }
 }

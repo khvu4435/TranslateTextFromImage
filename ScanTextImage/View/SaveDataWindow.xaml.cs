@@ -1,8 +1,10 @@
 ﻿using ScanTextImage.Interface;
 using ScanTextImage.Model;
 using ScanTextImage.Service;
+using Serilog;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -24,6 +26,8 @@ namespace ScanTextImage.View
     {
         private SaveModel _saveModel;
         private SelectedRegion _updateSelectedRange;
+        private LanguageModel fromLangugateUpdate;
+        private LanguageModel toLangugateUpdate;
 
         private IScreenshotService _screenshotService;
         private ITesseractService _tesseractService;
@@ -46,6 +50,10 @@ namespace ScanTextImage.View
             _tesseractService = tesseractService;
             _saveModel = saveModel;
 
+            // for display the update language
+            fromLangugateUpdate = _saveModel.languageTranslateFrom;
+            toLangugateUpdate = _saveModel.languageTranslateTo;
+
             this.Owner = App.Current.MainWindow;
 
             var data = _tesseractService.GetLanguageUsingTesseract();
@@ -58,12 +66,20 @@ namespace ScanTextImage.View
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             var listSaveData = _saveDataService.GetListSaveData();
+            var saveModel = listSaveData.FirstOrDefault(data => data.id == _saveModel.id);
+
+            if (listSaveData.Count <= 0)
+            {
+                btnEditData.IsEnabled = false;
+            }
 
             // load list data save
             cmbSaveData.ItemsSource = listSaveData;
             cmbSaveData.DisplayMemberPath = nameof(SaveModel.nameSave);
             cmbSaveData.SelectedValuePath = nameof(SaveModel.id);
             cmbSaveData.SelectedIndex = (_saveModel.id ?? 0) - 1;
+
+            LoadLanguageSaveData(saveModel);
 
             LoadDataSaveContent();
 
@@ -74,10 +90,10 @@ namespace ScanTextImage.View
             _saveModel.id = null;
 
             // prevent update range if the update range is 0
-            if( _updateSelectedRange.Width != 0 && 
-                _updateSelectedRange.Height != 0 && 
-                _updateSelectedRange.scaledX != 0 && 
-                _updateSelectedRange.scaledY != 0 )
+            if (_updateSelectedRange.Width != 0 &&
+                _updateSelectedRange.Height != 0 &&
+                _updateSelectedRange.scaledX != 0 &&
+                _updateSelectedRange.scaledY != 0)
             {
 
                 _saveModel.selectedRangeSave = _updateSelectedRange;
@@ -145,7 +161,8 @@ namespace ScanTextImage.View
 
                 // load the name of save data
                 titleSaveData.Text = _saveModel.nameSave;
-                LoadListLanguage();
+
+                LoadLanguageSaveData(_saveModel);
                 LoadSelectedRange();
             }
             catch (Exception ex)
@@ -164,6 +181,11 @@ namespace ScanTextImage.View
 
             LoadSelectedRange();
 
+            LoadUpdateSeletectedRange();
+        }
+
+        private void LoadUpdateSeletectedRange()
+        {
             lblUpdateScaledX.Content = _updateSelectedRange.scaledX;
             lblUpdateScaledY.Content = _updateSelectedRange.scaledY;
             lblUpdateScaledWidth.Content = _updateSelectedRange.Width;
@@ -180,6 +202,12 @@ namespace ScanTextImage.View
             lblScaledHeight.Content = _saveModel.selectedRangeSave.Height;
         }
 
+        private void LoadLanguageSaveData(SaveModel? saveModel)
+        {
+            tbFromLanguage.Text = saveModel == null ? string.Empty : saveModel.languageTranslateFrom.LangName;
+            tbToLanguage.Text = saveModel == null ? string.Empty : saveModel.languageTranslateTo.LangName;
+        }
+
         private void LoadListLanguage()
         {
             var data = cmbToLanguage.ItemsSource as List<LanguageModel>;
@@ -190,8 +218,8 @@ namespace ScanTextImage.View
                 return;
             }
 
-            LanguageModel from = _saveModel.languageTranslateFrom ?? data[0];
-            LanguageModel to = _saveModel.languageTranslateTo ?? data[0];
+            LanguageModel from = fromLangugateUpdate ?? data[0];
+            LanguageModel to = toLangugateUpdate ?? data[0];
 
             var indexOfLangFrom = data.FindIndex(0, model => model.LangCode == from.LangCode);
             var indexOfLangTo = data.FindIndex(0, model => model.LangCode == to.LangCode);
@@ -214,23 +242,13 @@ namespace ScanTextImage.View
                 // set name of data save
                 _saveModel.nameSave = titleSaveData.Text;
 
-                // set the language translate from and to
-                var selectedItemFrom = cmbFromLanguage.SelectedItem as LanguageModel;
-                var selectedItemTo = cmbToLanguage.SelectedItem as LanguageModel;
-
-                if (selectedItemTo == null || selectedItemFrom == null)
-                {
-                    MessageBox.Show("Selected language(s) have some problem", "Error selected", MessageBoxButton.OK, MessageBoxImage.Error);
-                    return;
-                }
-
-                _saveModel.languageTranslateFrom = selectedItemFrom;
-                _saveModel.languageTranslateTo = selectedItemTo;
+                _saveModel.languageTranslateFrom = fromLangugateUpdate;
+                _saveModel.languageTranslateTo = toLangugateUpdate;
 
                 // save file
                 var saveData = _saveDataService.SaveDataToFile(_saveModel);
 
-                _mainWindow.LoadListDataSaveFile(saveData.id.Value - 1);
+                _mainWindow.LoadListDataSaveFile(0);
 
                 var msgBoxResult = MessageBox.Show("Save data successfull!", "Save Data", MessageBoxButton.OK, MessageBoxImage.Information);
                 if (msgBoxResult == MessageBoxResult.OK)
@@ -249,7 +267,7 @@ namespace ScanTextImage.View
             var selectedItem = cmbFromLanguage.SelectedItem as LanguageModel;
             if (selectedItem != null)
             {
-                _saveModel.languageTranslateFrom = selectedItem;
+                fromLangugateUpdate = selectedItem;
             }
         }
 
@@ -258,8 +276,67 @@ namespace ScanTextImage.View
             var selectedItem = cmbToLanguage.SelectedItem as LanguageModel;
             if (selectedItem != null)
             {
-                _saveModel.languageTranslateTo = selectedItem;
+                toLangugateUpdate = selectedItem;
             }
+        }
+
+        private void tbFromLanguage_MouseEnter(object sender, MouseEventArgs e)
+        {
+            try
+            {
+                Log.Information("start tbFromLanguage_MouseEnter");
+
+                if(IsTextOverflowing(tbFromLanguage))
+                {
+                    Log.Information("text is overflowing");
+                    tbFromLanguage.ToolTip = tbFromLanguage.Text;
+                }
+
+                Log.Information("end tbFromLanguage_MouseEnter");
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "error when hover the text block from");
+                MessageBox.Show("error when hover the text block", "Error Hover", MessageBoxButton.OK, MessageBoxImage.Hand);
+                throw;
+            }
+
+        }
+
+        private void tbToLanguage_MouseEnter(object sender, MouseEventArgs e)
+        {
+            try
+            {
+                Log.Information("start tbToLanguage_MouseEnter");
+
+                if (IsTextOverflowing(tbToLanguage))
+                {
+                    Log.Information("text is overflowing");
+                    tbToLanguage.ToolTip = tbToLanguage.Text;
+                }
+
+                Log.Information("end tbToLanguage_MouseEnter");
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "error when hover the text block to");
+                MessageBox.Show("error when hover the text block", "Error Hover", MessageBoxButton.OK, MessageBoxImage.Hand);
+                throw;
+            }
+        }
+
+        private bool IsTextOverflowing(TextBlock textBlock)
+        {
+            var formattedText = new FormattedText(
+                textBlock.Text,
+                CultureInfo.CurrentCulture,
+                FlowDirection.LeftToRight,
+                new Typeface(textBlock.FontFamily, textBlock.FontStyle, textBlock.FontWeight, textBlock.FontStretch),
+                textBlock.FontSize,
+                Brushes.Black,
+                VisualTreeHelper.GetDpi(textBlock).PixelsPerDip);
+
+            return formattedText.Width > textBlock.Width;
         }
     }
 }

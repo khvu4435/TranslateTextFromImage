@@ -607,8 +607,8 @@ namespace ScanTextImage
                 return;
             }
 
-            var indexLangTo = listLang.IndexOf(saveData.languageTranslateTo);
-            var indexLangFrom = listLang.IndexOf(saveData.languageTranslateFrom);
+            var indexLangTo = listLang.FindIndex(0, listLang.Count, data => data.LangCode == saveData.languageTranslateTo.LangCode);
+            var indexLangFrom = listLang.FindIndex(0, listLang.Count, data => data.LangCode == saveData.languageTranslateFrom.LangCode);
 
             languageExtract.SelectedIndex = indexLangFrom;
             languageTranslateTo.SelectedIndex = indexLangTo;
@@ -654,12 +654,19 @@ namespace ScanTextImage
             Log.Information("end saveDataBtn_Click");
         }
 
-        private void configBtn_Click(object sender, RoutedEventArgs e)
+        private void configShortcutBtn_Click(object sender, RoutedEventArgs e)
         {
             Log.Information("start configBtn_Click");
             ConfigWindow configWindow = new ConfigWindow(_configService, _saveDataService, this);
             configWindow.ShowDialog();
             Log.Information("end configBtn_Click");
+        }
+        private void configLanguageBtn_Click(object sender, RoutedEventArgs e)
+        {
+            Log.Information("start configLanguageBtn_Click");
+            ConfigLanguageWindow configLanguageWindow = new ConfigLanguageWindow(_tesseractService, this);
+            configLanguageWindow.ShowDialog();
+            Log.Information("end configLanguageBtn_Click");
         }
 
         private void miniBtn_Click(object sender, RoutedEventArgs e)
@@ -680,7 +687,7 @@ namespace ScanTextImage
         #endregion button behviour
 
         #region Save Data
-        public void LoadListDataSaveFile(int selectedFileIndex)
+        public void LoadListDataSaveFile(int index)
         {
             // make selection change not occur when load a new list data file save
             isSelectionChanged = false;
@@ -689,7 +696,7 @@ namespace ScanTextImage
             cmbDataSave.ItemsSource = listSaveData;
             cmbDataSave.DisplayMemberPath = nameof(SaveModel.nameSave);
             cmbDataSave.SelectedValuePath = nameof(SaveModel.id);
-            cmbDataSave.SelectedIndex = selectedFileIndex;
+            cmbDataSave.SelectedIndex = index;
 
             var data = SaveModel.DefaultSaveData();
             if (listSaveData.Count >= 1)
@@ -702,7 +709,7 @@ namespace ScanTextImage
             LoadLanguageTranslateList();
         }
 
-        private void LoadLanguageTranslateList()
+        public void LoadLanguageTranslateList()
         {
             Log.Information("start LoadLanguageTranslateList");
 
