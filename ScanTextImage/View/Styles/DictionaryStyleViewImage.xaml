@@ -1,0 +1,60 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="DictionaryGeneral.xaml" />
+    </ResourceDictionary.MergedDictionaries>
+
+
+    <Style x:Key="styleImageBtn"
+           TargetType="Image"
+           BasedOn="{StaticResource imgTempaleStyle}">
+        <Setter Property="Width"
+                Value="20" />
+        <Setter Property="Height"
+                Value="20" />
+    </Style>
+
+    <Style TargetType="Button"
+           BasedOn="{StaticResource btnStyleTemplate}">
+        <Setter Property="Width"
+                Value="40" />
+        <Setter Property="Height"
+                Value="40" />
+        <Setter Property="Effect">
+            <Setter.Value>
+                <DropShadowEffect BlurRadius="10"
+                                  ShadowDepth="3"
+                                  Color="Black"
+                                  Opacity="0.5" />
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="ComboBox"
+           BasedOn="{StaticResource cmbTemplateStyle}">
+        <Setter Property="Width"
+                Value="90" />
+        <Setter Property="Height"
+                Value="40" />
+        <Setter Property="FontSize"
+                Value="15" />
+    </Style>
+
+    <Style TargetType="Slider"
+           BasedOn="{StaticResource sliderStyleTemplate}">
+        <Setter Property="Margin"
+                Value="5 20"/>
+        <Setter Property="Minimum"
+                Value="0.1" />
+        <Setter Property="Minimum"
+                Value="0.1" />
+        <Setter Property="Maximum"
+                Value="2.0" />
+        <Setter Property="Value"
+                Value="1" />
+        <Setter Property="IsMoveToPointEnabled"
+                Value="true" />
+    </Style>
+    
+</ResourceDictionary>

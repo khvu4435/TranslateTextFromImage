@@ -579,7 +579,7 @@ namespace ScanTextImage
                     return;
                 }
 
-                //textTranslateTo.Text = await _translateService.TranslateTo(textFrom, saveData.languageTranslateTo.LangName, saveData.languageTranslateFrom.LangName);
+                textTranslateTo.Text = await _translateService.TranslateTo(textFrom, saveData.languageTranslateTo.LangName, saveData.languageTranslateFrom.LangName);
             }
             catch (Exception ex)
             {

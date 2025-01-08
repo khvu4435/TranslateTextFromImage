@@ -17,6 +17,7 @@
 		<None Remove="Image\collapse.png" />
 		<None Remove="Image\crop.png" />
 		<None Remove="Image\delete.png" />
+		<None Remove="Image\diskette.png" />
 		<None Remove="Image\down-arrow.png" />
 		<None Remove="Image\expand-arrows.png" />
 		<None Remove="Image\filter.png" />
@@ -30,6 +31,7 @@
 		<None Remove="Image\search.png" />
 		<None Remove="Image\sort.png" />
 		<None Remove="Image\swap.png" />
+		<None Remove="Image\text-recognising.png" />
 		<None Remove="Image\trash-can.png" />
 		<None Remove="Image\zoom-in.png" />
 		<None Remove="Image\zoom-out.png" />
@@ -56,6 +58,9 @@
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Resource>
 		<Resource Include="Image\delete.png">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Resource>
+		<Resource Include="Image\diskette.png">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Resource>
 		<Resource Include="Image\down-arrow.png">
@@ -96,6 +101,9 @@
 		</Resource>
 		<Resource Include="Image\swap.png">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Resource>
+		<Resource Include="Image\text-recognising.png">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Resource>
 		<Resource Include="Image\zoom-out.png">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

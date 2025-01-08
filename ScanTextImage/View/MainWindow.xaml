@@ -9,7 +9,7 @@
         mc:Ignorable="d"
         Title="MainWindow"
         WindowState="Normal"
-        Height="500"
+        Height="550"
         Width="1250"
         Loaded="Window_Loaded">
 
@@ -68,43 +68,12 @@
     </Window.CommandBindings>
 
     <Window.Resources>
-        
-        <!--A Style that affects all Border-->
-        <Style TargetType="GroupBox">
-            <Setter Property="Background"
-                    Value="GhostWhite" />
-            <Setter Property="BorderBrush"
-                    Value="Gainsboro" />
-            <Setter Property="BorderThickness"
-                    Value="1" />
-        </Style>
-
-        <!--A Style that affects all TextBox-->
-        <Style TargetType="TextBox">
-            <Setter Property="TextWrapping"
-                    Value="Wrap" />
-            <Setter Property="AcceptsReturn"
-                    Value="True" />
-            <Setter Property="ScrollViewer.HorizontalScrollBarVisibility"
-                    Value="Disabled" />
-            <Setter Property="ScrollViewer.VerticalScrollBarVisibility"
-                    Value="Auto" />
-            <Setter Property="Padding"
-                    Value="10" />
-            <Setter Property="FontSize"
-                    Value="14" />
-        </Style>
-
-        <!--A Style that affects all Menu-->
-        <Style TargetType="Menu">
-            <Setter Property="BorderThickness"
-                    Value="1" />
-        </Style>
-        <!--A Style that affects all MenuItem-->
-        <Style TargetType="MenuItem">
-            <Setter Property="FontSize"
-                    Value="14" />
-        </Style>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="../View/Styles/DictionaryGeneral.xaml" />
+                <ResourceDictionary Source="../View/Styles/DictionaryMainWindow.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
     </Window.Resources>
 
     <DockPanel>
@@ -138,23 +107,29 @@
                         <Grid Margin="10">
 
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
 
-                            <StackPanel Grid.Column="0"
-                                        Margin="5"
-                                        Name="saveDataStackPanel">
+                            <Grid Grid.Column="0"
+                                  Grid.Row="0"
+                                  Name="saveDataStackPanel">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="*" />
+                                </Grid.RowDefinitions>
                                 <Button ToolTip="Create, edit or delete a save file that contains selected range; language translate from, to"
-                                        Padding="10"
-                                        Height="{Binding ElementName=saveDataStackPanel,Path=ActualHeight}"
                                         Name="saveDataBtn"
+                                        Margin="10"
                                         Click="saveDataBtn_Click">
-                                    <TextBlock Text="Create Save Data"
-                                               TextWrapping="Wrap"
-                                               TextAlignment="Center" />
+                                    <Image Width="20"
+                                           Height="20">
+                                        <Image.Source>
+                                            <BitmapImage UriSource="../Image/diskette.png" />
+                                        </Image.Source>
+                                    </Image>
                                 </Button>
-                            </StackPanel>
+                            </Grid>
 
                             <Grid Grid.Column="1"
                                   Margin="5">
@@ -164,16 +139,19 @@
                                     <RowDefinition Height="*" />
                                 </Grid.RowDefinitions>
 
-                                <ComboBox Grid.Row="0"
+                                <ComboBox Grid.Column="1"
+                                          Grid.Row="0"
                                           IsEditable="True"
                                           IsTextSearchEnabled="True"
                                           Name="cmbDataSave"
-                                          Margin="0 0 0 5"
                                           SelectionChanged="cmbDataSave_SelectionChanged"
                                           PreviewMouseDown="cmbDataSave_PreviewMouseDown"
                                           ToolTip="Load save data that contains selected range; language translate from, to " />
 
-                                <Button Grid.Row="1"
+                                <Button Grid.Column="1"
+                                        Grid.Row="1"
+                                        Width="{Binding ElementName=cmbDataSave, Path=ActualWidth}"
+                                        Height="30"
                                         ToolTip="Select range image want to translate"
                                         Name="freeSelection"
                                         Content="Free Selection"
@@ -217,7 +195,7 @@
                                            VerticalAlignment="Center" />
 
                                     <ComboBox Grid.Column="1"
-                                              Margin="10"
+                                              Height="30"
                                               Name="languageExtract"
                                               SelectionChanged="languageExtract_SelectionChanged"
                                               IsEditable="True"
@@ -237,13 +215,8 @@
 
                             <Button Grid.Row="1"
                                     Name="swapBtn"
-                                    Background="GhostWhite"
-                                    BorderBrush="Transparent"
-                                    BorderThickness="0"
                                     Click="swapBtn_Click"
-                                    Width="30"
-                                    Height="30"
-                                    Panel.ZIndex="1">
+                                    Style="{StaticResource styleBtnSwap}">
 
                                 <Image Name="swapBtnImg"
                                        Width="20"
@@ -275,7 +248,7 @@
                                            VerticalAlignment="Center" />
 
                                     <ComboBox Grid.Column="1"
-                                              Margin="10"
+                                              Height="30"
                                               Name="languageTranslateTo"
                                               SelectionChanged="languageTranslateTo_SelectionChanged"
                                               IsEditable="True"
@@ -290,47 +263,60 @@
 
                         <Grid Margin="10">
 
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="*" />
-                                <RowDefinition Height="*" />
-                            </Grid.RowDefinitions>
-
                             <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
 
-                            <Button Margin="10"
-                                    Grid.Row="0"
-                                    Grid.Column="0"
+                            <Button Grid.Column="0"
                                     Name="translate"
-                                    Content="Translate Text"
                                     Click="translate_Click"
-                                    ToolTip="Click to translate the text again" />
+                                    ToolTip="Click to translate the text again">
+                                <Image Width="20"
+                                       Height="20">
+                                    <Image.Source>
+                                        <BitmapImage UriSource="../Image/language.png" />
+                                    </Image.Source>
+                                </Image>
+                            </Button>
 
-                            <Button Margin="10"
-                                    Grid.Row="0"
-                                    Grid.Column="1"
+                            <Button Grid.Column="1"
                                     Name="translateImage"
-                                    Content="Translate Image"
                                     Click="translateImage_Click"
-                                    ToolTip="Click to translate the range of image that you have been selected before" />
+                                    ToolTip="Click to translate the range of image that you have been selected before">
+                                <Image Width="20"
+                                       Height="20">
+                                    <Image.Source>
+                                        <BitmapImage UriSource="../Image/text-recognising.png" />
+                                    </Image.Source>
+                                </Image>
+                            </Button>
 
-                            <Button Margin="10"
-                                    Grid.Row="1"
-                                    Grid.Column="0"
+                            <Button Grid.Column="2"
                                     Name="viewImageBtn"
-                                    Content="View Image"
                                     Click="viewImageBtn_Click"
-                                    ToolTip="Click to see image that just selected" />
+                                    ToolTip="Click to see image that just selected">
+                                <Image Width="20"
+                                       Height="20">
+                                    <Image.Source>
+                                        <BitmapImage UriSource="../Image/insert-picture-icon.png" />
+                                    </Image.Source>
+                                </Image>
+                            </Button>
 
-                            <Button Margin="10"
-                                    Grid.Row="1"
-                                    Grid.Column="1"
+                            <Button Grid.Column="3"
                                     Name="clearBtn"
-                                    Content="Clear"
                                     Click="clearBtn_Click"
-                                    ToolTip="Click to clear all text and image that has been selected, extract text or translated" />
+                                    ToolTip="Click to clear all text and image that has been selected, extract text or translated">
+                                <Image Width="20"
+                                       Height="20">
+                                    <Image.Source>
+                                        <BitmapImage UriSource="../Image/clean.png" />
+                                    </Image.Source>
+                                </Image>
+                            </Button>
                         </Grid>
                     </GroupBox>
 

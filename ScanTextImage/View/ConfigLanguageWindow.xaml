@@ -266,9 +266,22 @@
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
 
-                    <TextBox x:Name="tbSearchNotDownload"
-                             Grid.Column="0"
-                             TextChanged="tbSearchNotDownload_TextChanged" />
+                    <Grid Grid.Column="0">
+                        <TextBox x:Name="tbSearchNotDownload"
+                                 TextChanged="tbSearchNotDownload_TextChanged" />
+
+                        <Image Width="12"
+                               Height="12"
+                               HorizontalAlignment="Right"
+                               Margin="0,0,20,0">
+                            <Image.Source>
+                                <BitmapImage UriSource="../Image/search.png"
+                                             DecodePixelWidth="12"
+                                             DecodePixelHeight="12" />
+                            </Image.Source>
+                        </Image>
+                    </Grid>
+
 
                     <Button Grid.Column="1"
                             Margin="5"
@@ -398,9 +411,22 @@
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
 
-                    <TextBox x:Name="tbSearchDownloaded"
-                             Grid.Column="0"
-                             TextChanged="tbSearchDownload_TextChanged" />
+
+                    <Grid Grid.Column="0">
+                        <TextBox x:Name="tbSearchDownloaded"
+                                 TextChanged="tbSearchDownload_TextChanged" />
+
+                        <Image Width="12"
+                               Height="12"
+                               HorizontalAlignment="Right"
+                               Margin="0,0,20,0">
+                            <Image.Source>
+                                <BitmapImage UriSource="../Image/search.png"
+                                             DecodePixelWidth="12"
+                                             DecodePixelHeight="12" />
+                            </Image.Source>
+                        </Image>
+                    </Grid>
 
                     <Button Grid.Column="1"
                             Margin="5"
