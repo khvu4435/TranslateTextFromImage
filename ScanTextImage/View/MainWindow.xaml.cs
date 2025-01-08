@@ -96,8 +96,13 @@ namespace ScanTextImage
             _captureService.onScreenTaken += onScreenshotTaken; // create a event that will get the image capture
 
             this.IsVisibleChanged += MainWindow_IsVisibleChanged; // re-add the interactive window if open mini mode
-
             this.Closing += MainWindow_Closing;
+
+            // add a command binding for paste
+            CommandBinding pasteBinding = new CommandBinding(ApplicationCommands.Paste);
+            pasteBinding.Executed += PasteBinding_Executed;
+            textFromImage.CommandBindings.Add(pasteBinding);
+
 
             LoadCommandBinding();
 
@@ -816,5 +821,47 @@ namespace ScanTextImage
 
         #endregion Command Binding
 
+        private async void PasteBinding_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            Log.Information("Start PasteBinding_Executed");
+            if (Clipboard.ContainsImage())
+            {
+                Log.Information("Contain image in clipboard");
+
+                try
+                {
+                    Log.Information("get image from clipboard");
+                    var bmpSource = Clipboard.GetImage();
+
+                    Log.Information("convert to crop type");
+                    croppedBitmap = new CroppedBitmap(bmpSource, new Int32Rect(0,0, bmpSource.PixelWidth, bmpSource.PixelHeight));
+
+                    Log.Information("get text from image and translate it");
+                    ExtractTextFromImage(croppedBitmap);
+                    await TranslateText();
+
+                }
+                catch (Exception ex)
+                {
+                    Log.Error(ex, "Error when paste image to text box");
+                    MessageBox.Show("Error when paste image to text box: " + ex.Message, "Error paste image", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+            }
+            Log.Information("end PasteBinding_Executed");
+        }
+
+        private void textFromImage_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            Log.Information("start textFromImage_PreviewKeyDown");
+
+            if(e.Key == Key.V && (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+            {
+                ApplicationCommands.Paste.Execute(null, textFromImage);
+                e.Handled = true;
+            }
+
+            Log.Information("emd textFromImage_PreviewKeyDown");
+        }
     }
 }

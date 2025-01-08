@@ -346,7 +346,9 @@
 
                 <TextBox Grid.Row="0"
                          Name="textFromImage"
-                         Margin="10">
+                         Margin="10"
+                         PreviewKeyDown="textFromImage_PreviewKeyDown">
+
                 </TextBox>
 
                 <TextBox Grid.Row="2"
