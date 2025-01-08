@@ -4,13 +4,653 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ScanTextImage.View"
+        xmlns:Const="clr-namespace:ScanTextImage.ConstData"
         mc:Ignorable="d"
-        Title="ImageWindow" Height="450" Width="800">
+        Title="ImageWindow"
+        Height="450"
+        Width="800"
+        SizeChanged="Window_SizeChanged"
+        PreviewMouseWheel="Window_PreviewMouseWheel"
+        PreviewMouseDown="Window_PreviewMouseDown">
+
+    <Window.Resources>
+        <Style TargetType="Button">
+            <Setter Property="Background"
+                    Value="GhostWhite" />
+            <Setter Property="BorderThickness"
+                    Value="0" />
+            <Setter Property="Width"
+                    Value="40" />
+            <Setter Property="Height"
+                    Value="40" />
+            <Setter Property="Margin"
+                    Value="5" />
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect BlurRadius="10"
+                                      ShadowDepth="3"
+                                      Color="Black"
+                                      Opacity="0.5" />
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center" />
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Resources>
+                <Style TargetType="Border">
+                    <Setter Property="CornerRadius"
+                            Value="5" />
+                </Style>
+            </Style.Resources>
+            <Style.Triggers>
+                <EventTrigger RoutedEvent="Mouse.MouseEnter">
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <ThicknessAnimation Storyboard.TargetProperty="BorderThickness"
+                                                Duration="0:0:0"
+                                                To="1,1,1,1"
+                                                From="0,0,0,0" />
+
+                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="BorderBrush"
+                                                           Duration="0">
+                                <DiscreteObjectKeyFrame KeyTime="0">
+                                    <DiscreteObjectKeyFrame.Value>
+                                        <SolidColorBrush Color="#b8b8be"
+                                                         Opacity="1" />
+                                    </DiscreteObjectKeyFrame.Value>
+                                </DiscreteObjectKeyFrame>
+                            </ObjectAnimationUsingKeyFrames>
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+
+                <EventTrigger RoutedEvent="Mouse.MouseLeave">
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <ThicknessAnimation Storyboard.TargetProperty="BorderThickness"
+                                                Duration="0:0:0"
+                                                From="1,1,1,1"
+                                                To="0,0,0,0" />
+
+                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="BorderBrush"
+                                                           Duration="0">
+                                <DiscreteObjectKeyFrame KeyTime="0">
+                                    <DiscreteObjectKeyFrame.Value>
+                                        <SolidColorBrush Color="GhostWhite"
+                                                         Opacity="1" />
+                                    </DiscreteObjectKeyFrame.Value>
+                                </DiscreteObjectKeyFrame>
+                            </ObjectAnimationUsingKeyFrames>
+
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+
+                <EventTrigger RoutedEvent="Mouse.PreviewMouseDown">
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background"
+                                                           Duration="0">
+                                <DiscreteObjectKeyFrame KeyTime="0">
+                                    <DiscreteObjectKeyFrame.Value>
+                                        <SolidColorBrush Color="#b8b8be"
+                                                         Opacity="1" />
+                                    </DiscreteObjectKeyFrame.Value>
+                                </DiscreteObjectKeyFrame>
+                            </ObjectAnimationUsingKeyFrames>
+
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+
+                <EventTrigger RoutedEvent="Mouse.PreviewMouseUp">
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background"
+                                                           Duration="0">
+                                <DiscreteObjectKeyFrame KeyTime="0">
+                                    <DiscreteObjectKeyFrame.Value>
+                                        <SolidColorBrush Color="GhostWhite"
+                                                         Opacity="1" />
+                                    </DiscreteObjectKeyFrame.Value>
+                                </DiscreteObjectKeyFrame>
+                            </ObjectAnimationUsingKeyFrames>
+
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+
+            </Style.Triggers>
+
+        </Style>
+
+        <Style x:Key="styleImageBtn"
+               TargetType="Image">
+            <Setter Property="Width"
+                    Value="20" />
+            <Setter Property="Height"
+                    Value="20" />
+            <Setter Property="RenderOptions.BitmapScalingMode"
+                    Value="HighQuality" />
+            <Setter Property="SnapsToDevicePixels"
+                    Value="True" />
+        </Style>
+
+        <Style TargetType="Label">
+            <Setter Property="Background"
+                    Value="Black" />
+            <Setter Property="Foreground"
+                    Value="White" />
+            <Setter Property="Opacity"
+                    Value="0.6" />
+            <Setter Property="Width"
+                    Value="150" />
+            <Setter Property="Height"
+                    Value="50" />
+            <Setter Property="HorizontalAlignment"
+                    Value="Right" />
+            <Setter Property="VerticalAlignment"
+                    Value="Bottom" />
+            <Setter Property="FontSize"
+                    Value="30" />
+            <Setter Property="HorizontalContentAlignment"
+                    Value="Center" />
+            <Setter Property="VerticalContentAlignment"
+                    Value="Center" />
+            <Setter Property="Margin"
+                    Value="5" />
+            <Style.Resources>
+                <Style TargetType="Border">
+                    <Setter Property="CornerRadius"
+                            Value="5" />
+                </Style>
+            </Style.Resources>
+        </Style>
+
+        <Style x:Key="SliderRepeatButton"
+               TargetType="RepeatButton">
+            <Setter Property="SnapsToDevicePixels"
+                    Value="true" />
+            <Setter Property="OverridesDefaultStyle"
+                    Value="true" />
+            <Setter Property="IsTabStop"
+                    Value="false" />
+            <Setter Property="Focusable"
+                    Value="false" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="RepeatButton">
+                        <Border Background="Transparent" />
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Thumb style with MouseOver trigger -->
+        <Style x:Key="SliderThumbStyle"
+               TargetType="Thumb">
+            <Setter Property="SnapsToDevicePixels"
+                    Value="true" />
+            <Setter Property="OverridesDefaultStyle"
+                    Value="true" />
+            <Setter Property="VerticalAlignment"
+                    Value="Center" />
+            <Setter Property="HorizontalAlignment"
+                    Value="Center" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Thumb">
+                        <Grid VerticalAlignment="Center"
+                              HorizontalAlignment="Center">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+
+                            <Ellipse x:Name="overLapThumb"
+                                     Fill="Black"
+                                     Width="17"
+                                     Height="17"
+                                     Opacity="0.7"
+                                     VerticalAlignment="Center"
+                                     HorizontalAlignment="Center"
+                                     Grid.Row="1"
+                                     Grid.Column="1" />
+
+                            <Ellipse x:Name="thumbEllipse"
+                                     Fill="LightGray"
+                                     Width="10"
+                                     Height="10"
+                                     Opacity="0.7"
+                                     VerticalAlignment="Center"
+                                     HorizontalAlignment="Center"
+                                     Grid.Row="1"
+                                     Grid.Column="1" />
+
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver"
+                                     Value="True">
+                                <Setter TargetName="thumbEllipse"
+                                        Property="Width"
+                                        Value="12" />
+                                <Setter TargetName="thumbEllipse"
+                                        Property="Height"
+                                        Value="12" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style TargetType="Slider">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Slider">
+                        <Border BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                Background="{TemplateBinding Background}"
+                                SnapsToDevicePixels="True">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto"
+                                                   MinHeight="{TemplateBinding MinHeight}" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <Track x:Name="PART_Track"
+                                       Grid.Row="1">
+                                    <Track.DecreaseRepeatButton>
+                                        <RepeatButton Command="{x:Static Slider.DecreaseLarge}"
+                                                      Style="{StaticResource SliderRepeatButton}">
+                                            <RepeatButton.Template>
+                                                <ControlTemplate TargetType="RepeatButton">
+                                                    <Border Height="4"
+                                                            Background="#FF0078D7"
+                                                            CornerRadius="2, 0, 0, 2" />
+                                                </ControlTemplate>
+                                            </RepeatButton.Template>
+                                        </RepeatButton>
+                                    </Track.DecreaseRepeatButton>
+                                    <Track.IncreaseRepeatButton>
+                                        <RepeatButton Command="{x:Static Slider.IncreaseLarge}"
+                                                      Style="{StaticResource SliderRepeatButton}">
+                                            <RepeatButton.Template>
+                                                <ControlTemplate TargetType="RepeatButton">
+                                                    <Border Height="2"
+                                                            Background="#FFE0E0E0"
+                                                            CornerRadius="0, 2, 2, 0" />
+                                                </ControlTemplate>
+                                            </RepeatButton.Template>
+                                        </RepeatButton>
+                                    </Track.IncreaseRepeatButton>
+                                    <Track.Thumb>
+                                        <Thumb Style="{StaticResource SliderThumbStyle}" />
+                                    </Track.Thumb>
+                                </Track>
+                            </Grid>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+
+        <Style TargetType="{x:Type ComboBox}">
+            <Setter Property="Width"
+                    Value="80" />
+            <Setter Property="Height"
+                    Value="40" />
+            <Setter Property="FontSize"
+                    Value="15" />
+            <Setter Property="Margin"
+                    Value="5" />
+            <Setter Property="Padding"
+                    Value="5" />
+            <Setter Property="IsEditable"
+                    Value="True" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ComboBox}">
+                        <Grid>
+                            <Border x:Name="border"
+                                    CornerRadius="5"
+                                    Background="GhostWhite"
+                                    BorderBrush="Gray"
+                                    BorderThickness="0,0,0,0">
+
+                                <Border.Effect>
+                                    <DropShadowEffect BlurRadius="10"
+                                                      ShadowDepth="3"
+                                                      Color="Black"
+                                                      Opacity="0.4" />
+                                </Border.Effect>
+
+                                <Grid>
+
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition />
+                                        <ColumnDefinition Width="30" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <!-- TextBox for editable mode -->
+                                    <TextBox x:Name="PART_EditableTextBox"
+                                             Grid.Column="0"
+                                             Margin="3,0,0,0"
+                                             VerticalAlignment="Center"
+                                             HorizontalAlignment="Center"
+                                             Background="Transparent"
+                                             Visibility="Collapsed"
+                                             BorderThickness="0"
+                                             IsReadOnly="{TemplateBinding IsReadOnly}">
+                                        <TextBox.Style>
+                                            <Style TargetType="{x:Type TextBox}">
+                                                <Style.Triggers>
+                                                    <Trigger Property="IsReadOnly"
+                                                             Value="true">
+                                                        <Setter Property="Background"
+                                                                Value="Transparent" />
+                                                    </Trigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBox.Style>
+                                    </TextBox>
+
+                                    <!-- Regular content presenter for non-editable mode -->
+                                    <ContentPresenter x:Name="PART_NonEditableTextBox"
+                                                      Grid.Column="0"
+                                                      Content="{TemplateBinding SelectionBoxItem}"
+                                                      ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                                                      ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}"
+                                                      VerticalAlignment="Center"
+                                                      Margin="8,0,0,0" />
+                                    <ToggleButton Grid.Column="1"
+                                                  IsChecked="{Binding Path=IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
+                                                  ClickMode="Press">
+                                        <ToggleButton.Template>
+                                            <ControlTemplate>
+                                                <Border x:Name="borderToggleBtn"
+                                                        Background="Transparent"
+                                                        Margin="3"
+                                                        CornerRadius="3">
+                                                    <Image Height="12"
+                                                           Width="12"
+                                                           RenderOptions.BitmapScalingMode="HighQuality">
+                                                        <Image.Source>
+                                                            <BitmapImage UriSource="../Image/caret-down.png" />
+                                                        </Image.Source>
+                                                    </Image>
+                                                </Border>
+
+                                                <ControlTemplate.Triggers>
+                                                    <Trigger Property="IsMouseOver"
+                                                             Value="True">
+                                                        <Setter TargetName="borderToggleBtn"
+                                                                Property="Background">
+                                                            <Setter.Value>
+                                                                <SolidColorBrush Color="Gray"
+                                                                                 Opacity="0.3" />
+                                                            </Setter.Value>
+                                                        </Setter>
+                                                    </Trigger>
+                                                </ControlTemplate.Triggers>
+                                            </ControlTemplate>
+                                        </ToggleButton.Template>
+                                    </ToggleButton>
+                                </Grid>
+
+                                <Border.Triggers>
+                                    <EventTrigger RoutedEvent="TextBoxBase.GotFocus"
+                                                  SourceName="PART_EditableTextBox">
+                                        <BeginStoryboard>
+                                            <Storyboard>
+                                                <!--<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background"
+                                                                               Duration="0">
+                                                    <DiscreteObjectKeyFrame KeyTime="0">
+                                                        <DiscreteObjectKeyFrame.Value>
+                                                            <SolidColorBrush Color="#dbdbdb"
+                                                                             Opacity="1" />
+                                                        </DiscreteObjectKeyFrame.Value>
+                                                    </DiscreteObjectKeyFrame>
+                                                </ObjectAnimationUsingKeyFrames>-->
+
+                                                <ThicknessAnimation Storyboard.TargetProperty="BorderThickness"
+                                                                    Duration="0:0:0"
+                                                                    From="0,0,0,0"
+                                                                    To="0,0,0,3" />
+
+                                            </Storyboard>
+                                        </BeginStoryboard>
+                                    </EventTrigger>
+
+                                    <EventTrigger RoutedEvent="TextBoxBase.LostFocus"
+                                                  SourceName="PART_EditableTextBox">
+                                        <BeginStoryboard>
+                                            <Storyboard>
+                                                <!--<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background"
+                                                                               Duration="0">
+                                                    <DiscreteObjectKeyFrame KeyTime="0">
+                                                        <DiscreteObjectKeyFrame.Value>
+                                                            <SolidColorBrush Color="GhostWhite" />
+                                                        </DiscreteObjectKeyFrame.Value>
+                                                    </DiscreteObjectKeyFrame>
+                                                </ObjectAnimationUsingKeyFrames>-->
+
+                                                <ThicknessAnimation Storyboard.TargetProperty="BorderThickness"
+                                                                    Duration="0:0:0"
+                                                                    From="0,0,0,3"
+                                                                    To="0,0,0,0" />
+
+                                            </Storyboard>
+                                        </BeginStoryboard>
+                                    </EventTrigger>
+                                </Border.Triggers>
+
+                            </Border>
+                            <Popup IsOpen="{TemplateBinding IsDropDownOpen}"
+                                   Placement="Bottom"
+                                   AllowsTransparency="True">
+                                <Border CornerRadius="5"
+                                        Width="80"
+                                        Background="#fef8ff"
+                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                        BorderThickness="1">
+                                    <ScrollViewer SnapsToDevicePixels="True">
+                                        <ItemsPresenter KeyboardNavigation.DirectionalNavigation="Contained" />
+                                    </ScrollViewer>
+                                </Border>
+                            </Popup>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <!--Handle edit mode-->
+                            <Trigger Property="IsEditable"
+                                     Value="True">
+                                <Setter TargetName="PART_NonEditableTextBox"
+                                        Property="Visibility"
+                                        Value="Collapsed" />
+                                <Setter TargetName="PART_EditableTextBox"
+                                        Property="Visibility"
+                                        Value="Visible" />
+                            </Trigger>
+
+                            <Trigger Property="IsEnabled"
+                                     Value="False">
+                                <Setter Property="Opacity"
+                                        Value="0.5" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+    </Window.Resources>
+
     <Grid>
-        <Image Name="screenshotImage"
-               Stretch="Uniform"
-               StretchDirection="Both"
-               HorizontalAlignment="Center"
-               VerticalAlignment="Center" />
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0">
+            <Image Name="screenshotImage"
+                   StretchDirection="Both"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Center"
+                   RenderOptions.BitmapScalingMode="HighQuality"
+                   SnapsToDevicePixels="True">
+            </Image>
+        </Grid>
+
+
+        <Grid Grid.Row="1"
+              Panel.ZIndex="1"
+              Background="GhostWhite">
+
+            <Grid.Effect>
+                <DropShadowEffect Color="Gray"
+                                  BlurRadius="10"
+                                  ShadowDepth="3"
+                                  Opacity="0.6" />
+            </Grid.Effect>
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="650" />
+            </Grid.ColumnDefinitions>
+
+            <Button Grid.Column="0"
+                    x:Name="btnSaveAs"
+                    Click="btnSaveAs_Click">
+                <Image Style="{StaticResource styleImageBtn}">
+                    <Image.Source>
+                        <BitmapImage UriSource="../Image/down-arrow.png"
+                                     DecodePixelWidth="24"
+                                     DecodePixelHeight="24" />
+                    </Image.Source>
+                </Image>
+            </Button>
+
+            <Grid Grid.Column="2">
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+
+                <Button Grid.Column="0"
+                        x:Name="btnRotateImg"
+                        Click="btnRotateImg_Click">
+                    <Image Style="{StaticResource styleImageBtn}">
+                        <Image.Source>
+                            <BitmapImage UriSource="../Image/rotate.png"
+                                         DecodePixelWidth="24"
+                                         DecodePixelHeight="24" />
+                        </Image.Source>
+                    </Image>
+                </Button>
+
+                <Button Grid.Column="1"
+                        x:Name="btnOriginScale"
+                        Click="btnOriginScale_Click">
+                    <Image Style="{StaticResource styleImageBtn}">
+                        <Image.Source>
+                            <BitmapImage UriSource="../Image/ratio.png"
+                                         DecodePixelWidth="24"
+                                         DecodePixelHeight="24" />
+                        </Image.Source>
+                    </Image>
+                </Button>
+
+                <ComboBox  x:Name="cbScale"
+                           Grid.Column="2"
+                           SelectionChanged="cbScale_SelectionChanged"
+                           PreviewMouseDown="cbScale_PreviewMouseDown"
+                           PreviewKeyDown="cbScale_PreviewKeyDown"
+                           LostFocus="cbScale_LostFocus">
+                    <ComboBoxItem Tag="2"
+                                  Content="200%" />
+                    <ComboBoxItem Tag="1.75"
+                                  Content="175%" />
+                    <ComboBoxItem Tag="1.5"
+                                  Content="150%" />
+                    <ComboBoxItem Tag="1.25"
+                                  Content="125%" />
+                    <ComboBoxItem Tag="1"
+                                  Content="100%" />
+                    <ComboBoxItem Tag="0.75"
+                                  Content="75%" />
+                    <ComboBoxItem Tag="0.5"
+                                  Content="50%" />
+                    <ComboBoxItem Tag="0.25"
+                                  Content="25%" />
+                    <ComboBoxItem Tag="0.1"
+                                  Content="10%" />
+                </ComboBox>
+
+                <Button Grid.Column="3"
+                        x:Name="btnZoomOut"
+                        Tag="{x:Static Const:Const.tagZoomOut}"
+                        Click="btnZoom_Click">
+                    <Image Style="{StaticResource styleImageBtn}">
+                        <Image.Source>
+                            <BitmapImage UriSource="../Image/zoom-out.png"
+                                         DecodePixelWidth="24"
+                                         DecodePixelHeight="24" />
+                        </Image.Source>
+                    </Image>
+                </Button>
+
+                <Slider x:Name="sliderScale"
+                        Grid.Column="4"
+                        Margin="5 20"
+                        Minimum="0.1"
+                        Maximum="2.0"
+                        Value="1"
+                        IsMoveToPointEnabled="true"
+                        ValueChanged="sliderScale_ValueChanged"
+                        Thumb.DragStarted="sliderScale_DragStarted"
+                        Thumb.DragCompleted="sliderScale_DragCompleted" />
+
+
+                <Button Grid.Column="5"
+                        x:Name="btnZoomIn"
+                        Tag="{x:Static Const:Const.tagZoomIn}"
+                        Click="btnZoom_Click">
+                    <Image Style="{StaticResource styleImageBtn}">
+                        <Image.Source>
+                            <BitmapImage UriSource="../Image/zoom.png"
+                                         DecodePixelWidth="24"
+                                         DecodePixelHeight="24" />
+                        </Image.Source>
+                    </Image>
+                </Button>
+
+
+            </Grid>
+
+        </Grid>
     </Grid>
 </Window>

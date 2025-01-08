@@ -11,6 +11,67 @@
         ResizeMode="NoResize">
 
     <Window.Resources>
+
+        <!--<Style TargetType="Border">
+            <Setter Property="Background"
+                    Value="GhostWhite" />
+            <Setter Property="BorderBrush"
+                    Value="Gainsboro" />
+            <Setter Property="BorderThickness"
+                    Value="1" />
+            <Setter Property="CornerRadius"
+                    Value="5" />
+        </Style>-->
+        <Style TargetType="ListBox">
+            <Setter Property="Background"
+                    Value="GhostWhite" />
+            <Setter Property="BorderBrush"
+                    Value="Gainsboro" />
+            <Setter Property="BorderThickness"
+                    Value="0" />
+
+            <Style.Resources>
+                <Style TargetType="Border">
+                    <Setter Property="CornerRadius"
+                            Value="3" />
+                </Style>
+            </Style.Resources>
+        </Style>
+
+        <Style TargetType="ListBoxItem">
+            <Setter Property="Margin"
+                    Value="3" />
+            <Setter Property="FontSize"
+                    Value="13" />
+            <Style.Resources>
+                <Style TargetType="Border">
+                    <Setter Property="CornerRadius"
+                            Value="3" />
+                </Style>
+            </Style.Resources>
+
+            <Style.Triggers>
+                <Trigger Property="IsSelected"
+                         Value="True">
+                    <Setter Property="FontWeight"
+                            Value="Bold" />
+                    <Setter Property="Background"
+                            Value="Transparent" />
+                    <Setter Property="Foreground"
+                            Value="Black" />
+                    <Setter Property="BitmapEffect">
+                        <Setter.Value>
+                            <DropShadowBitmapEffect Color="Gray"
+                                                    Softness="1"
+                                                    ShadowDepth="3"
+                                                    Opacity="0.3" />
+                        </Setter.Value>
+                    </Setter>
+                </Trigger>
+            </Style.Triggers>
+
+        </Style>
+
         <Style TargetType="GridViewColumnHeader">
             <Setter Property="VerticalContentAlignment"
                     Value="Center" />
@@ -20,38 +81,166 @@
                     Value="13" />
         </Style>
 
-        <Style TargetType="Button">
-            <Setter Property="Background"
-                    Value="GhostWhite" />
-            <Setter Property="BorderBrush"
-                    Value="Black" />
+        <Style TargetType="TextBox">
+            <Setter Property="VerticalContentAlignment"
+                    Value="Center" />
+            <Setter Property="FontSize"
+                    Value="13" />
+            <Setter Property="Margin"
+                    Value="10" />
+            <Setter Property="Padding"
+                    Value="5" />
             <Setter Property="BorderThickness"
-                    Value="1" />
-            <Setter Property="Width"
-                    Value="20" />
-            <Setter Property="Height"
-                    Value="20" />
-            <Setter Property="IsEnabled"
-                    Value="false" />
+                    Value="0" />
+            <Setter Property="BitmapEffect">
+                <Setter.Value>
+                    <DropShadowBitmapEffect Color="Gray"
+                                            Softness="5"
+                                            ShadowDepth="3"
+                                            Opacity="0.3" />
+                </Setter.Value>
+            </Setter>
+
             <Style.Resources>
                 <Style TargetType="Border">
                     <Setter Property="CornerRadius"
                             Value="3" />
                 </Style>
             </Style.Resources>
-            <Style.Triggers>
-                <DataTrigger Binding="{Binding ElementName=cbDeleteAllLanguage,Path=IsChecked}"
-                             Value="false">
-                    <Setter Property="IsEnabled"
-                            Value="true" />
-                </DataTrigger>
-            </Style.Triggers>
         </Style>
 
-        <!--<Style TargetType="ListViewItem">
-            <Setter Property="Focusable"
-                    Value="false" />
-        </Style>-->
+        <Style TargetType="Button">
+            <Setter Property="Background"
+                    Value="GhostWhite" />
+            <Setter Property="BorderBrush"
+                    Value="Black" />
+            <Setter Property="BorderThickness"
+                    Value="0" />
+            <Setter Property="Width"
+                    Value="20" />
+            <Setter Property="Height"
+                    Value="20" />
+            <Setter Property="BitmapEffect">
+                <Setter.Value>
+                    <DropShadowBitmapEffect Color="Gray"
+                                            Softness="5"
+                                            ShadowDepth="3"
+                                            Opacity="0.3" />
+                </Setter.Value>
+            </Setter>
+            <Style.Resources>
+                <Style TargetType="Border">
+                    <Setter Property="CornerRadius"
+                            Value="3" />
+                </Style>
+            </Style.Resources>
+        </Style>
+
+        <Style x:Key="ExpanderToggleButtonStyle"
+               TargetType="{x:Type ToggleButton}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ToggleButton}">
+                        <Border Background="GhostWhite"
+                                BorderBrush="Gainsboro"
+                                BorderThickness="1"
+                                CornerRadius="3">
+                            <Border.BitmapEffect>
+                                <DropShadowBitmapEffect Color="Gray"
+                                                        Softness="5"
+                                                        ShadowDepth="3"
+                                                        Opacity="0.3" />
+                            </Border.BitmapEffect>
+                            <Grid Margin="5">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+
+                                <!-- Custom Icon - Change the Path.Data to modify the icon shape -->
+                                <Image Width="16"
+                                       Height="16"
+                                       x:Name="Arrow"
+                                       RenderOptions.BitmapScalingMode="Fant"
+                                       SnapsToDevicePixels="True">
+                                    <Image.Source>
+                                        <BitmapImage UriSource="../Image/expand-arrows.png"
+                                                     DecodePixelWidth="20"
+                                                     DecodePixelHeight="20" />
+                                    </Image.Source>
+                                </Image>
+
+                                <ContentPresenter Grid.Column="1"
+                                                  Margin="3 0 0 0"
+                                                  HorizontalAlignment="Left"
+                                                  VerticalAlignment="Center" />
+                            </Grid>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked"
+                                     Value="true">
+                                <Setter Property="Source"
+                                        TargetName="Arrow">
+                                    <Setter.Value>
+                                        <BitmapImage UriSource="../Image/collapse.png"
+                                                     DecodePixelWidth="20"
+                                                     DecodePixelHeight="20" />
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style TargetType="Expander">
+            <Setter Property="Margin"
+                    Value="5" />
+            <Setter Property="FontSize"
+                    Value="14" />
+
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Expander}">
+                        <DockPanel>
+                            <ToggleButton DockPanel.Dock="Top"
+                                          Style="{StaticResource ExpanderToggleButtonStyle}"
+                                          Content="{TemplateBinding Header}"
+                                          IsChecked="{Binding IsExpanded, Mode=TwoWay, 
+                                          RelativeSource={RelativeSource TemplatedParent}}" />
+
+                            <Border x:Name="ContentBorder"
+                                    DockPanel.Dock="Bottom"
+                                    Background="GhostWhite"
+                                    BorderBrush="Gainsboro"
+                                    BorderThickness="1"
+                                    CornerRadius="3"
+                                    Margin="0,3,0,0"
+                                    Visibility="Collapsed">
+                                <Border.BitmapEffect>
+                                    <DropShadowBitmapEffect Color="Gray"
+                                                            Softness="5"
+                                                            ShadowDepth="3"
+                                                            Opacity="0.3" />
+                                </Border.BitmapEffect>
+                                <ContentPresenter x:Name="ExpandSite"
+                                                  Margin="5" />
+                            </Border>
+                        </DockPanel>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsExpanded"
+                                     Value="True">
+                                <Setter TargetName="ContentBorder"
+                                        Property="Visibility"
+                                        Value="Visible" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+
+        </Style>
     </Window.Resources>
 
     <Grid>
@@ -62,53 +251,130 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <ListView x:Name="lvLanguagesNotAdd"
-                  Grid.Column="0"
-                  Margin="10"
-                  SelectionMode="Multiple">
-            <ListView.ItemContainerStyle>
-                <Style TargetType="ListViewItem">
-                    <Setter Property="Focusable"
-                            Value="false" />
-                </Style>
-            </ListView.ItemContainerStyle>
-            <ListView.View>
-                <GridView>
-                    <GridViewColumn x:Name="gvLanguageNotAddCheckBox"
-                                    Width="30">
-                        <GridViewColumn.CellTemplate>
-                            <DataTemplate>
-                                <CheckBox x:Name="cbLanguageNotAddSelected"
-                                          Click="cbLanguageNotAddSelected_Click" 
-                                          IsChecked="{Binding isSelected}"/>
-                            </DataTemplate>
-                        </GridViewColumn.CellTemplate>
-                    </GridViewColumn>
-                    <GridViewColumn Width="300">
-                        <GridViewColumn.Header>
-                            <TextBlock HorizontalAlignment="Center"
-                                       VerticalAlignment="Center"
-                                       TextAlignment="Center">
-                                Not Download Languages <LineBreak />
-                                (Only select 5 languages want to download)
-                            </TextBlock>
-                        </GridViewColumn.Header>
-                        <GridViewColumn.CellTemplate>
-                            <DataTemplate>
-                                <TextBlock Text="{Binding LanguageModel.LangName}"
-                                           Margin="3" />
-                            </DataTemplate>
-                        </GridViewColumn.CellTemplate>
-                    </GridViewColumn>
-                </GridView>
-            </ListView.View>
-        </ListView>
+        <Grid Grid.Column="0">
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <Expander Grid.Row="0"
+                      Header="Filter Language">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <TextBox x:Name="tbSearchNotDownload"
+                             Grid.Column="0"
+                             TextChanged="tbSearchNotDownload_TextChanged" />
+
+                    <Button Grid.Column="1"
+                            Margin="5"
+                            Width="30"
+                            Height="30"
+                            Click="btnFilterNotDownload_Click"
+                            x:Name="btnFilterNotDownload"
+                            RenderOptions.BitmapScalingMode="Fant"
+                            SnapsToDevicePixels="True">
+                        <Image Margin="5">
+                            <Image.Source>
+                                <BitmapImage UriSource="../Image/filter.png"
+                                             DecodePixelWidth="30"
+                                             DecodePixelHeight="30" />
+                            </Image.Source>
+                        </Image>
+                    </Button>
+                    <Popup x:Name="lbFilterNotDownload"
+                           PlacementTarget="{Binding ElementName=btnFilterNotDownload}"
+                           Placement="Bottom"
+                           StaysOpen="False"
+                           AllowsTransparency="True">
+                        <Border>
+                            <ListBox x:Name="lbFilterSelectionNotDownload"
+                                     Width="100"
+                                     SelectionChanged="lbFilterSelectionNotDownload_SelectionChanged">
+                                <ListBoxItem Tag="null">All</ListBoxItem>
+                                <ListBoxItem Tag="true">Selected</ListBoxItem>
+                                <ListBoxItem Tag="false">Not Selected</ListBoxItem>
+                            </ListBox>
+                        </Border>
+                    </Popup>
+                </Grid>
+            </Expander>
+
+            <ListView  Grid.Row="1"
+                       x:Name="lvLanguagesNotAdd"
+                       Margin="10"
+                       SelectionMode="Multiple">
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <Setter Property="Focusable"
+                                Value="false" />
+                    </Style>
+                </ListView.ItemContainerStyle>
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn x:Name="gvLanguageNotAddCheckBox"
+                                        Width="30">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <CheckBox x:Name="cbLanguageNotAddSelected"
+                                              Click="cbLanguageNotAddSelected_Click"
+                                              IsChecked="{Binding isSelected}" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Width="300">
+                            <GridViewColumn.Header>
+                                <GridViewColumnHeader Tag="NotDownloadTag"
+                                                      Click="GridViewSortByColumn_Click">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="2*" />
+                                            <ColumnDefinition Width="100" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <TextBlock HorizontalAlignment="Center"
+                                                   VerticalAlignment="Center"
+                                                   TextAlignment="Center"
+                                                   Text="Not Download Languages"
+                                                   Grid.Column="0" />
+                                        <Image Width="15"
+                                               Height="15"
+                                               Grid.Column="2"
+                                               RenderOptions.BitmapScalingMode="Fant"
+                                               SnapsToDevicePixels="True">
+                                            <Image.Source>
+                                                <BitmapImage UriSource="../Image/sort.png"
+                                                             DecodePixelWidth="20"
+                                                             DecodePixelHeight="20" />
+                                            </Image.Source>
+                                        </Image>
+                                    </Grid>
+                                </GridViewColumnHeader>
+                            </GridViewColumn.Header>
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding LanguageModel.LangName}"
+                                               Margin="3" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                    </GridView>
+                </ListView.View>
+            </ListView>
+        </Grid>
+
 
         <Button Width="50"
                 Height="50"
                 Grid.Column="1"
                 x:Name="btnAddLanguage"
-                Click="btnAddLanguage_Click">
+                Click="btnAddLanguage_Click"
+                IsEnabled="false">
             <Image Width="30"
                    Height="30">
                 <Image.Source>
@@ -117,75 +383,159 @@
             </Image>
         </Button>
 
-        <ListView x:Name="lvLanguagesAdd"
-                  Grid.Column="2"
-                  Margin="10">
-            <ListView.ItemContainerStyle>
-                <Style TargetType="ListViewItem">
-                    <Setter Property="Focusable"
-                            Value="false" />
-                </Style>
-            </ListView.ItemContainerStyle>
-            <ListView.View>
-                <GridView>
-                    <GridViewColumn x:Name="gvLanguageAddCheckBox"
-                                    Width="30">
-                        <GridViewColumn.Header>
-                            <CheckBox IsThreeState="true"
-                                      x:Name="cbDeleteAllLanguage"
-                                      Click="cbAllLanguage_Click"
-                                      Checked="cbDeleteAllLanguage_Checked"
-                                      Unchecked="cbDeleteAllLanguage_Unchecked" />
-                        </GridViewColumn.Header>
-                        <GridViewColumn.CellTemplate>
-                            <DataTemplate>
-                                <CheckBox x:Name="cbLanguageAddSelected"
-                                          Click="cbLanguageAddSelected_Click"
-                                          IsChecked="{Binding isSelected}" />
-                            </DataTemplate>
-                        </GridViewColumn.CellTemplate>
-                    </GridViewColumn>
-                    <GridViewColumn x:Name="gvLanguageAddText"
-                                    Header="Downloaded Languages"
-                                    Width="300">
-                        <GridViewColumn.CellTemplate>
-                            <DataTemplate>
-                                <TextBlock Text="{Binding LanguageModel.LangName}"
-                                           Margin="3" />
-                            </DataTemplate>
-                        </GridViewColumn.CellTemplate>
-                    </GridViewColumn>
-                    <GridViewColumn x:Name="gvLanguageAddButton">
-                        <GridViewColumn.Header>
-                            <Button BorderBrush="Red"
-                                    x:Name="btnDeleteSelectedLanguage"
-                                    Click="btnDeleteSelectedLanguage_Click"
-                                    IsEnabled="false">
-                                <Image Width="10"
-                                       Height="10">
-                                    <Image.Source>
-                                        <BitmapImage UriSource="../Image/close.png" />
-                                    </Image.Source>
-                                </Image>
-                            </Button>
-                        </GridViewColumn.Header>
-                        <GridViewColumn.CellTemplate>
-                            <DataTemplate>
-                                <Button BorderBrush="Red"
-                                        x:Name="btnDeleteLanguage"
-                                        Click="btnDeleteLanguage_Click">
-                                    <Image Width="10"
-                                           Height="10">
-                                        <Image.Source>
-                                            <BitmapImage UriSource="../Image/close.png" />
-                                        </Image.Source>
-                                    </Image>
-                                </Button>
-                            </DataTemplate>
-                        </GridViewColumn.CellTemplate>
-                    </GridViewColumn>
-                </GridView>
-            </ListView.View>
-        </ListView>
+        <Grid Grid.Column="2">
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <Expander Grid.Row="0"
+                      Header="Filter Language">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <TextBox x:Name="tbSearchDownloaded"
+                             Grid.Column="0"
+                             TextChanged="tbSearchDownload_TextChanged" />
+
+                    <Button Grid.Column="1"
+                            Margin="5"
+                            Width="30"
+                            Height="30"
+                            Click="btnFilterDownload_Click"
+                            x:Name="btnFilterDownload"
+                            RenderOptions.BitmapScalingMode="Fant"
+                            SnapsToDevicePixels="True">
+                        <Image Margin="5">
+                            <Image.Source>
+                                <BitmapImage UriSource="../Image/filter.png"
+                                             DecodePixelWidth="30"
+                                             DecodePixelHeight="30" />
+                            </Image.Source>
+                        </Image>
+                    </Button>
+                    <Popup x:Name="lbFilterDownloadLanguage"
+                           PlacementTarget="{Binding ElementName=btnFilterDownload}"
+                           Placement="Bottom"
+                           StaysOpen="False"
+                           AllowsTransparency="True">
+                        <Border>
+                            <ListBox x:Name="lbFilterSelectionDownloaded"
+                                     Width="100"
+                                     SelectionChanged="lbFilterSelectionDownloaded_SelectionChanged">
+                                <ListBoxItem Tag="null">All</ListBoxItem>
+                                <ListBoxItem Tag="true">Selected</ListBoxItem>
+                                <ListBoxItem Tag="false">Not Selected</ListBoxItem>
+                            </ListBox>
+                        </Border>
+                    </Popup>
+                </Grid>
+            </Expander>
+
+            <Grid  Grid.Row="1">
+                <ListView x:Name="lvLanguagesAdd"
+                          Margin="10">
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="ListViewItem">
+                            <Setter Property="Focusable"
+                                    Value="false" />
+                        </Style>
+                    </ListView.ItemContainerStyle>
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn x:Name="gvLanguageAddCheckBox"
+                                            Width="30">
+                                <GridViewColumn.Header>
+                                    <CheckBox IsThreeState="true"
+                                              x:Name="cbDeleteAllLanguage"
+                                              Click="cbAllLanguage_Click"
+                                              Checked="cbDeleteAllLanguage_Checked"
+                                              Unchecked="cbDeleteAllLanguage_Unchecked" />
+                                </GridViewColumn.Header>
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <CheckBox x:Name="cbLanguageAddSelected"
+                                                  Click="cbLanguageAddSelected_Click"
+                                                  IsChecked="{Binding isSelected}" />
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                            <GridViewColumn x:Name="gvLanguageAddText"
+                                            Width="300">
+                                <GridViewColumn.Header>
+                                    <GridViewColumnHeader Tag="DownloadedTag"
+                                                          Click="GridViewSortByColumn_Click">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="2*" />
+                                                <ColumnDefinition Width="100" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+
+                                            <TextBlock HorizontalAlignment="Center"
+                                                       VerticalAlignment="Center"
+                                                       TextAlignment="Center"
+                                                       Text="Downloaded Languages"
+                                                       Grid.Column="0" />
+                                            <Image Width="15"
+                                                   Height="15"
+                                                   Grid.Column="2"
+                                                   RenderOptions.BitmapScalingMode="Fant"
+                                                   SnapsToDevicePixels="True">
+                                                <Image.Source>
+                                                    <BitmapImage UriSource="../Image/sort.png"
+                                                                 DecodePixelWidth="20"
+                                                                 DecodePixelHeight="20" />
+                                                </Image.Source>
+                                            </Image>
+                                        </Grid>
+                                    </GridViewColumnHeader>
+                                </GridViewColumn.Header>
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding LanguageModel.LangName}"
+                                                   Margin="3" />
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+
+                <Button BorderBrush="Red"
+                        x:Name="btnDeleteSelectedLanguage"
+                        Click="btnDeleteSelectedLanguage_Click"
+                        Width="50"
+                        Height="50"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Bottom"
+                        Margin="10"
+                        BorderThickness="0"
+                        Visibility="Hidden">
+                    <Button.BitmapEffect>
+                        <DropShadowBitmapEffect Color="Black"
+                                                Softness="1"
+                                                ShadowDepth="5"
+                                                Opacity="0.5" />
+                    </Button.BitmapEffect>
+                    <Image Width="35"
+                           Height="35"
+                           RenderOptions.BitmapScalingMode="HighQuality"
+                           SnapsToDevicePixels="True">
+                        <Image.Source>
+                            <BitmapImage UriSource="../Image/delete.png"
+                                         DecodePixelWidth="35"
+                                         DecodePixelHeight="35" />
+                        </Image.Source>
+                    </Image>
+                </Button>
+            </Grid>
+
+
+        </Grid>
     </Grid>
 </Window>

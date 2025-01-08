@@ -277,33 +277,59 @@ namespace ScanTextImage.Service
             }
         }
 
-        public async Task DownloadTesseractLanguageFromGit(DownloadItem item)
+        public async Task<DownloadItem> DownloadTesseractLanguageFromGit(DownloadItem item)
         {
             Log.Information("start DownloadTesseractLanguageFromGit");
             using (HttpClient httpClient = new HttpClient())
             {
                 try
                 {
+                    long existingFileSize = 0;
+                    var localFilePath = Path.Combine(tessdataPath, item.langModel.LangCode + Const.tempExtensionFile);
+
+                    // check if the file is already downloaded
+                    if (File.Exists(localFilePath))
+                    {
+                        // get the size of existing file
+                        existingFileSize = new FileInfo(localFilePath).Length;
+                        Log.Information("size of existing file - " + existingFileSize);
+                    }
+
                     var url = Const.rawUrlGit;
                     url = url.Replace(Const.templateOwner, Const.owner);
                     url = url.Replace(Const.templateBranch, Const.branchGit);
                     url = url.Replace(Const.templateRepo, Const.repositoryGit);
                     url = url.Replace(Const.templateNameFile, item.langModel.LangCode);
 
-                    HttpResponseMessage response = await httpClient.GetAsync(url, HttpCompletionOption.ResponseHeadersRead);
+                    var request = new HttpRequestMessage(HttpMethod.Get, url);
+                    if (existingFileSize > 0)
+                    {
+                        request.Headers.Range = new System.Net.Http.Headers.RangeHeaderValue(existingFileSize, null);
+                        Log.Information("Resume download " + item.langModel.LangName + ": " + existingFileSize);
+                        item.progressStatus = $"Resume download {item.langModel.LangName}: {FormatBytes(existingFileSize)}";
+                    }
+
+                    using HttpResponseMessage response = await httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
                     if(!response.IsSuccessStatusCode)
                     {
                         Log.Warning("Downloading file is not success " + response.StatusCode);
                         item.progressStatus = "Failed to download file";
-                        return;
+                        return null;
+                    }
+
+                    if (response.StatusCode == System.Net.HttpStatusCode.OK && existingFileSize > 0)
+                    {
+                        Log.Information("The server doesn't support range requests. Restarting download...");
+                        item.progressStatus = $"Restarting download {item.langModel.LangName}";
+                        existingFileSize = 0;
                     }
 
                     // get the size of content
                     var totalBytes = response.Content.Headers.ContentLength;
+                    bool isSucessDownload = false;
 
                     Log.Information("size of file - " + totalBytes);
 
-                    var localFilePath = Path.Combine(tessdataPath, item.langModel.LangCode + ".traineddata");
                     using (Stream contentStream = await response.Content.ReadAsStreamAsync(), 
                         fileStream = new FileStream(localFilePath, System.IO.FileMode.Create, FileAccess.Write, FileShare.None))
                     {
@@ -320,14 +346,33 @@ namespace ScanTextImage.Service
                             {
                                 var progress = (double)totalRead / totalBytes * 100;
                                 item.progressPercent = progress.Value;
-                                item.progressStatus = $"Downloading {FormatBytes(totalRead)} of {FormatBytes(totalBytes.Value)} - {progress:N1}%";
+                                item.progressStatus = $"Downloading {item.langModel.LangName}: {FormatBytes(totalRead)} of {FormatBytes(totalBytes.Value)} - {progress:N1}%";
 
                                 Log.Information($"progress download {item.langModel.LangName} - {progress} | {totalRead}/{totalBytes}");
                             }
                         }
+
+                        isSucessDownload = totalBytes == totalRead;
                     }
 
-                    item.progressStatus = $"Download {item.langModel.LangName} Complete!";
+                    Log.Information("end DownloadTesseractLanguageFromGit");
+
+                    if (isSucessDownload)
+                    {
+                        Log.Information("Download file to local");
+                        item.progressStatus = $"Download {item.langModel.LangName} Complete!";
+
+                        // change the extension of the file to .traineddata
+                        File.Move(localFilePath, Path.Combine(tessdataPath, item.langModel.LangCode + ".traineddata"), true);
+                        return item;
+                    }
+                    else
+                    {
+                        Log.Warning("Download file to local is incomplete");
+                        item.progressStatus = $"Download {item.langModel.LangName} is incomplete!";
+                        return null;
+                    }
+
                 }
                 catch (Exception ex)
                 {
@@ -336,7 +381,6 @@ namespace ScanTextImage.Service
                     throw;
                 }
 
-                Log.Information("end DownloadTesseractLanguageFromGit");
             }
 
         }

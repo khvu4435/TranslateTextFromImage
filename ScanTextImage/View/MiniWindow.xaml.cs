@@ -3,6 +3,7 @@ using ScanTextImage.Interface;
 using ScanTextImage.Model;
 using ScanTextImage.View.Command;
 using ScanTextImage.View.Helper;
+using Serilog;
 using System.Collections.ObjectModel;
 using System.Drawing;
 using System.IO;
@@ -51,6 +52,7 @@ namespace ScanTextImage.View
             _translateService = translateService;
             _saveDataService = saveDataService;
 
+            // remove the screen taken event and interactive window value
             this.Loaded += (s, e) =>
             {
                 _captureService.SetInteractiveWindow(this, () => this.Show(), () => this.Hide());
@@ -61,14 +63,6 @@ namespace ScanTextImage.View
             LoadLanguageTranslateList();
             LoadCommandBinding();
         }
-
-        //protected override void OnClosed(EventArgs e)
-        //{
-        //    base.OnClosed(e);
-
-        //    //_captureService.onScreenTaken -= this._captureService_onScreenTaken;
-        //    //_captureService.SetInteractiveWindow(null);
-        //}
 
         #region Load Data
         public void LoadListDataSaveFile(int selectedFileIndex)
@@ -190,92 +184,145 @@ namespace ScanTextImage.View
 
         public void btnSelectionRange_Click(object sender, RoutedEventArgs e)
         {
-            _captureService.StartScreenShot();
+            Log.Information("Start selection range");
+            try
+            {
+                _captureService.StartScreenShot();
+            }
+            catch (Exception ex)
+            {
+
+                Log.Error(ex, "Error when start screen shot");
+                MessageBox.Show("Error when start screen shot", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+
+            }
+            Log.Information("end selection range");
         }
         private async void btnSwap_Click(object sender, RoutedEventArgs e)
         {
-            // swap text translate to become translate from
-            if (tbxFrom.Text == Const.placeholderTextFrom)
+            Log.Information("Start swap language");
+            try
             {
+                tbxFrom.Text = tbxTo.Text;
+
+                // swap lang code
+                var tempLang = saveData.languageTranslateFrom;
+                saveData.languageTranslateFrom = saveData.languageTranslateTo;
+                saveData.languageTranslateTo = tempLang;
+
+                // swap lang code in UI
+                var listLang = cmbLanguageFrom.ItemsSource as List<LanguageModel>;
+
+                if (listLang == null || listLang.Count <= 0)
+                {
+                    Log.Warning("List of language shouldn't be empty");
+                    MessageBox.Show("List of language shouldn't be empty", "Invalid", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
+                var indexLangTo = listLang.IndexOf(saveData.languageTranslateTo);
+                var indexLangFrom = listLang.IndexOf(saveData.languageTranslateFrom);
+
+                Log.Information($"selected index from list language from - {indexLangFrom} & to - {indexLangTo}");
+
+                cmbLanguageFrom.SelectedIndex = indexLangFrom;
+                cmbLanguageTo.SelectedIndex = indexLangTo;
+                // translate text
+                await TranslateText(tbxFrom.Text);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Error when swap language");
+                MessageBox.Show("Error when swap language", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
-
-            tbxFrom.Text = tbxTo.Text;
-
-            // swap lang code
-            var tempLang = saveData.languageTranslateFrom;
-            saveData.languageTranslateFrom = saveData.languageTranslateTo;
-            saveData.languageTranslateTo = tempLang;
-
-            // swap lang code in UI
-            var listLang = cmbLanguageFrom.ItemsSource as List<LanguageModel>;
-
-            if (listLang == null || listLang.Count <= 0)
-            {
-                MessageBox.Show("List of language shouldn't be empty", "Invalid", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return;
-            }
-
-            var indexLangTo = listLang.IndexOf(saveData.languageTranslateTo);
-            var indexLangFrom = listLang.IndexOf(saveData.languageTranslateFrom);
-
-            cmbLanguageFrom.SelectedIndex = indexLangFrom;
-            cmbLanguageTo.SelectedIndex = indexLangTo;
-            // translate text
-            await TranslateText(tbxFrom.Text);
-
+            Log.Information("End swap language");
         }
 
         private async void btnTranslateText_Click(object sender, RoutedEventArgs e)
         {
-            if (tbxFrom.Text == Const.placeholderTextFrom)
+            Log.Information("Start translate text");
+            try
             {
+                if (string.IsNullOrWhiteSpace(tbxFrom.Text))
+                {
+                    Log.Information("text from is empty or white space");
+                    return;
+                }
+                await TranslateText(tbxFrom.Text);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Error when translate text");
+                MessageBox.Show("Error when translate text", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
-            await TranslateText(tbxFrom.Text);
+            Log.Information("End translate text");
         }
 
         private void btnTranslateImage_Click(object sender, RoutedEventArgs e)
         {
-            this.Hide();
-
-            // check if selection range is not select, throw a msg
-            if (saveData.selectedRangeSave == null || saveData.selectedRangeSave.scaledX == 0 || saveData.selectedRangeSave.scaledY == 0 || saveData.selectedRangeSave.Width == 0 || saveData.selectedRangeSave.Height == 0)
+            Log.Information("Start translate image");
+            try
             {
-                MessageBox.Show("Please select the range image first", "Not Have Selected Range", MessageBoxButton.OK, MessageBoxImage.Warning);
+                this.Hide();
+
+                // check if selection range is not select, throw a msg
+                if (saveData.selectedRangeSave == null || (saveData.selectedRangeSave.scaledX == 0 && saveData.selectedRangeSave.scaledY == 0 && saveData.selectedRangeSave.Width == 0 && saveData.selectedRangeSave.Height == 0))
+                {
+                    Log.Warning($"range selected is {saveData.selectedRangeSave.scaledX} - {saveData.selectedRangeSave.scaledY} - {saveData.selectedRangeSave.Width} - {saveData.selectedRangeSave.Height} or selected range is null");
+                    MessageBox.Show("Please select the range image first", "Not Have Selected Range", MessageBoxButton.OK, MessageBoxImage.Warning);
+                }
+                else
+                {
+                    int scaledX = saveData.selectedRangeSave.scaledX;
+                    int scaledY = saveData.selectedRangeSave.scaledY;
+                    int scaledWidth = saveData.selectedRangeSave.Width;
+                    int scaledHeight = saveData.selectedRangeSave.Height;
+
+                    // get full screen image
+                    var fullscreen = _screenshotService.CaptureScreen();
+
+                    // crop image based on the selected range
+                    Int32Rect selectedRegion = new Int32Rect(scaledX, scaledY, scaledWidth, scaledHeight);
+                    var imgCrop = new CroppedBitmap(fullscreen, selectedRegion);
+
+                    // get text from image and translate it
+                    ExtractTextFromImage(imgCrop);
+                }
+
+
+                this.Show();
             }
-            else
+            catch (Exception ex)
             {
-                int scaledX = saveData.selectedRangeSave.scaledX;
-                int scaledY = saveData.selectedRangeSave.scaledY;
-                int scaledWidth = saveData.selectedRangeSave.Width;
-                int scaledHeight = saveData.selectedRangeSave.Height;
 
-                // get full screen image
-                var fullscreen = _screenshotService.CaptureScreen();
-
-                // crop image based on the selected range
-                Int32Rect selectedRegion = new Int32Rect(scaledX, scaledY, scaledWidth, scaledHeight);
-                var imgCrop = new CroppedBitmap(fullscreen, selectedRegion);
-
-                // get text from image and translate it
-                ExtractTextFromImage(imgCrop);
+                Log.Error(ex, "Error when translate image");
+                return;
             }
-
-
-            this.Show();
+            Log.Information("End translate image");
         }
 
         private void btnClear_Click(object sender, RoutedEventArgs e)
         {
+            Log.Information("Start clear text");
             tbxFrom.Text = string.Empty;
             tbxTo.Text = string.Empty;
+            Log.Information("End clear text");
         }
 
 
         private void _captureService_onScreenTaken(CroppedBitmap img)
         {
-            ExtractTextFromImage(img);
+            try
+            {
+                ExtractTextFromImage(img);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Error when invoke screen taken");
+                throw;
+            }
         }
 
 
@@ -285,37 +332,53 @@ namespace ScanTextImage.View
 
         private void cmbLoadSaveData_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            var saveData = cmbLoadSaveData.SelectedItem as SaveModel;
-            if (saveData == null)
+            Log.Information("Start load save data");
+            try
             {
-                throw new Exception("Something wrong when selected save file");
+                var saveData = cmbLoadSaveData.SelectedItem as SaveModel;
+                if (saveData == null)
+                {
+                    Log.Warning("Selected save data is null");
+                    throw new Exception("Something wrong when selected save file");
+                }
+
+                // clear all text
+                tbxFrom.Text = string.Empty;
+                tbxTo.Text = string.Empty;
+
+                // load data again
+                this.saveData = saveData.Clone();
+                LoadLanguageTranslateList();
             }
-
-            // clear all text
-            tbxFrom.Text = string.Empty;
-            tbxTo.Text = string.Empty;
-
-            // load data again
-            this.saveData = saveData;
-            LoadLanguageTranslateList();
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Error when load save data");
+                MessageBox.Show("Error when load save data", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                throw;
+            }
+            Log.Information("End load save data");
         }
 
         private void cmbLanguageFrom_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            Log.Information("Start select language from");
             var selectedItem = cmbLanguageFrom.SelectedItem as LanguageModel;
             if (selectedItem != null)
             {
                 saveData.languageTranslateFrom = selectedItem;
             }
+            Log.Information("End select language from");
         }
 
         private void cmbLanguageTo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            Log.Information("Start select language to");
             var selectedItem = cmbLanguageTo.SelectedItem as LanguageModel;
             if (selectedItem != null)
             {
                 saveData.languageTranslateTo = selectedItem;
             }
+            Log.Information("End select language to");
         }
 
         #endregion Combo box
@@ -326,7 +389,18 @@ namespace ScanTextImage.View
         #region cmd free selection
         private void CommandBindingFreeSelection_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            this.btnSelectionRange_Click(sender, e);
+            Log.Information("Start free selection by command binding");
+            try
+            {
+                this.btnSelectionRange_Click(sender, e);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Error when excute command binding free selection");
+                MessageBox.Show("Error when excute command binding free selection", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+            Log.Information("End free selection by command binding");
         }
 
         #endregion cmd free selection
@@ -348,58 +422,91 @@ namespace ScanTextImage.View
 
         private void CommandBindingLoadData_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            var command = e.Command as RoutedUICommand;
-            // Extract the number from the command parameter
-            if (command != null)
+            Log.Information("Start load data by command binding");
+            try
             {
-                var match = Regex.Match(command.Name, ConstData.Const.regexNameLoadSaveCommand);
-                int index = Convert.ToInt32(match.Groups["numberLoad"].Value);
-
-                index--;
-
-                // Check if the index is valid
-                if (index >= 0 && index < cmbLoadSaveData.Items.Count)
+                var command = e.Command as RoutedUICommand;
+                // Extract the number from the command parameter
+                if (command != null)
                 {
-                    cmbLoadSaveData.SelectedIndex = index;
+                    var match = Regex.Match(command.Name, ConstData.Const.regexNameLoadSaveCommand);
+                    int index = Convert.ToInt32(match.Groups["numberLoad"].Value);
+                    
+                    index--;
+
+                    Log.Information("index of load data selected");
+
+                    // Check if the index is valid
+                    if (index >= 0 && index < cmbLoadSaveData.Items.Count)
+                    {
+                        cmbLoadSaveData.SelectedIndex = index;
+                    }
                 }
             }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Error when excute command binding load data");
+                MessageBox.Show("Error when excute command binding load data", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                throw;
+            }
+            Log.Information("End load data by command binding");
         }
 
         #endregion Command Binding
 
         private async void ExtractTextFromImage(CroppedBitmap croppedBitmap)
         {
-            if (saveData.languageTranslateFrom == null || string.IsNullOrWhiteSpace(saveData.languageTranslateFrom.LangCode))
+            try
             {
-                MessageBox.Show("Language code is not exist", "Invalid language", MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
-            }
+                if (saveData.languageTranslateFrom == null || string.IsNullOrWhiteSpace(saveData.languageTranslateFrom.LangCode))
+                {
+                    Log.Warning("Language code is not exist");
+                    MessageBox.Show("Language code is not exist", "Invalid language", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
 
-            var bitmapSrc = croppedBitmap as BitmapSource;
-            if (bitmapSrc == null)
+                var bitmapSrc = croppedBitmap as BitmapSource;
+                if (bitmapSrc == null)
+                {
+                    Log.Warning("Bitmap source is null");
+                    return;
+                }
+
+                var bitmap = ConvertToBitmap(bitmapSrc);
+
+                var textFrom = _tesseractService.ExtractTextFromImage(bitmap, saveData.languageTranslateFrom.LangCode);
+                tbxFrom.Text = textFrom;
+                await TranslateText(textFrom);
+            }
+            catch (Exception ex)
             {
-                return;
+                Log.Error(ex, "Error when trying to get text from image");
+                MessageBox.Show("Error when trying to get text from image", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                throw;
             }
-
-            var bitmap = ConvertToBitmap(bitmapSrc);
-
-            var textFrom = _tesseractService.ExtractTextFromImage(bitmap, saveData.languageTranslateFrom.LangCode);
-            tbxFrom.Text = textFrom;
-            await TranslateText(textFrom);
         }
 
         private Bitmap ConvertToBitmap(BitmapSource bitmapSrc)
         {
-            Bitmap bitmap;
-            using (MemoryStream memoryStream = new MemoryStream())
+            try
             {
-                BitmapEncoder enc = new BmpBitmapEncoder();
-                enc.Frames.Add(BitmapFrame.Create(bitmapSrc));
-                enc.Save(memoryStream);
-                bitmap = new Bitmap(memoryStream);
+                Bitmap bitmap;
+                using (MemoryStream memoryStream = new MemoryStream())
+                {
+                    BitmapEncoder enc = new BmpBitmapEncoder();
+                    enc.Frames.Add(BitmapFrame.Create(bitmapSrc));
+                    enc.Save(memoryStream);
+                    bitmap = new Bitmap(memoryStream);
+                }
+
+                return bitmap;
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Error when convert bitmap source to bitmap");
+                throw;
             }
 
-            return bitmap;
         }
 
         private async Task TranslateText(string from)
@@ -409,12 +516,14 @@ namespace ScanTextImage.View
                 if (saveData.languageTranslateFrom == null || string.IsNullOrWhiteSpace(saveData.languageTranslateFrom.LangCode)
                     || saveData.languageTranslateTo == null || string.IsNullOrWhiteSpace(saveData.languageTranslateTo.LangCode))
                 {
+                    Log.Warning("Language code is not exist");
                     MessageBox.Show("Language code is not exist", "Invalid language", MessageBoxButton.OK, MessageBoxImage.Error);
                     return;
                 }
 
                 if (string.IsNullOrWhiteSpace(from))
                 {
+                    Log.Information("text wanted to translate is empty or white space");
                     tbxTo.Text = string.Empty;
                     return;
                 }
@@ -423,6 +532,7 @@ namespace ScanTextImage.View
             }
             catch (Exception ex)
             {
+                Log.Error(ex, "Error when translate text");
                 MessageBox.Show("There is some problem: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }

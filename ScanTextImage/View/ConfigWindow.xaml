@@ -182,7 +182,7 @@
                     </GridViewColumn>
 
                     <GridViewColumn Header="Key"
-                                    Width="50">
+                                    Width="80">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <Grid HorizontalAlignment="Center"
@@ -190,6 +190,7 @@
                                     <TextBox x:Name="tbxKey"
                                              BorderThickness="0"
                                              Text="{Binding Key}"
+                                             Width="50"
                                              HorizontalAlignment="Center"
                                              HorizontalContentAlignment="Center"
                                              PreviewKeyDown="tbxKey_PreviewKeyDown"

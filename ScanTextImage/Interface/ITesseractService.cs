@@ -14,6 +14,6 @@ namespace ScanTextImage.Interface
         public List<LanguageModel> GetLanguageUsingTesseract();
         public Task<List<LanguageModel>> GetLanguageUsingTesseractFromGit();
         public void DeleteTesseractLanguage(List<string> nameFiles);
-        public Task DownloadTesseractLanguageFromGit(DownloadItem item);
+        public Task<DownloadItem> DownloadTesseractLanguageFromGit(DownloadItem item);
     }
 }

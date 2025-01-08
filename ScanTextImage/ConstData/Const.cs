@@ -216,8 +216,8 @@ namespace ScanTextImage.ConstData
         public static readonly Double miniCollapseWidth = 25;
         public static readonly Double miniCollapseHeight = 75;
 
-        public static readonly string placeholderTextFrom = "From...";
-        public static readonly string placeholderTextTo = "To...";
+        public static readonly string tagZoomIn = "tagZoomIn";
+        public static readonly string tagZoomOut = "tagZoomOut";
 
         public static readonly string repositoryGit = "tessdata";
         public static readonly string owner = "tesseract-ocr";
@@ -229,6 +229,34 @@ namespace ScanTextImage.ConstData
         public static readonly string templateBranch = "{branch}";
         public static readonly string templateNameFile = "{nameFile}";
 
+        public static readonly string tempExtensionFile = ".tmp";
+        public static readonly string tessdataExtensionFile = ".traineddata";
+
         public static string[] suffixes = { "B", "KB", "MB", "GB", "TB" };
+
+        public static readonly Dictionary<string, int> columnTags = new Dictionary<string, int>()
+        {
+            { "NotDownloadTag", 0},
+            { "DownloadedTag", 1},
+        };
+
+        public static readonly Dictionary<List<string>, string> extenstionFilePair = new Dictionary<List<string>, string>
+        {
+            {new List<string> {".gif"}, "gif"} ,
+            {new List<string> {".jpg", ".jpeg",".jfif",".pjeg",".jpp"}, "jpeg"} ,
+            {new List<string> {".png"}, "png"} ,
+            {new List<string> {".bmp"}, "bmp"} ,
+            {new List<string> {".tiff"}, "tiff"}
+        };
+
+        public static readonly string templateSaveFileFilter = "{fileType} files|{extensionFile}";
+        public static readonly string fileTypeTemplate = "{fileType}";
+        public static readonly string extenstionFileTemplate = "{extensionFile}";
+
+        public static readonly string azureTranslatorNameUsage = "TextTranslation";
+        public static readonly int limitAzureTrasnlatorUsage = 2000000;
+        public static readonly int maxCharacterInOneRequest= 50000;
+
+        public static readonly string regexScalePercent = @"^(?<scalePercent>[01]?[0-9]?[0-9]|1[0-9][0-9]|200)(?:%*)$";
     }
 }

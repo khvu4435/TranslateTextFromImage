@@ -2,11 +2,15 @@
 using ScanTextImage.Model;
 using ScanTextImage.View.Command;
 using ScanTextImage.View.Helper;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.Drawing;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -15,6 +19,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
+using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
@@ -37,6 +42,9 @@ namespace ScanTextImage.View
 
         private ObservableCollection<ShortcutModel> shortcutModels;
 
+        private TextBox currFocusTextBox = null;
+
+
         public ConfigWindow(IConfigService configService, ISaveDataService saveDataService, MainWindow mainWindow)
         {
             InitializeComponent();
@@ -45,14 +53,17 @@ namespace ScanTextImage.View
             _saveDataService = saveDataService;
             _mainWindow = mainWindow;
 
-            var dataShortcuts = _saveDataService.GetShortcutConfig();
+            this.Owner = mainWindow;
+            this.WindowStartupLocation = WindowStartupLocation.CenterOwner;
 
+            var dataShortcuts = _saveDataService.GetShortcutConfig();
             shortcutModels = new ObservableCollection<ShortcutModel>(dataShortcuts);
             lvConfigShortcut.ItemsSource = shortcutModels;
 
             LoadCheckBoxAll(dataShortcuts);
-
         }
+
+        #region btn event
         private void btnCancelConfigShortcut_Click(object sender, RoutedEventArgs e)
         {
             this.Close();
@@ -60,6 +71,7 @@ namespace ScanTextImage.View
 
         private void btnSaveConfigShortcut_Click(object sender, RoutedEventArgs e)
         {
+            Log.Information("start btnSaveConfigShortcut_Click");
             try
             {
                 var data = lvConfigShortcut.ItemsSource as ObservableCollection<ShortcutModel>;
@@ -85,37 +97,109 @@ namespace ScanTextImage.View
                 MessageBox.Show("Error: " + ex.Message, "Error Config Shortcut", MessageBoxButton.OK, MessageBoxImage.Error);
             }
 
+            Log.Information("end btnSaveConfigShortcut_Click");
+
         }
+
+        #endregion
 
         #region check box unchecked & checked
 
         private void cbCtrlAll_Checked(object sender, RoutedEventArgs e)
         {
-            UpdateModifierKyOfShortcut(nameof(ShortcutModel.IsControlKey), true);
+            Log.Information("start cbCtrlAll_Checked");
+            try
+            {
+                UpdateModifierKyOfShortcut(nameof(ShortcutModel.IsControlKey), true);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Error when click check box all - ctrl");
+                MessageBox.Show("Error when config shortcut: " + ex.Message, "Error Config Shortcut", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+            Log.Information("start cbCtrlAll_Checked");
         }
         private void cbCtrlAll_Unchecked(object sender, RoutedEventArgs e)
         {
-            UpdateModifierKyOfShortcut(nameof(ShortcutModel.IsControlKey), false);
+            Log.Information("start cbCtrlAll_Unchecked");
+            try
+            {
+                UpdateModifierKyOfShortcut(nameof(ShortcutModel.IsControlKey), false);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Error when click check box all - ctrl");
+                MessageBox.Show("Error when config shortcut: " + ex.Message, "Error Config Shortcut", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+            Log.Information("end cbCtrlAll_Unchecked");
         }
 
         private void cbShiftAll_Checked(object sender, RoutedEventArgs e)
         {
-            UpdateModifierKyOfShortcut(nameof(ShortcutModel.IsShiftKey), true);
+            Log.Information("start cbShiftAll_Checked");
+            try
+            {
+                UpdateModifierKyOfShortcut(nameof(ShortcutModel.IsShiftKey), true);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Error when click check box all - shift");
+                MessageBox.Show("Error when config shortcut: " + ex.Message, "Error Config Shortcut", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+            Log.Information("end cbShiftAll_Checked");
         }
 
         private void cbShiftAll_Unchecked(object sender, RoutedEventArgs e)
         {
-            UpdateModifierKyOfShortcut(nameof(ShortcutModel.IsShiftKey), false);
+            Log.Information("start cbShiftAll_Unchecked");
+            try
+            {
+                UpdateModifierKyOfShortcut(nameof(ShortcutModel.IsShiftKey), false);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Error when click check box all - shift");
+                MessageBox.Show("Error when config shortcut: " + ex.Message, "Error Config Shortcut", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+            Log.Information("end cbShiftAll_Unchecked");
         }
 
         private void cbAltAll_Checked(object sender, RoutedEventArgs e)
         {
-            UpdateModifierKyOfShortcut(nameof(ShortcutModel.IsAltKey), true);
+            Log.Information("start cbAltAll_Checked");
+            try
+            {
+                UpdateModifierKyOfShortcut(nameof(ShortcutModel.IsAltKey), true);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Error when click check box all - alt");
+                MessageBox.Show("Error when config shortcut: " + ex.Message, "Error Config Shortcut", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+            Log.Information("end cbAltAll_Checked");
         }
 
         private void cbAltAll_Unchecked(object sender, RoutedEventArgs e)
         {
-            UpdateModifierKyOfShortcut(nameof(ShortcutModel.IsAltKey), false);
+            Log.Information("start cbAltAll_Unchecked");
+
+            try
+            {
+                UpdateModifierKyOfShortcut(nameof(ShortcutModel.IsAltKey), false);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Error when click check box all - alt");
+                MessageBox.Show("Error when config shortcut: " + ex.Message, "Error Config Shortcut", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+
+            }
+            Log.Information("end cbAltAll_Unchecked");
         }
 
         #endregion check box
@@ -161,6 +245,7 @@ namespace ScanTextImage.View
 
                 if (dataShortcuts == null || dataShortcuts.Count <= 0)
                 {
+                    Log.Warning("the list data shortcut is empty when trying to update");
                     throw new InvalidOperationException("the list data shortcut is empty when trying to update");
                 }
 
@@ -170,12 +255,14 @@ namespace ScanTextImage.View
                     var typeData = data.GetType();
                     if (typeData != typeof(ShortcutModel) || typeData == null)
                     {
+                        Log.Warning("invalid data");
                         throw new InvalidOperationException("the data is invalid");
                     }
 
                     var property = typeData.GetProperty(nameField, System.Reflection.BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
                     if (property == null || property.PropertyType != typeof(bool))
                     {
+                        Log.Warning("the data field is invalid");
                         throw new InvalidOperationException("the data field is invalid");
                     }
 
@@ -185,6 +272,7 @@ namespace ScanTextImage.View
             }
             catch (Exception ex)
             {
+                Log.Error(ex, "Error when update modifier key of shortcut");
                 MessageBox.Show("Error when config shortcut: " + ex.Message, "Error Config Shortcut", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
@@ -216,37 +304,44 @@ namespace ScanTextImage.View
             cbShiftAll.IsChecked = isAllShift;
         }
 
+        #region Text box event
         private void tbxKey_PreviewKeyDown(object sender, KeyEventArgs e)
         {
-            // Get text box that trigger event
-            TextBox tbx = sender as TextBox;
+            Log.Information("start tbxKey_PreviewKeyDown");
 
-            if(tbx == null)
+            try
             {
-                MessageBox.Show("Error the text box trigger the event is null", "Error Config", MessageBoxButton.OK, MessageBoxImage.Error);
+                // Get text box that trigger event
+                TextBox tbx = sender as TextBox;
+
+                if (tbx == null)
+                {
+                    MessageBox.Show("Error the text box trigger the event is null", "Error Config", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+
+                Key pressedKey = e.Key;
+
+                ValidKeyPress(pressedKey);
+
+                string displayKey = pressedKey.ToString();
+
+                tbx.Text = ConstData.Const.MapModifierKey.ContainsKey(displayKey) ? ConstData.Const.MapModifierKey[displayKey] : displayKey;
+
+                // set lost focus for text box
+                tbx.Focusable = false;
+                tbx.Focusable = true;
+
+                e.Handled = true;
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Error in preview key down");
+                MessageBox.Show("Error when config shortcut " + ex.Message, "Error Config", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
-            // prevent from being handle normally when press key
-            e.Handled = true;
-
-            Key pressedKey = e.Key;
-
-            // Skip modifier keys themselves
-            if (pressedKey == Key.LeftCtrl || pressedKey == Key.RightCtrl ||
-                pressedKey == Key.LeftAlt || pressedKey == Key.RightAlt ||
-                pressedKey == Key.LeftShift || pressedKey == Key.RightShift ||
-                pressedKey == Key.LWin || pressedKey == Key.RWin ||
-                pressedKey == Key.System)
-            {
-                MessageBox.Show("Warning key should not be modifier key", "Warning Config", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return;
-            }
-
-            string displayKey = pressedKey.ToString();
-
-
-            tbx.Text = ConstData.Const.MapModifierKey.ContainsKey(displayKey) ? ConstData.Const.MapModifierKey[displayKey] : displayKey;
+            Log.Information("end tbxKey_PreviewKeyDown");
         }
 
         private void tbxKey_GotFocus(object sender, RoutedEventArgs e)
@@ -260,7 +355,20 @@ namespace ScanTextImage.View
                 return;
             }
 
-            tbx.BorderThickness = new Thickness(1);
+            if (currFocusTextBox != null && currFocusTextBox != tbx)
+            {
+                // to prevent change focus to another if other text box is focused
+                tbx.IsReadOnly = true;
+                return;
+            }
+
+            currFocusTextBox = tbx;
+
+            tbx.BorderThickness = new Thickness(2);
+            tbx.FontWeight = FontWeights.Bold;
+            tbx.CaretIndex = tbx.Text.Length;
+
+            e.Handled = true;
         }
 
         private void tbxKey_LostFocus(object sender, RoutedEventArgs e)
@@ -274,7 +382,49 @@ namespace ScanTextImage.View
                 return;
             }
 
+            // check if key is invalid or not
+            string keyPressedStr = tbx.Text;
+            if (!Enum.TryParse(typeof(Key), keyPressedStr, out _) || string.IsNullOrWhiteSpace(keyPressedStr))
+            {
+                Log.Warning("Warning invalid key press, " + keyPressedStr);
+                MessageBox.Show("Warning invalid key press: " + keyPressedStr, "Warning Config", MessageBoxButton.OK, MessageBoxImage.Warning);
+                tbx.Text = string.Empty;
+                //currFocusTextBox.Focus();
+                return;
+            }
+
+            if (currFocusTextBox != null && currFocusTextBox == tbx)
+            {
+                currFocusTextBox = null;
+            }
+
             tbx.BorderThickness = new Thickness(0);
+            tbx.FontWeight = FontWeights.Normal;
+
+            e.Handled = true;
         }
+
+        private void ValidKeyPress(Key pressedKey)
+        {
+            // check if pressed key is none
+            if (pressedKey == Key.None)
+            {
+                Log.Warning("Warning key should not be empty ");
+                throw new Exception("Key should not be empty");
+            }
+
+            // Skip modifier keys themselves
+            if (pressedKey == Key.LeftCtrl || pressedKey == Key.RightCtrl ||
+                pressedKey == Key.LeftAlt || pressedKey == Key.RightAlt ||
+                pressedKey == Key.LeftShift || pressedKey == Key.RightShift ||
+                pressedKey == Key.LWin || pressedKey == Key.RWin ||
+                pressedKey == Key.System)
+            {
+                Log.Warning("Warning key should not be modifier key " + pressedKey);
+                throw new Exception("key should not be modifier key");
+            }
+        }
+
+        #endregion Text box event
     }
 }

@@ -1,5 +1,6 @@
 ﻿using ScanTextImage.Interface;
 using ScanTextImage.Model;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -58,13 +59,27 @@ namespace ScanTextImage.View
             SetWindowLong(hwnd, GWL_STYLE, currStyle & ~WS_SYSMENU);
         }
 
-        public async void DownloadFile()
+        public async Task<List<DownloadItem>> DownloadFile()
         {
-            foreach (var item in _downloadItems)
+            try
             {
-                await _tesseractService.DownloadTesseractLanguageFromGit(item);
+                List<DownloadItem> result = new();
+
+                foreach (var item in _downloadItems)
+                {
+                    Log.Information($"Downloading {item.langModel.LangName}");
+                    result.Add(await _tesseractService.DownloadTesseractLanguageFromGit(item));
+                }
+                Close();
+                return result;
             }
-            Close();
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Download file error");
+                MessageBox.Show("Download file error: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return null;
+            }
+
         }
     }
 }

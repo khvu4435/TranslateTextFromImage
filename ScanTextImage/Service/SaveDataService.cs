@@ -1,6 +1,8 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.Win32;
+using Newtonsoft.Json;
 using ScanTextImage.Interface;
 using ScanTextImage.Model;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -9,6 +11,8 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Windows.Input;
+using System.Windows.Media.Imaging;
 using System.Xml.Linq;
 
 namespace ScanTextImage.Service
@@ -126,6 +130,7 @@ namespace ScanTextImage.Service
 
             var invalidUpdate = saveShortcuts.Where(data => (!data.IsAltKey && !data.IsShiftKey && !data.IsControlKey) || string.IsNullOrEmpty(data.Key)).ToList();
             var duplicateUpdate = saveShortcuts.Select(data => (data.IsControlKey, data.IsShiftKey, data.IsAltKey, data.Key)).Distinct().ToList();
+            var listKeyPress = saveShortcuts.Select(data => data.Key).ToList();
 
             // if not have modified or key => error
             if (invalidUpdate.Count() > 0)
@@ -136,6 +141,15 @@ namespace ScanTextImage.Service
             if (duplicateUpdate.Count() != saveShortcuts.Count)
             {
                 throw new Exception("Duplicate shortcut");
+            }
+
+            // check if there is any key is not valid
+            foreach (var item in listKeyPress)
+            {
+                if (!ConstData.Const.MapKeyNumber.ContainsKey(item) && !Enum.TryParse(typeof(Key),item, out _))
+                {
+                    throw new Exception("Invalid key " + item);
+                }
             }
 
             string jsonData = JsonConvert.SerializeObject(saveShortcuts);
@@ -167,6 +181,62 @@ namespace ScanTextImage.Service
 
 
             return listData;
+        }
+
+        public bool SaveScreenShotImageToLocal(string filePath, BitmapSource srcImage)
+        {
+
+            try
+            {
+                if (string.IsNullOrWhiteSpace(filePath))
+                {
+                    throw new Exception("Invalid file path");
+                }
+
+                string extensionFile = Path.GetExtension(filePath);
+                string typeOfExtension = ConstData.Const.extenstionFilePair.FirstOrDefault(pair => pair.Key.Contains(extensionFile, StringComparer.OrdinalIgnoreCase)).Value;
+                // check file has extension is image or not
+                if (string.IsNullOrWhiteSpace(extensionFile) || string.IsNullOrWhiteSpace(typeOfExtension))
+                {
+                    Log.Warning("Invalid file path or file is not save as image: file extension - " + extensionFile + " or type of extension - " + typeOfExtension);
+                    throw new Exception("Invalid file path or file is not save as image: file extension - " + extensionFile + " or type of extension - " + typeOfExtension);
+                }
+
+                BitmapEncoder? encoder = null;
+                switch (typeOfExtension)
+                {
+                    case "tiff":
+                        encoder = new TiffBitmapEncoder();
+                        break;
+                    case "bmp":
+                        encoder = new BmpBitmapEncoder();
+                        break;
+                    case "png":
+                        encoder = new PngBitmapEncoder();
+                        break;
+                    case "jpeg":
+                        encoder = new JpegBitmapEncoder();
+                        break;
+                    case "gif":
+                        encoder = new GifBitmapEncoder();
+                        break;
+                    default:
+                        Log.Warning("May not support that file extension " + typeOfExtension);
+                        throw new Exception("May not support that file extension " + typeOfExtension);
+                }
+
+                encoder.Frames.Add(BitmapFrame.Create(srcImage));
+                using (var fileStream = new System.IO.FileStream(filePath, System.IO.FileMode.Create))
+                {
+                    encoder.Save(fileStream);
+                }
+
+                return true;
+            }catch(Exception ex)
+            {
+                Log.Error(ex, "Error save image");
+                throw;
+            }
         }
     }
 }

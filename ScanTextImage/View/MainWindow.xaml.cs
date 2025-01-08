@@ -107,7 +107,7 @@ namespace ScanTextImage
         private void MainWindow_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
             Log.Information("start event MainWindow_IsVisibleChanged");
-            if(e.NewValue is bool isVisible && isVisible && isOpenMiniMode)
+            if (e.NewValue is bool isVisible && isVisible && isOpenMiniMode)
             {
                 Log.Information("main window is change to show and has open mini mode before");
                 _captureService.onScreenTaken += onScreenshotTaken;
@@ -574,7 +574,7 @@ namespace ScanTextImage
                     return;
                 }
 
-                textTranslateTo.Text = await _translateService.TranslateTo(textFrom, saveData.languageTranslateTo.LangName, saveData.languageTranslateFrom.LangName);
+                //textTranslateTo.Text = await _translateService.TranslateTo(textFrom, saveData.languageTranslateTo.LangName, saveData.languageTranslateFrom.LangName);
             }
             catch (Exception ex)
             {
@@ -630,7 +630,7 @@ namespace ScanTextImage
                 imageWindow.Close();
                 imageWindow = null;
             }
-            imageWindow = new ImageWindow(croppedBitmap);
+            imageWindow = new ImageWindow(_saveDataService, croppedBitmap);
             imageWindow.Show();
 
             Log.Information("end viewImageBtn_Click");
@@ -647,19 +647,29 @@ namespace ScanTextImage
             }
             catch (Exception ex)
             {
-                Log.Information("Error when trying to saving data: " + ex.Message);
+                Log.Error(ex ,"Error when trying to saving data: ");
                 MessageBox.Show("Error when trying to saving data: " + ex.Message, "Some thing happen when saving", MessageBoxButton.OK, MessageBoxImage.Error);
-                throw;
+                return;
             }
             Log.Information("end saveDataBtn_Click");
         }
 
         private void configShortcutBtn_Click(object sender, RoutedEventArgs e)
         {
-            Log.Information("start configBtn_Click");
-            ConfigWindow configWindow = new ConfigWindow(_configService, _saveDataService, this);
-            configWindow.ShowDialog();
-            Log.Information("end configBtn_Click");
+            try
+            {
+                Log.Information("start configBtn_Click");
+                ConfigWindow configWindow = new ConfigWindow(_configService, _saveDataService, this);
+                configWindow.ShowDialog();
+                Log.Information("end configBtn_Click");
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Error when trying to open config window");
+                MessageBox.Show("Error when trying to open config window: " + ex.Message, "Some thing happen when open config window", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
         }
         private void configLanguageBtn_Click(object sender, RoutedEventArgs e)
         {

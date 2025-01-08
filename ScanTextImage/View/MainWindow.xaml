@@ -37,7 +37,7 @@
         <CommandBinding x:Name="Clear"
                         Command="customCommand:CustomCommand.clearCommand"
                         Executed="CommandBindingClear_Executed" />
-        
+
         <CommandBinding x:Name="loadSave1"
                         Command="customCommand:CustomCommand.loadData1Command"
                         Executed="CommandBindingLoadData_Executed" />
@@ -68,6 +68,7 @@
     </Window.CommandBindings>
 
     <Window.Resources>
+        
         <!--A Style that affects all Border-->
         <Style TargetType="GroupBox">
             <Setter Property="Background"

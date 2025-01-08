@@ -10,27 +10,62 @@
 
 	<ItemGroup>
 		<None Remove="Image\bin.png" />
+		<None Remove="Image\caret-arrow-up.png" />
+		<None Remove="Image\caret-down.png" />
 		<None Remove="Image\clean.png" />
 		<None Remove="Image\close.png" />
+		<None Remove="Image\collapse.png" />
 		<None Remove="Image\crop.png" />
+		<None Remove="Image\delete.png" />
+		<None Remove="Image\down-arrow.png" />
+		<None Remove="Image\expand-arrows.png" />
+		<None Remove="Image\filter.png" />
 		<None Remove="Image\insert-picture-icon.png" />
 		<None Remove="Image\language.png" />
 		<None Remove="Image\left-arrow.png" />
 		<None Remove="Image\move.png" />
+		<None Remove="Image\ratio.png" />
 		<None Remove="Image\right-arrow.png" />
+		<None Remove="Image\rotate.png" />
+		<None Remove="Image\search.png" />
+		<None Remove="Image\sort.png" />
 		<None Remove="Image\swap.png" />
 		<None Remove="Image\trash-can.png" />
+		<None Remove="Image\zoom-in.png" />
+		<None Remove="Image\zoom-out.png" />
+		<None Remove="Image\zoom.png" />
 	</ItemGroup>
 
 	<ItemGroup>
+		<Resource Include="Image\caret-arrow-up.png">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Resource>
+		<Resource Include="Image\caret-down.png">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Resource>
 		<Resource Include="Image\clean.png">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Resource>
 		<Resource Include="Image\close.png">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Resource>
+		<Resource Include="Image\collapse.png">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Resource>
 		<Resource Include="Image\crop.png">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Resource>
+		<Resource Include="Image\delete.png">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Resource>
+		<Resource Include="Image\down-arrow.png">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Resource>
+		<Resource Include="Image\expand-arrows.png">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Resource>
+		<Resource Include="Image\filter.png">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Resource>
 		<Resource Include="Image\insert-picture-icon.png">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -44,20 +79,43 @@
 		<Resource Include="Image\move.png">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Resource>
+		<Resource Include="Image\ratio.png">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Resource>
 		<Resource Include="Image\right-arrow.png">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Resource>
+		<Resource Include="Image\rotate.png">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Resource>
+		<Resource Include="Image\search.png">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Resource>
+		<Resource Include="Image\sort.png">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Resource>
 		<Resource Include="Image\swap.png">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Resource>
-		<Resource Include="Image\trash-can.png">
+		<Resource Include="Image\zoom-out.png">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Resource>
+		<Resource Include="Image\zoom.png">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Resource>
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="GTranslate" Version="2.2.8" />
+		<PackageReference Include="Azure.AI.Translation.Text" Version="1.0.0" />
+		<PackageReference Include="Azure.Core" Version="1.44.1" />
+		<PackageReference Include="Azure.Identity" Version="1.13.1" />
+		<PackageReference Include="Azure.ResourceManager.CognitiveServices" Version="1.4.0" />
+		<PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="9.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="9.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.0" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="9.0.0" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
 		<PackageReference Include="Octokit" Version="13.0.1" />
 		<PackageReference Include="OpenCvSharp4" Version="4.10.0.20241108" />
@@ -73,6 +131,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<None Update="appsettings.json">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
 		<None Update="C:\Users\grey.dang\.nuget\packages\tesseract\5.2.0\build\\..\x64\leptonica-1.82.0.dll">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>

@@ -11,12 +11,18 @@ namespace ScanTextImage.ViewMode
     public class ConfigLanguageList : INotifyPropertyChanged
     {
         private bool _isSelected;
-        public LanguageModel LanguageModel { get; set; }
+        private LanguageModel _languageModel;
 
         public bool isSelected
         {
             get { return _isSelected; }
             set { _isSelected = value; NotifyPropertyChanged(nameof(isSelected)); }
+        }
+
+        public LanguageModel LanguageModel
+        {
+            get { return _languageModel; }
+            set { _languageModel = value; NotifyPropertyChanged(nameof(LanguageModel)); }
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;
