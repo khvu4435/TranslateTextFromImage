@@ -25,17 +25,25 @@ namespace ScanTextImage.Service
         private readonly AzureTranslatorResource azureTranslatorResource;
         private readonly AzureResource azureResource;
         private int numberCharaterUsed = 0;
-        public TranslateService(IAzureClientService azureClientService, IOptions<AzureTranslatorResource> optionsTranslator, IOptions<AzureResource> optionsResource)
+        public event Action<int>? displayUsageEvent;
+
+        private readonly SaveDataService saveDataService;
+
+        public TranslateService(IAzureClientService azureClientService, IOptions<AzureTranslatorResource> optionsTranslator, IOptions<AzureResource> optionsResource, SaveDataService saveDataService)
         {
             this.azureClientService = azureClientService;
+            this.saveDataService = saveDataService;
 
             azureTranslatorResource = optionsTranslator.Value;
             azureResource = optionsResource.Value;
             translationClient = azureClientService.GetTextTranslationClient();
             cognitiveServicesAccountResource = azureClientService.GetCognitiveResourceClient(azureResource.subscriptionId, azureTranslatorResource.ResourceGroupName, azureTranslatorResource.ResourceName);
 
+            displayUsageEvent = null;
+
             // get the number of character used in the current month
             GetNumberCharacterUsed();
+
         }
 
         private void GetNumberCharacterUsed()
@@ -51,9 +59,22 @@ namespace ScanTextImage.Service
                 }
                 else
                 {
-                    Log.Information("usage data is not null " + usageData.CurrentValue);
+                    Log.Information("usage data is not null - curr usage: " + usageData.CurrentValue);
                     numberCharaterUsed = Convert.ToInt32(usageData.CurrentValue);
                 }
+
+                int localUsage = saveDataService.GetCurrentUsageData();
+                Log.Information("usage data from local - curr usage: " + localUsage);
+
+                Log.Information("localUsage > usage from azure => " + (localUsage > numberCharaterUsed) + " -> get the value that greater");
+                numberCharaterUsed = Math.Max(numberCharaterUsed, localUsage);
+
+                // store the usage
+                saveDataService.SaveCurrentUsageData(numberCharaterUsed);
+
+                // invoke event display usage
+                displayUsageEvent?.Invoke(numberCharaterUsed);
+
             }
             catch (Exception ex)
             {
@@ -83,11 +104,23 @@ namespace ScanTextImage.Service
                     throw new Exception("the total character has been used to translate has exceed 2000000");
                 }
 
+                // invoke event display usage
+                displayUsageEvent?.Invoke(numberCharaterUsed);
+
+                // return empty if text is empty or white space
+                if (string.IsNullOrWhiteSpace(from))
+                {
+                    return string.Empty;
+                }
+
+                // store the usage to local
+                saveDataService.SaveCurrentUsageData(numberCharaterUsed);
+
                 // transfer the full name to iso format
                 string langToIso = GetIsoFormatCountryName(langaugeTo);
                 string langFromIso = GetIsoFormatCountryName(languageFrom, true);
 
-                var response = await translationClient.TranslateAsync(langaugeTo, from, languageFrom);
+                var response = await translationClient.TranslateAsync(langToIso, from, langFromIso);
                 var translations = response.Value;
                 var result = translations?.FirstOrDefault()?.Translations?.FirstOrDefault()?.Text;
 

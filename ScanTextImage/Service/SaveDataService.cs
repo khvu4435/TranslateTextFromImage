@@ -65,7 +65,6 @@ namespace ScanTextImage.Service
             {
                 using (var sw = new StreamWriter(file))
                 {
-                    Debug.WriteLine("Save file data - " + saveModel.id);
                     sw.WriteLine(jsonData);
                 }
             }
@@ -146,7 +145,7 @@ namespace ScanTextImage.Service
             // check if there is any key is not valid
             foreach (var item in listKeyPress)
             {
-                if (!ConstData.Const.MapKeyNumber.ContainsKey(item) && !Enum.TryParse(typeof(Key),item, out _))
+                if (!ConstData.Const.MapKeyNumber.ContainsKey(item) && !Enum.TryParse(typeof(Key), item, out _))
                 {
                     throw new Exception("Invalid key " + item);
                 }
@@ -232,11 +231,75 @@ namespace ScanTextImage.Service
                 }
 
                 return true;
-            }catch(Exception ex)
+            }
+            catch (Exception ex)
             {
                 Log.Error(ex, "Error save image");
                 throw;
             }
+        }
+
+        public void SaveCurrentUsageData(int numberCharacterUse)
+        {
+            Log.Information("Start saveCurrentUsageData");
+            try
+            {
+                Log.Information($"current usage: {numberCharacterUse}");
+                var path = ConstData.Const.pathUsageData;
+                var dic = new Dictionary<string, int>()
+                {
+                    {"usage", numberCharacterUse}
+                };
+
+                var json = JsonConvert.SerializeObject(dic);
+
+                using (var file = new FileStream(path, FileMode.Create))
+                {
+                    using (var sw = new StreamWriter(file))
+                    {
+                        sw.WriteLine(json);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Error when save current usage");
+                throw;
+            }
+            Log.Information("end saveCurrentUsageData");
+        }
+
+        public int GetCurrentUsageData()
+        {
+            Log.Information("Start GetCurrentUsageData");
+            try
+            {
+                var path = ConstData.Const.pathUsageData;
+
+                if (!File.Exists(path))
+                {
+                    Log.Information("Not exist file usage data");
+                    return 0;
+                }
+
+                // read data
+                string json = File.ReadAllText(path);
+                var dic = JsonConvert.DeserializeObject<Dictionary<string, int>>(json);
+                if(dic == null)
+                {
+                    Log.Information("Not have any data in usage file");
+                    return 0;
+                }
+
+                return dic.Values.FirstOrDefault();
+                
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Error when get current usage");
+                throw;
+            }
+            Log.Information("end GetCurrentUsageData");
         }
     }
 }

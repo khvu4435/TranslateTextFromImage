@@ -276,8 +276,8 @@ namespace ScanTextImage.View
                 // Remove focus from the TextBox
                 Keyboard.ClearFocus();
 
-            // Optionally set focus to the parent container or window
-            FocusManager.SetFocusedElement(this, null);
+                // Optionally set focus to the parent container or window
+                FocusManager.SetFocusedElement(this, null);
             }
         }
 
@@ -312,7 +312,7 @@ namespace ScanTextImage.View
 
             try
             {
-                if(isSelected)
+                if (isSelected)
                 {
                     var item = cbScale.SelectedItem as ComboBoxItem;
                     if (item == null)
@@ -376,7 +376,7 @@ namespace ScanTextImage.View
         private void cbScale_PreviewKeyDown(object sender, KeyEventArgs e)
         {
             // if press enter -> update scale
-            if(e.Key == Key.Enter)
+            if (e.Key == Key.Enter)
             {
                 Log.Information("Pressed enter in combo box cbScale");
 

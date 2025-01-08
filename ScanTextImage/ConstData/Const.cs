@@ -206,6 +206,7 @@ namespace ScanTextImage.ConstData
 
         public static readonly string pathSaveData = @"./Data";
         public static readonly string pathConfigData = @"./Config/config_shortcut.json";
+        public static readonly string pathUsageData = @"./Usage/usageData.json";
 
         public static readonly string tessdataPath = @"./tessdata";
 

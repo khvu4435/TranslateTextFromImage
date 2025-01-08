@@ -28,6 +28,7 @@ using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using static System.Net.Mime.MediaTypeNames;
 using Point = System.Windows.Point;
 
 namespace ScanTextImage
@@ -103,11 +104,12 @@ namespace ScanTextImage
             pasteBinding.Executed += PasteBinding_Executed;
             textFromImage.CommandBindings.Add(pasteBinding);
 
+            _translateService.displayUsageEvent += _translateService_displayUsageEvent;
 
             LoadCommandBinding();
-
             LoadMenuItems();
         }
+
 
         private void MainWindow_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
@@ -284,7 +286,7 @@ namespace ScanTextImage
             Log.Information("start MainWindow_Closing");
             try
             {
-                Application.Current.Shutdown();
+                System.Windows.Application.Current.Shutdown();
             }
             catch (Exception ex)
             {
@@ -848,6 +850,27 @@ namespace ScanTextImage
                     return;
                 }
             }
+            else if(Clipboard.ContainsText())
+            {
+                try
+                {
+                    string text = Clipboard.GetText();
+                    int caretIndex = textFromImage.CaretIndex;
+                    textFromImage.Text = textFromImage.Text.Insert(caretIndex, text);
+                    textFromImage.CaretIndex = caretIndex + text.Length;
+                }
+                catch (Exception ex)
+                {
+                    Log.Error(ex, "Error when pasting text");
+                    MessageBox.Show(
+                        $"Error when pasting text: {ex.Message}",
+                        "Error paste text",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Error);
+                    return;
+                }
+
+            }
             Log.Information("end PasteBinding_Executed");
         }
 
@@ -863,5 +886,25 @@ namespace ScanTextImage
 
             Log.Information("emd textFromImage_PreviewKeyDown");
         }
+
+        private void Window_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            // Check if the currently focused element is a TextBox
+            if (Keyboard.FocusedElement is TextBox)
+            {
+                // Remove focus from the TextBox
+                Keyboard.ClearFocus();
+
+                // Optionally set focus to the parent container or window
+                FocusManager.SetFocusedElement(this, null);
+            }
+        }
+
+
+        private void _translateService_displayUsageEvent(int numberCharacter)
+        {
+            lblUsage.Content = numberCharacter.ToString("N0") + " / " + Const.limitAzureTrasnlatorUsage.ToString("N0");
+        }
+
     }
 }

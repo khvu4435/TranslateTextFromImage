@@ -11,7 +11,8 @@
         WindowState="Normal"
         Height="550"
         Width="1250"
-        Loaded="Window_Loaded">
+        Loaded="Window_Loaded"
+        PreviewMouseDown="Window_PreviewMouseDown">
 
     <Window.CommandBindings>
         <CommandBinding x:Name="Free_selection"
@@ -330,12 +331,23 @@
                     <RowDefinition Height="1*" />
                 </Grid.RowDefinitions>
 
-                <TextBox Grid.Row="0"
-                         Name="textFromImage"
-                         Margin="10"
-                         PreviewKeyDown="textFromImage_PreviewKeyDown">
+                <Grid Grid.Row="0">
+                    <TextBox Name="textFromImage"
+                             Margin="10"
+                             PreviewKeyDown="textFromImage_PreviewKeyDown" />
+                    <Label x:Name="lblUsage"
+                           Content="12 / 200000"
+                           FontStyle="Italic"
+                           FontWeight="Bold"
+                           Foreground="Gray"
+                           Opacity="0.6"
+                           HorizontalAlignment="Right"
+                           VerticalAlignment="Bottom"
+                           Margin="0,0,10,10"/>
+                </Grid>
 
-                </TextBox>
+
+
 
                 <TextBox Grid.Row="2"
                          Name="textTranslateTo"

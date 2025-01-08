@@ -16,5 +16,8 @@ namespace ScanTextImage.Interface
         public List<SaveModel> GetListSaveData();
         public List<ShortcutModel> GetShortcutConfig();
         public bool SaveScreenShotImageToLocal(string filePath, BitmapSource srcImage);
+
+        public void SaveCurrentUsageData(int numberCharacterUse);
+        public int GetCurrentUsageData();
     }
 }
