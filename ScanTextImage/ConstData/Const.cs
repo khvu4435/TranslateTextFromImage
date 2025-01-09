@@ -213,9 +213,9 @@ namespace ScanTextImage.ConstData
         public static readonly string regexSaveFileName = @"(?:.*)data_(?'idSave'[1-9]).json";
 
         public static readonly Double miniWidth = 658;
-        public static readonly Double miniHeight = 200;
-        public static readonly Double miniCollapseWidth = 25;
-        public static readonly Double miniCollapseHeight = 75;
+        public static readonly Double miniHeight = 253;
+        public static readonly Double miniCollapseWidth = 26;
+        public static readonly Double miniCollapseHeight = 189;
 
         public static readonly string tagZoomIn = "tagZoomIn";
         public static readonly string tagZoomOut = "tagZoomOut";

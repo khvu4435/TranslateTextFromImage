@@ -71,7 +71,7 @@
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="../View/Styles/DictionaryGeneral.xaml" />
+                <!--<ResourceDictionary Source="../View/Styles/DictionaryGeneral.xaml" />-->
                 <ResourceDictionary Source="../View/Styles/DictionaryMainWindow.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>

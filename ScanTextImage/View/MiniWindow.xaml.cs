@@ -59,81 +59,126 @@ namespace ScanTextImage.View
                 _captureService.onScreenTaken += _captureService_onScreenTaken;
             };
 
+            _translateService.displayUsageEvent += translateService_displayUsageEvent;
+
+            // get data usage from local save
+            int currUsaged = _saveDataService.GetCurrentUsageData();
+            Log.Information("current usaged from local: " + currUsaged);
+            translateService_displayUsageEvent(currUsaged); // display usaged
+
             LoadListDataSaveFile(0);
             LoadLanguageTranslateList();
             LoadCommandBinding();
         }
 
+        private void translateService_displayUsageEvent(int numberCharacter)
+        {
+            lblUsageData.Content = numberCharacter.ToString("N0") + " / " + Const.limitAzureTrasnlatorUsage;
+        }
+
         #region Load Data
         public void LoadListDataSaveFile(int selectedFileIndex)
         {
-            var listSaveData = _saveDataService.GetListSaveData();
-            cmbLoadSaveData.ItemsSource = listSaveData;
-            cmbLoadSaveData.DisplayMemberPath = nameof(SaveModel.nameSave);
-            cmbLoadSaveData.SelectedValuePath = nameof(SaveModel.id);
-            cmbLoadSaveData.SelectedIndex = selectedFileIndex;
-
-            var data = SaveModel.DefaultSaveData();
-            if (listSaveData.Count >= 1)
+            Log.Information("start LoadListDataSaveFile - selected index: " + selectedFileIndex);
+            try
             {
-                data = listSaveData[0];
-            }
+                var listSaveData = _saveDataService.GetListSaveData();
+                cmbLoadSaveData.ItemsSource = listSaveData;
+                cmbLoadSaveData.DisplayMemberPath = nameof(SaveModel.nameSave);
+                cmbLoadSaveData.SelectedValuePath = nameof(SaveModel.id);
+                cmbLoadSaveData.SelectedIndex = selectedFileIndex;
 
-            saveData = data;
+                var data = SaveModel.DefaultSaveData();
+                if (listSaveData.Count >= 1)
+                {
+                    data = listSaveData[0];
+                }
+
+                saveData = data;
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "error when load list data save");
+                MessageBox.Show("Error when load list data save " + ex.Message, "Error load list data", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+            Log.Information("end LoadListDataSaveFile - selected index: " + selectedFileIndex);
         }
 
         private void LoadLanguageTranslateList()
         {
-            var languageModels = _tesseractService.GetLanguageUsingTesseract();
+            Log.Information("start LoadLanguageTranslateList");
+            try
+            {
+                var languageModels = _tesseractService.GetLanguageUsingTesseract();
 
-            int langFrom = languageModels.FindIndex(0, x => x.LangCode == saveData.languageTranslateFrom.LangCode);
-            int langTo = languageModels.FindIndex(0, x => x.LangCode == saveData.languageTranslateTo.LangCode);
+                int langFrom = languageModels.FindIndex(0, x => x.LangCode == saveData.languageTranslateFrom.LangCode);
+                int langTo = languageModels.FindIndex(0, x => x.LangCode == saveData.languageTranslateTo.LangCode);
 
-            cmbLanguageFrom.ItemsSource = languageModels;
-            cmbLanguageFrom.DisplayMemberPath = nameof(LanguageModel.LangName);
-            cmbLanguageFrom.SelectedValuePath = nameof(LanguageModel.LangCode);
-            cmbLanguageFrom.SelectedIndex = langFrom < 0 ? 0 : langFrom;
+                cmbLanguageFrom.ItemsSource = languageModels;
+                cmbLanguageFrom.DisplayMemberPath = nameof(LanguageModel.LangName);
+                cmbLanguageFrom.SelectedValuePath = nameof(LanguageModel.LangCode);
+                cmbLanguageFrom.SelectedIndex = langFrom < 0 ? 0 : langFrom;
 
-            cmbLanguageTo.ItemsSource = languageModels;
-            cmbLanguageTo.DisplayMemberPath = nameof(LanguageModel.LangName);
-            cmbLanguageTo.SelectedValuePath = nameof(LanguageModel.LangCode);
-            cmbLanguageTo.SelectedIndex = langTo < 0 ? 0 : langTo;
+                cmbLanguageTo.ItemsSource = languageModels;
+                cmbLanguageTo.DisplayMemberPath = nameof(LanguageModel.LangName);
+                cmbLanguageTo.SelectedValuePath = nameof(LanguageModel.LangCode);
+                cmbLanguageTo.SelectedIndex = langTo < 0 ? 0 : langTo;
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "error when load language data");
+                MessageBox.Show("Error when load language data " + ex.Message, "Error load list data", MessageBoxButton.OK, MessageBoxImage.Error);
+                throw;
+            }
+            Log.Information("end LoadLanguageTranslateList");
         }
 
         public void LoadCommandBinding()
         {
-            var shortcuts = _saveDataService.GetShortcutConfig();
-            if (shortcuts != null)
+            Log.Information("start LoadCommandBinding");
+            try
             {
-                // Find and modify existing command binding
-                foreach (CommandBinding binding in this.CommandBindings)
+                var shortcuts = _saveDataService.GetShortcutConfig();
+                if (shortcuts != null)
                 {
-                    if (binding.Command is RoutedUICommand command)
+                    // Find and modify existing command binding
+                    foreach (CommandBinding binding in this.CommandBindings)
                     {
-                        var shortcut = shortcuts.FirstOrDefault(data => data.Name == command.Name);
-                        if (shortcut != null)
+                        if (binding.Command is RoutedUICommand command)
                         {
-                            ModifierKeys modifier = ModifierKeys.None;
-                            if (shortcut.IsControlKey) modifier |= ModifierKeys.Control;
-                            if (shortcut.IsShiftKey) modifier |= ModifierKeys.Shift;
-                            if (shortcut.IsAltKey) modifier |= ModifierKeys.Alt;
+                            var shortcut = shortcuts.FirstOrDefault(data => data.Name == command.Name);
+                            if (shortcut != null)
+                            {
+                                ModifierKeys modifier = ModifierKeys.None;
+                                if (shortcut.IsControlKey) modifier |= ModifierKeys.Control;
+                                if (shortcut.IsShiftKey) modifier |= ModifierKeys.Shift;
+                                if (shortcut.IsAltKey) modifier |= ModifierKeys.Alt;
 
-                            string keyStr = Const.MapKeyNumber.ContainsKey(shortcut.Key) ? Const.MapKeyNumber[shortcut.Key] : shortcut.Key;
-                            Key key = (Key)Enum.Parse(typeof(Key), keyStr);
+                                string keyStr = Const.MapKeyNumber.ContainsKey(shortcut.Key) ? Const.MapKeyNumber[shortcut.Key] : shortcut.Key;
+                                Key key = (Key)Enum.Parse(typeof(Key), keyStr);
 
-                            // Create new input gesture
-                            InputGestureCollection newGestures = new InputGestureCollection
+                                // Create new input gesture
+                                InputGestureCollection newGestures = new InputGestureCollection
                             {
                                 new KeyGesture(key, modifier)
                             };
 
-                            // Update the command's input gestures
-                            ((RoutedUICommand)binding.Command).InputGestures.Clear();
-                            ((RoutedUICommand)binding.Command).InputGestures.Add(newGestures[0]);
+                                // Update the command's input gestures
+                                ((RoutedUICommand)binding.Command).InputGestures.Clear();
+                                ((RoutedUICommand)binding.Command).InputGestures.Add(newGestures[0]);
+                            }
                         }
                     }
                 }
             }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "error when load command binding");
+                MessageBox.Show("Error when load command binding " + ex.Message, "Error load list data", MessageBoxButton.OK, MessageBoxImage.Error);
+                throw;
+            }
+            Log.Information("end LoadCommandBinding");
         }
         #endregion Load Data
 

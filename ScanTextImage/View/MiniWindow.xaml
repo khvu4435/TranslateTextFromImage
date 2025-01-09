@@ -30,7 +30,7 @@
         <CommandBinding x:Name="Translate_image"
                         Command="customCommand:CustomCommand.translateImageCommand"
                         Executed="CommandBindingtranslateImage_Executed" />
-        
+
         <CommandBinding x:Name="Clear"
                         Command="customCommand:CustomCommand.clearCommand"
                         Executed="CommandBindingClear_Executed" />
@@ -65,66 +65,12 @@
     </Window.CommandBindings>
 
     <Window.Resources>
-
-
-        <!--A Style that affects all Border-->
-        <Style TargetType="Button">
-            <Setter Property="Background"
-                    Value="GhostWhite" />
-            <Setter Property="BorderBrush"
-                    Value="Black" />
-            <Setter Property="BorderThickness"
-                    Value="1" />
-            <Setter Property="Width"
-                    Value="25" />
-            <Setter Property="Height"
-                    Value="25" />
-            <Style.Resources>
-                <Style TargetType="Border">
-                    <Setter Property="CornerRadius"
-                            Value="3" />
-                </Style>
-            </Style.Resources>
-        </Style>
-
-        <Style TargetType="ComboBox">
-            <Setter Property="Background"
-                    Value="GhostWhite" />
-            <Setter Property="BorderBrush"
-                    Value="Black" />
-            <Setter Property="BorderThickness"
-                    Value="1" />
-            <Setter Property="IsEditable"
-                    Value="True" />
-            <Setter Property="IsTextSearchEnabled"
-                    Value="True" />
-        </Style>
-
-        <!--A Style that affects all TextBox-->
-        <Style TargetType="TextBox">
-            <Setter Property="TextWrapping"
-                    Value="Wrap" />
-            <Setter Property="Background"
-                    Value="GhostWhite" />
-            <Setter Property="AcceptsReturn"
-                    Value="True" />
-            <Setter Property="ScrollViewer.HorizontalScrollBarVisibility"
-                    Value="Disabled" />
-            <Setter Property="ScrollViewer.VerticalScrollBarVisibility"
-                    Value="Auto" />
-            <Setter Property="Padding"
-                    Value="10" />
-            <Setter Property="FontSize"
-                    Value="12" />
-
-            <Style.Resources>
-                <Style TargetType="Border">
-                    <Setter Property="CornerRadius"
-                            Value="3" />
-                </Style>
-            </Style.Resources>
-        </Style>
-
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <!--<ResourceDictionary Source="../View/Styles/DictionaryGeneral.xaml" />-->
+                <ResourceDictionary Source="../View/Styles/DictionaryMiniMode.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
     </Window.Resources>
 
     <Grid>
@@ -276,8 +222,17 @@
                           SelectionChanged="cmbLanguageTo_SelectionChanged" />
             </Grid>
 
-            <TextBox Grid.Row="1"
-                     x:Name="tbxFrom" />
+            <Grid Grid.Row="1">
+                <TextBox x:Name="tbxFrom" />
+                <Label x:Name="lblUsageData" Content="1,000,000 / 2,000,000"
+                       Foreground="Gray"
+                       Opacity="0.5"
+                       FontStyle="Italic"
+                       FontWeight="Bold"
+                       HorizontalAlignment="Right"
+                       VerticalAlignment="Bottom"/>
+            </Grid>
+
             <TextBox Grid.Row="2"
                      x:Name="tbxTo"
                      IsReadOnly="true" />

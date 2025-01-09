@@ -72,9 +72,6 @@ namespace ScanTextImage.Service
                 // store the usage
                 saveDataService.SaveCurrentUsageData(numberCharaterUsed);
 
-                // invoke event display usage
-                displayUsageEvent?.Invoke(numberCharaterUsed);
-
             }
             catch (Exception ex)
             {
