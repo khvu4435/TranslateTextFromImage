@@ -123,8 +123,8 @@
                                         Name="saveDataBtn"
                                         Margin="10"
                                         Click="saveDataBtn_Click">
-                                    <Image Width="20"
-                                           Height="20">
+                                    <Image Width="30"
+                                           Height="30">
                                         <Image.Source>
                                             <BitmapImage UriSource="../Image/diskette.png" />
                                         </Image.Source>
@@ -207,12 +207,14 @@
                             <Line Grid.Row="1"
                                   X1="0"
                                   Y1="0"
-                                  X2="300"
+                                  X2="115"
                                   Y2="0"
                                   Stroke="Gainsboro"
-                                  StrokeThickness="1"
+                                  StrokeThickness="2"
                                   VerticalAlignment="Center"
-                                  HorizontalAlignment="Left" />
+                                  HorizontalAlignment="Left"
+                                  StrokeStartLineCap="Round"
+                                  StrokeEndLineCap="Square" />
 
                             <Button Grid.Row="1"
                                     Name="swapBtn"
@@ -220,14 +222,26 @@
                                     Style="{StaticResource styleBtnSwap}">
 
                                 <Image Name="swapBtnImg"
-                                       Width="20"
-                                       Height="20">
+                                       Width="25"
+                                       Height="25">
                                     <Image.Source>
                                         <BitmapImage UriSource="../Image/swap.png"
                                                      Rotation="Rotate90" />
                                     </Image.Source>
                                 </Image>
                             </Button>
+
+                            <Line Grid.Row="1"
+                                  X1="0"
+                                  Y1="0"
+                                  X2="115"
+                                  Y2="0"
+                                  Stroke="Gainsboro"
+                                  StrokeThickness="2"
+                                  VerticalAlignment="Center"
+                                  HorizontalAlignment="Right"
+                                  StrokeStartLineCap="Square"
+                                  StrokeEndLineCap="Round"/>
 
                             <Grid Grid.Row="2">
 
@@ -275,8 +289,8 @@
                                     Name="translate"
                                     Click="translate_Click"
                                     ToolTip="Click to translate the text again">
-                                <Image Width="20"
-                                       Height="20">
+                                <Image Width="30"
+                                       Height="30">
                                     <Image.Source>
                                         <BitmapImage UriSource="../Image/language.png" />
                                     </Image.Source>
@@ -287,8 +301,8 @@
                                     Name="translateImage"
                                     Click="translateImage_Click"
                                     ToolTip="Click to translate the range of image that you have been selected before">
-                                <Image Width="20"
-                                       Height="20">
+                                <Image Width="30"
+                                       Height="30">
                                     <Image.Source>
                                         <BitmapImage UriSource="../Image/text-recognising.png" />
                                     </Image.Source>
@@ -299,8 +313,8 @@
                                     Name="viewImageBtn"
                                     Click="viewImageBtn_Click"
                                     ToolTip="Click to see image that just selected">
-                                <Image Width="20"
-                                       Height="20">
+                                <Image Width="30"
+                                       Height="30">
                                     <Image.Source>
                                         <BitmapImage UriSource="../Image/insert-picture-icon.png" />
                                     </Image.Source>
@@ -311,8 +325,8 @@
                                     Name="clearBtn"
                                     Click="clearBtn_Click"
                                     ToolTip="Click to clear all text and image that has been selected, extract text or translated">
-                                <Image Width="20"
-                                       Height="20">
+                                <Image Width="30"
+                                       Height="30">
                                     <Image.Source>
                                         <BitmapImage UriSource="../Image/clean.png" />
                                     </Image.Source>

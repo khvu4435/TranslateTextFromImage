@@ -13,6 +13,7 @@
 		<None Remove="Image\caret-arrow-up.png" />
 		<None Remove="Image\caret-down.png" />
 		<None Remove="Image\clean.png" />
+		<None Remove="Image\clock.png" />
 		<None Remove="Image\close.png" />
 		<None Remove="Image\collapse.png" />
 		<None Remove="Image\crop.png" />
@@ -21,10 +22,12 @@
 		<None Remove="Image\down-arrow.png" />
 		<None Remove="Image\expand-arrows.png" />
 		<None Remove="Image\filter.png" />
+		<None Remove="Image\gear.png" />
 		<None Remove="Image\insert-picture-icon.png" />
 		<None Remove="Image\language.png" />
 		<None Remove="Image\left-arrow.png" />
 		<None Remove="Image\move.png" />
+		<None Remove="Image\pause.png" />
 		<None Remove="Image\ratio.png" />
 		<None Remove="Image\right-arrow.png" />
 		<None Remove="Image\rotate.png" />
@@ -32,10 +35,17 @@
 		<None Remove="Image\sort.png" />
 		<None Remove="Image\swap.png" />
 		<None Remove="Image\text-recognising.png" />
+		<None Remove="Image\time-left.png" />
 		<None Remove="Image\trash-can.png" />
 		<None Remove="Image\zoom-in.png" />
 		<None Remove="Image\zoom-out.png" />
 		<None Remove="Image\zoom.png" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Resource Include="Image\clock.png">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Resource>
 	</ItemGroup>
 
 	<ItemGroup>
@@ -72,6 +82,9 @@
 		<Resource Include="Image\filter.png">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Resource>
+		<Resource Include="Image\gear.png">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Resource>
 		<Resource Include="Image\insert-picture-icon.png">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Resource>
@@ -83,6 +96,9 @@
 		</Resource>
 		<Resource Include="Image\move.png">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Resource>
+		<Resource Include="Image\pause.png">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Resource>
 		<Resource Include="Image\ratio.png">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

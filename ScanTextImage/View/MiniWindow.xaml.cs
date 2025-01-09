@@ -73,7 +73,7 @@ namespace ScanTextImage.View
 
         private void translateService_displayUsageEvent(int numberCharacter)
         {
-            lblUsageData.Content = numberCharacter.ToString("N0") + " / " + Const.limitAzureTrasnlatorUsage;
+            lblUsageData.Content = numberCharacter.ToString("N0") + " / " + Const.limitAzureTrasnlatorUsage.ToString("N0");
         }
 
         #region Load Data

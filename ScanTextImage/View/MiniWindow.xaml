@@ -88,6 +88,7 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
             <Button Grid.Row="0"
@@ -123,8 +124,8 @@
                     PreviewMouseDown="btnDragMove_PreviewMouseDown"
                     ToolTip="Hold the button to move the window">
 
-                <Image Width="15"
-                       Height="15">
+                <Image Width="20"
+                       Height="20">
                     <Image.Source>
                         <BitmapImage UriSource="../Image/move.png" />
                     </Image.Source>
@@ -136,8 +137,8 @@
                     Click="btnSelectionRange_Click"
                     ToolTip="Capture the image in the range">
 
-                <Image Width="15"
-                       Height="15">
+                <Image Width="20"
+                       Height="20">
                     <Image.Source>
                         <BitmapImage UriSource="../Image/crop.png" />
                     </Image.Source>
@@ -149,8 +150,8 @@
                     Click="btnTranslateText_Click"
                     ToolTip="Click to translate only text">
 
-                <Image Width="15"
-                       Height="15">
+                <Image Width="20"
+                       Height="20">
                     <Image.Source>
                         <BitmapImage UriSource="../Image/language.png" />
                     </Image.Source>
@@ -162,8 +163,8 @@
                     Click="btnTranslateImage_Click"
                     ToolTip="Translate text from image just capture from the previous range">
 
-                <Image Width="15"
-                       Height="15">
+                <Image Width="20"
+                       Height="20">
                     <Image.Source>
                         <BitmapImage UriSource="../Image/insert-picture-icon.png" />
                     </Image.Source>
@@ -175,10 +176,22 @@
                     Click="btnClear_Click"
                     ToolTip="Clear text">
 
-                <Image Width="15"
-                       Height="15">
+                <Image Width="20"
+                       Height="20">
                     <Image.Source>
                         <BitmapImage UriSource="../Image/clean.png" />
+                    </Image.Source>
+                </Image>
+            </Button>
+
+            <Button Grid.Row="7"
+                    x:Name="btnAutoTranslate"
+                    ToolTip="Automatic translate text from image from the previous selected range">
+
+                <Image Width="20"
+                       Height="20">
+                    <Image.Source>
+                        <BitmapImage UriSource="../Image/gear.png" />
                     </Image.Source>
                 </Image>
             </Button>
@@ -232,10 +245,76 @@
                        HorizontalAlignment="Right"
                        VerticalAlignment="Bottom"/>
             </Grid>
+            <Grid Grid.Row="1"
+                  Grid.RowSpan="2"
+                  HorizontalAlignment="Left"
+                  VerticalAlignment="Center"
+                  Margin="20 0 0 0"
+                  Panel.ZIndex="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
 
+                <TextBox Grid.Row="0"
+                         Width="55"
+                         Height="25"
+                         ScrollViewer.HorizontalScrollBarVisibility="Hidden"
+                         ScrollViewer.VerticalScrollBarVisibility="Hidden"
+                         BorderThickness="0"
+                         Text="1"
+                         MaxLength="2"
+                         FontSize="16"
+                         HorizontalContentAlignment="Left"
+                         VerticalContentAlignment="Center"
+                         Style="{StaticResource TextBoxWithIconStyle}">
+                    <TextBox.Effect>
+                        <DropShadowEffect BlurRadius="5"
+                                          ShadowDepth="3"
+                                          Color="Gray"
+                                          Opacity="0.4" />
+                    </TextBox.Effect>
+                </TextBox>
+
+                <Button Grid.Column="1"
+                        Margin="3">
+                    <Button.Effect>
+                        <DropShadowEffect BlurRadius="5"
+                                          ShadowDepth="3"
+                                          Color="Gray"
+                                          Opacity="0.4" />
+                    </Button.Effect>
+                    <Image Height="15">
+                        <Image.Source>
+                            <BitmapImage UriSource="../Image/caret-arrow-up.png" 
+                                         Rotation="Rotate90"/>
+                        </Image.Source>
+                    </Image>
+                </Button>
+
+                <Button Grid.Column="2"
+                        Margin="3">
+                    <Button.Effect>
+                        <DropShadowEffect BlurRadius="5"
+                                          ShadowDepth="3"
+                                          Color="Gray"
+                                          Opacity="0.4" />
+                    </Button.Effect>
+                    <Image Height="15">
+                        <Image.Source>
+                            <BitmapImage UriSource="../Image/pause.png" />
+                        </Image.Source>
+                    </Image>
+                </Button>
+                
+                
+
+            </Grid>
             <TextBox Grid.Row="2"
                      x:Name="tbxTo"
-                     IsReadOnly="true" />
+                     IsReadOnly="true"
+                     Panel.ZIndex="0"/>
         </Grid>
 
     </Grid>

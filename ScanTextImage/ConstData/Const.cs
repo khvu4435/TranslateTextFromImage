@@ -259,5 +259,6 @@ namespace ScanTextImage.ConstData
         public static readonly int maxCharacterInOneRequest= 50000;
 
         public static readonly string regexScalePercent = @"^(?<scalePercent>[01]?[0-9]?[0-9]|1[0-9][0-9]|200)(?:%*)$";
+        public static readonly string regexTimeAutoTranslate = @"^(([0-9](?:[\.\,][0-9]*)?|10(?:[\.\,]0*)?)[sS]*)$";
     }
 }

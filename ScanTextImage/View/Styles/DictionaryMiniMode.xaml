@@ -27,18 +27,19 @@
         </Style.Resources>
     </Style>
 
-    <Style TargetType="ComboBox" BasedOn="{StaticResource cmbTemplateStyle}">
+    <Style TargetType="ComboBox"
+           BasedOn="{StaticResource cmbTemplateStyle}">
         <Setter Property="Background"
                 Value="GhostWhite" />
         <Setter Property="Margin"
-                Value="0"/>
+                Value="0" />
 
         <Setter Property="IsEditable"
                 Value="True" />
         <Setter Property="IsTextSearchEnabled"
                 Value="True" />
         <Setter Property="Height"
-                Value="25"/>
+                Value="25" />
     </Style>
 
     <!--A Style that affects all TextBox-->
@@ -64,6 +65,44 @@
                         Value="3" />
             </Style>
         </Style.Resources>
+    </Style>
+
+    <Style x:Key="TextBoxWithIconStyle"
+           TargetType="TextBox">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="TextBox">
+                    <Border Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="3">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+
+                            <!-- Icon -->
+                            <Image Height="15"
+                                   HorizontalAlignment="Left"
+                                   Margin="3 0 0 0">
+                                <Image.Source>
+                                    <BitmapImage UriSource="../../Image/clock.png" />
+                                </Image.Source>
+                            </Image>
+
+                            <!-- ScrollViewer is necessary for proper text editing -->
+                            <ScrollViewer Grid.Column="1"
+                                          x:Name="PART_ContentHost"
+                                          Margin="3,0,8,0"
+                                          VerticalAlignment="Center"/>
+
+
+                        </Grid>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
     </Style>
 
     <Style TargetType="Image"
