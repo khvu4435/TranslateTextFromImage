@@ -186,7 +186,8 @@
 
             <Button Grid.Row="7"
                     x:Name="btnAutoTranslate"
-                    ToolTip="Automatic translate text from image from the previous selected range">
+                    ToolTip="Automatic translate text from image from the previous selected range"
+                    Click="btnAutoTranslate_Click">
 
                 <Image Width="20"
                        Height="20">
@@ -237,38 +238,44 @@
 
             <Grid Grid.Row="1">
                 <TextBox x:Name="tbxFrom" />
-                <Label x:Name="lblUsageData" Content="1,000,000 / 2,000,000"
+                <Label x:Name="lblUsageData"
+                       Content="1,000,000 / 2,000,000"
                        Foreground="Gray"
                        Opacity="0.5"
                        FontStyle="Italic"
                        FontWeight="Bold"
                        HorizontalAlignment="Right"
-                       VerticalAlignment="Bottom"/>
+                       VerticalAlignment="Bottom" />
             </Grid>
-            <Grid Grid.Row="1"
+            
+            <Grid x:Name="gridAutoTranslate" Grid.Row="1"
                   Grid.RowSpan="2"
                   HorizontalAlignment="Left"
                   VerticalAlignment="Center"
                   Margin="20 0 0 0"
-                  Panel.ZIndex="1">
+                  Panel.ZIndex="1"
+                  Visibility="Collapsed">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
 
-                <TextBox Grid.Row="0"
-                         Width="55"
+                <TextBox x:Name="tbxTimeAuto"
+                         Grid.Row="0"
+                         IsEnabled="True"
+                         Width="64"
                          Height="25"
                          ScrollViewer.HorizontalScrollBarVisibility="Hidden"
                          ScrollViewer.VerticalScrollBarVisibility="Hidden"
                          BorderThickness="0"
                          Text="1"
-                         MaxLength="2"
                          FontSize="16"
                          HorizontalContentAlignment="Left"
                          VerticalContentAlignment="Center"
-                         Style="{StaticResource TextBoxWithIconStyle}">
+                         Style="{StaticResource TextBoxWithIconStyle}"
+                         PreviewKeyDown="tbxTimeAuto_PreviewKeyDown"
+                         LostFocus="tbxTimeAuto_LostFocus">
                     <TextBox.Effect>
                         <DropShadowEffect BlurRadius="5"
                                           ShadowDepth="3"
@@ -277,8 +284,11 @@
                     </TextBox.Effect>
                 </TextBox>
 
-                <Button Grid.Column="1"
-                        Margin="3">
+                <Button x:Name="btnStartAuto"
+                        Grid.Column="1"
+                        Margin="3"
+                        Click="btnStartAuto_Click"
+                        IsEnabled="True">
                     <Button.Effect>
                         <DropShadowEffect BlurRadius="5"
                                           ShadowDepth="3"
@@ -287,14 +297,17 @@
                     </Button.Effect>
                     <Image Height="15">
                         <Image.Source>
-                            <BitmapImage UriSource="../Image/caret-arrow-up.png" 
-                                         Rotation="Rotate90"/>
+                            <BitmapImage UriSource="../Image/caret-arrow-up.png"
+                                         Rotation="Rotate90" />
                         </Image.Source>
                     </Image>
                 </Button>
 
-                <Button Grid.Column="2"
-                        Margin="3">
+                <Button x:Name="btnPauseAuto"
+                        Grid.Column="2"
+                        Margin="3"
+                        Click="btnPauseAuto_Click"
+                        IsEnabled="false">
                     <Button.Effect>
                         <DropShadowEffect BlurRadius="5"
                                           ShadowDepth="3"
@@ -307,14 +320,14 @@
                         </Image.Source>
                     </Image>
                 </Button>
-                
-                
+
+
 
             </Grid>
             <TextBox Grid.Row="2"
                      x:Name="tbxTo"
                      IsReadOnly="true"
-                     Panel.ZIndex="0"/>
+                     Panel.ZIndex="0" />
         </Grid>
 
     </Grid>

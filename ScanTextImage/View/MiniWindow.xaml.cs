@@ -1,4 +1,5 @@
-﻿using ScanTextImage.ConstData;
+﻿using OpenCvSharp.XPhoto;
+using ScanTextImage.ConstData;
 using ScanTextImage.Interface;
 using ScanTextImage.Model;
 using ScanTextImage.View.Command;
@@ -9,6 +10,7 @@ using System.Drawing;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -35,6 +37,13 @@ namespace ScanTextImage.View
 
         private bool isCollapse = false;
         private double rotationAngle = 0;
+
+        private bool isStartAutoTranslate = false;
+        private bool isAutoGridCollpase = true;
+        private double delayTimeTranslate = 5000;
+        private CancellationTokenSource cancellationTokenSource = null;
+
+        private string preText = string.Empty;
 
         public MiniWindow(INavigationWindowService navigationWindowService,
             IScreenshotService screenshotServie,
@@ -65,6 +74,9 @@ namespace ScanTextImage.View
             int currUsaged = _saveDataService.GetCurrentUsageData();
             Log.Information("current usaged from local: " + currUsaged);
             translateService_displayUsageEvent(currUsaged); // display usaged
+
+            //set auto time data
+            tbxTimeAuto.Text = String.Format("{0:0.#}", (delayTimeTranslate / 1000));
 
             LoadListDataSaveFile(0);
             LoadLanguageTranslateList();
@@ -186,6 +198,8 @@ namespace ScanTextImage.View
         private void btnCloseMiniWindow_Click(object sender, RoutedEventArgs e)
         {
             _navigationWindowService.ShowWindow<MainWindow>();
+            // dispose the background auto translate
+            StopAutoTranslate();
             this.Close();
         }
 
@@ -201,13 +215,14 @@ namespace ScanTextImage.View
             {
                 this.Width = ConstData.Const.miniCollapseWidth;
                 this.Height = ConstData.Const.miniCollapseHeight;
+                this.ResizeMode = ResizeMode.NoResize;
                 isCollapse = true;
             }
             else
             {
                 this.Width = ConstData.Const.miniWidth;
                 this.Height = ConstData.Const.miniHeight;
-
+                this.ResizeMode = ResizeMode.CanResizeWithGrip;
                 isCollapse = false;
             }
 
@@ -222,7 +237,7 @@ namespace ScanTextImage.View
             rotateBitmapImage.EndInit();
 
             imgBtnCollapse.Source = rotateBitmapImage;
-
+            StopAutoTranslate();
             e.Handled = true;
 
         }
@@ -305,7 +320,7 @@ namespace ScanTextImage.View
             Log.Information("End translate text");
         }
 
-        private void btnTranslateImage_Click(object sender, RoutedEventArgs e)
+        private async void btnTranslateImage_Click(object sender, RoutedEventArgs e)
         {
             Log.Information("Start translate image");
             try
@@ -320,20 +335,11 @@ namespace ScanTextImage.View
                 }
                 else
                 {
-                    int scaledX = saveData.selectedRangeSave.scaledX;
-                    int scaledY = saveData.selectedRangeSave.scaledY;
-                    int scaledWidth = saveData.selectedRangeSave.Width;
-                    int scaledHeight = saveData.selectedRangeSave.Height;
-
-                    // get full screen image
-                    var fullscreen = _screenshotService.CaptureScreen();
-
-                    // crop image based on the selected range
-                    Int32Rect selectedRegion = new Int32Rect(scaledX, scaledY, scaledWidth, scaledHeight);
-                    var imgCrop = new CroppedBitmap(fullscreen, selectedRegion);
+                    CroppedBitmap imgCrop = GetImgFromPreSelection();
 
                     // get text from image and translate it
-                    ExtractTextFromImage(imgCrop);
+                    tbxFrom.Text = ExtractTextFromImage(imgCrop);
+                    await TranslateText(tbxFrom.Text);
                 }
 
 
@@ -348,6 +354,22 @@ namespace ScanTextImage.View
             Log.Information("End translate image");
         }
 
+        private CroppedBitmap GetImgFromPreSelection()
+        {
+            int scaledX = saveData.selectedRangeSave.scaledX;
+            int scaledY = saveData.selectedRangeSave.scaledY;
+            int scaledWidth = saveData.selectedRangeSave.Width;
+            int scaledHeight = saveData.selectedRangeSave.Height;
+
+            // get full screen image
+            var fullscreen = _screenshotService.CaptureScreen();
+
+            // crop image based on the selected range
+            Int32Rect selectedRegion = new Int32Rect(scaledX, scaledY, scaledWidth, scaledHeight);
+            var imgCrop = new CroppedBitmap(fullscreen, selectedRegion);
+            return imgCrop;
+        }
+
         private void btnClear_Click(object sender, RoutedEventArgs e)
         {
             Log.Information("Start clear text");
@@ -357,11 +379,12 @@ namespace ScanTextImage.View
         }
 
 
-        private void _captureService_onScreenTaken(CroppedBitmap img)
+        private async void _captureService_onScreenTaken(CroppedBitmap img)
         {
             try
             {
-                ExtractTextFromImage(img);
+                tbxFrom.Text = ExtractTextFromImage(img);
+                await TranslateText(tbxFrom.Text);
             }
             catch (Exception ex)
             {
@@ -476,7 +499,7 @@ namespace ScanTextImage.View
                 {
                     var match = Regex.Match(command.Name, ConstData.Const.regexNameLoadSaveCommand);
                     int index = Convert.ToInt32(match.Groups["numberLoad"].Value);
-                    
+
                     index--;
 
                     Log.Information("index of load data selected");
@@ -499,7 +522,7 @@ namespace ScanTextImage.View
 
         #endregion Command Binding
 
-        private async void ExtractTextFromImage(CroppedBitmap croppedBitmap)
+        private string ExtractTextFromImage(CroppedBitmap croppedBitmap)
         {
             try
             {
@@ -507,21 +530,20 @@ namespace ScanTextImage.View
                 {
                     Log.Warning("Language code is not exist");
                     MessageBox.Show("Language code is not exist", "Invalid language", MessageBoxButton.OK, MessageBoxImage.Error);
-                    return;
+                    return string.Empty;
                 }
 
                 var bitmapSrc = croppedBitmap as BitmapSource;
                 if (bitmapSrc == null)
                 {
                     Log.Warning("Bitmap source is null");
-                    return;
+                    return string.Empty;
                 }
 
                 var bitmap = ConvertToBitmap(bitmapSrc);
 
                 var textFrom = _tesseractService.ExtractTextFromImage(bitmap, saveData.languageTranslateFrom.LangCode);
-                tbxFrom.Text = textFrom;
-                await TranslateText(textFrom);
+                return textFrom;
             }
             catch (Exception ex)
             {
@@ -581,5 +603,247 @@ namespace ScanTextImage.View
                 MessageBox.Show("There is some problem: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+
+        #region Auto Translate
+        private void btnAutoTranslate_Click(object sender, RoutedEventArgs e)
+        {
+            Log.Information("start btnAutoTranslate_Click");
+            try
+            {
+                if (isAutoGridCollpase)
+                {
+                    gridAutoTranslate.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    gridAutoTranslate.Visibility = Visibility.Collapsed;
+                }
+                isAutoGridCollpase = !isAutoGridCollpase;
+
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Error auto translate");
+                MessageBox.Show("Error auto translate: " + ex.Message, "Errpr auto translate", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+            Log.Information("end btnAutoTranslate_Click");
+        }
+
+        #region Behavious time deplay 
+        private void tbxTimeAuto_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            Log.Information("Start tbxTimeAuto_PreviewKeyDown");
+            try
+            {
+                // submit data if pressed enter
+                if (e.Key == Key.Enter)
+                {
+                    Log.Information("pressed enter");
+                    SetDelayTimeTranslate();
+
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Error whem enter the time delay translate");
+                MessageBox.Show("Error when enter time deplay translate, " + ex.Message, "Error Input Data", MessageBoxButton.OK, MessageBoxImage.Error);
+                tbxTimeAuto.Text = String.Format("{0:0.#}", (delayTimeTranslate / 1000));
+                return;
+            }
+            Log.Information("end tbxTimeAuto_PreviewKeyDown");
+        }
+
+        private void tbxTimeAuto_LostFocus(object sender, RoutedEventArgs e)
+        {
+            Log.Information("Start tbxTimeAuto_LostFocus");
+            try
+            {
+                SetDelayTimeTranslate();
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Error whem enter the time delay translate");
+                MessageBox.Show("Error when enter time deplay translate, " + ex.Message, "Error Input Data", MessageBoxButton.OK, MessageBoxImage.Error);
+                tbxTimeAuto.Text = (delayTimeTranslate / 1000).ToString("#.#");
+                return;
+            }
+            Log.Information("end tbxTimeAuto_LostFocus");
+        }
+
+        private void btnStartAuto_Click(object sender, RoutedEventArgs e)
+        {
+            Log.Information("start btnStartAuto_Click");
+            try
+            {
+                //set status enable is false to prevent change time during the time auto execute
+                tbxTimeAuto.IsEnabled = false;
+                // prevent click it again
+                btnStartAuto.IsEnabled = false;
+                btnPauseAuto.IsEnabled = true;
+                StartAutoTranslate();
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Error when click start auto translate");
+                MessageBox.Show("Error start auto traslate, " + ex.Message, "Error Start Auto Translate", MessageBoxButton.OK, MessageBoxImage.Error);
+                throw;
+            }
+            Log.Information("end btnStartAuto_Click");
+        }
+
+        private void btnPauseAuto_Click(object sender, RoutedEventArgs e)
+        {
+            Log.Information("start btnPauseAuto_Click");
+            try
+            {
+                //set status enable is true
+                tbxTimeAuto.IsEnabled = true;
+                btnStartAuto.IsEnabled = true; // enable start auto translate
+                btnPauseAuto.IsEnabled = false; // set disable pause
+                StopAutoTranslate(); // stop auto translate
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Error when click pause auto translate");
+                MessageBox.Show("Error pause auto traslate, " + ex.Message, "Error Pause Auto Translate", MessageBoxButton.OK, MessageBoxImage.Error);
+                throw;
+            }
+            Log.Information("end btnPauseAuto_Click");
+        }
+
+        private void SetDelayTimeTranslate()
+        {
+
+
+            var match = Regex.Match(tbxTimeAuto.Text, Const.regexTimeAutoTranslate);
+            if (!match.Success)
+            {
+                Log.Information("Not match the regex - back to the previous data: " + delayTimeTranslate);
+                tbxTimeAuto.Text = String.Format("{0:0.#}", (delayTimeTranslate / 1000));
+                return;
+            }
+
+            delayTimeTranslate = Convert.ToDouble(match.Groups["timeDelay"].Value) * 1000; // convert from second to milisecond
+            tbxTimeAuto.Text = String.Format("{0:0.#}", (delayTimeTranslate / 1000));
+        }
+
+        private async void StartAutoTranslate()
+        {
+
+            // prevent more loop create in thread
+            if(isStartAutoTranslate) { return; }
+
+            isStartAutoTranslate = true; // set flag
+            cancellationTokenSource = new CancellationTokenSource(); // create new resouces
+
+            try
+            {
+                await Task.Run(async () =>
+                {
+                    while (!cancellationTokenSource.Token.IsCancellationRequested)
+                    {
+                        try
+                        {
+                            string currText = preText;
+
+                            // get screent shot and process text in background
+                            await Application.Current.Dispatcher.InvokeAsync(() =>
+                            {
+                                Log.Information("Extract text from image");
+                                var cropImg = GetImgFromPreSelection();
+                                if (cropImg != null)
+                                {
+                                    Log.Information("Image cropped is not null");
+                                    // get text from image
+                                    currText = ExtractTextFromImage(cropImg);
+                                }
+                            });
+
+                            Log.Information("Current text from image " + currText);
+
+                            if (currText.Equals(preText, StringComparison.OrdinalIgnoreCase))
+                            {
+                                Log.Information("current text get from image and pre text is the same");
+                                await Task.Delay(Convert.ToInt32(delayTimeTranslate), cancellationTokenSource.Token);
+                                continue;
+                            }
+
+                            // set pre text with the curr text and translate it
+                            preText = currText;
+
+                            // set current text to text box
+                            await Application.Current.Dispatcher.InvokeAsync(async () =>
+                            {
+                                tbxFrom.Text = currText;
+                                await TranslateText(preText);
+                            });
+
+
+                            // deplay for the next translate
+                            await Task.Delay(Convert.ToInt32(delayTimeTranslate), cancellationTokenSource.Token);
+                        }
+                        catch (OperationCanceledException)
+                        {
+                            throw;
+                        }
+                        catch (Exception ex)
+                        {
+                            Log.Error(ex, "Error in auto translate cycle");
+                            // Log error but continue loop
+                            await Application.Current.Dispatcher.InvokeAsync(() =>
+                            {
+                                MessageBox.Show(
+                                    "Error in auto translate cycle: " + ex.Message,
+                                    "Error",
+                                    MessageBoxButton.OK,
+                                    MessageBoxImage.Error
+                                );
+                            });
+                            throw;
+                        }
+                    }
+                }, cancellationTokenSource.Token);
+            }
+            catch (OperationCanceledException)
+            {
+                StopAutoTranslate();
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Error in auto translate main loop");
+                await Application.Current.Dispatcher.InvokeAsync(() =>
+                {
+                    MessageBox.Show(
+                        "Error in auto translate main loop: " + ex.Message,
+                        "Error",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Error
+                    );
+                });
+            }
+            finally
+            {
+                StopAutoTranslate();
+            }
+
+
+        }
+
+        private void StopAutoTranslate()
+        {
+            // set flag to create new loop
+            isStartAutoTranslate = false;
+            if(cancellationTokenSource != null)
+            {
+                cancellationTokenSource.Cancel();
+                cancellationTokenSource.Dispose();
+                cancellationTokenSource = null;
+            }
+        }
+
+        #endregion
+
+        #endregion Auto Translate
     }
 }

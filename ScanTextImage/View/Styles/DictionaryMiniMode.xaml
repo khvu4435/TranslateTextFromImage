@@ -95,11 +95,23 @@
                             <ScrollViewer Grid.Column="1"
                                           x:Name="PART_ContentHost"
                                           Margin="3,0,8,0"
-                                          VerticalAlignment="Center"/>
+                                          VerticalAlignment="Center" />
 
 
                         </Grid>
                     </Border>
+
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsEnabled"
+                                 Value="False">
+                            <Setter Property="Background">
+                                <Setter.Value>
+                                    <SolidColorBrush Color="GhostWhite"
+                                                     Opacity="0.7" />
+                                </Setter.Value>
+                            </Setter>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

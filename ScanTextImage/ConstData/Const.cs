@@ -215,7 +215,7 @@ namespace ScanTextImage.ConstData
         public static readonly Double miniWidth = 658;
         public static readonly Double miniHeight = 253;
         public static readonly Double miniCollapseWidth = 26;
-        public static readonly Double miniCollapseHeight = 189;
+        public static readonly Double miniCollapseHeight = 215;
 
         public static readonly string tagZoomIn = "tagZoomIn";
         public static readonly string tagZoomOut = "tagZoomOut";
@@ -259,6 +259,6 @@ namespace ScanTextImage.ConstData
         public static readonly int maxCharacterInOneRequest= 50000;
 
         public static readonly string regexScalePercent = @"^(?<scalePercent>[01]?[0-9]?[0-9]|1[0-9][0-9]|200)(?:%*)$";
-        public static readonly string regexTimeAutoTranslate = @"^(([0-9](?:[\.\,][0-9]*)?|10(?:[\.\,]0*)?)[sS]*)$";
+        public static readonly string regexTimeAutoTranslate = @"^((?<timeDelay>0*[3-9](?:[\.\,][0-9]*)?|10(?:[\.\,]0*)?)[sS]*)$";
     }
 }
