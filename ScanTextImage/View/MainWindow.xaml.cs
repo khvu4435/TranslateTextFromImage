@@ -104,7 +104,7 @@ namespace ScanTextImage
             pasteBinding.Executed += PasteBinding_Executed;
             textFromImage.CommandBindings.Add(pasteBinding);
 
-            _translateService.displayUsageEvent += _translateService_displayUsageEvent;
+            //_translateService.displayUsageEvent += _translateService_displayUsageEvent;
 
             LoadCommandBinding();
             LoadMenuItems();

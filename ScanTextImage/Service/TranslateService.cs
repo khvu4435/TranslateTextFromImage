@@ -27,9 +27,9 @@ namespace ScanTextImage.Service
         private int numberCharaterUsed = 0;
         public event Action<int>? displayUsageEvent;
 
-        private readonly SaveDataService saveDataService;
+        private readonly ISaveDataService saveDataService;
 
-        public TranslateService(IAzureClientService azureClientService, IOptions<AzureTranslatorResource> optionsTranslator, IOptions<AzureResource> optionsResource, SaveDataService saveDataService)
+        public TranslateService(IAzureClientService azureClientService, IOptions<AzureTranslatorResource> optionsTranslator, IOptions<AzureResource> optionsResource, ISaveDataService saveDataService)
         {
             this.azureClientService = azureClientService;
             this.saveDataService = saveDataService;

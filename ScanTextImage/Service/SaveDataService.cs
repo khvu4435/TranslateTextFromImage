@@ -246,6 +246,21 @@ namespace ScanTextImage.Service
             {
                 Log.Information($"current usage: {numberCharacterUse}");
                 var path = ConstData.Const.pathUsageData;
+                var folderPath = Path.GetDirectoryName(path);
+
+                if(string.IsNullOrWhiteSpace(folderPath))
+                {
+                    Log.Warning("Folder path is empty");
+                    throw new ArgumentNullException(nameof(folderPath) + " is null");
+                }
+
+                // create a new folder if not exist
+                if(!Directory.Exists(folderPath))
+                {
+                    Log.Information(folderPath + " is not exist -> create new");
+                    Directory.CreateDirectory(folderPath);
+                }
+
                 var dic = new Dictionary<string, int>()
                 {
                     {"usage", numberCharacterUse}
@@ -253,7 +268,7 @@ namespace ScanTextImage.Service
 
                 var json = JsonConvert.SerializeObject(dic);
 
-                using (var file = new FileStream(path, FileMode.Create))
+                using (var file = new FileStream(path, FileMode.OpenOrCreate))
                 {
                     using (var sw = new StreamWriter(file))
                     {
@@ -291,6 +306,8 @@ namespace ScanTextImage.Service
                     return 0;
                 }
 
+                Log.Information("end GetCurrentUsageData");
+
                 return dic.Values.FirstOrDefault();
                 
             }
@@ -299,7 +316,6 @@ namespace ScanTextImage.Service
                 Log.Error(ex, "Error when get current usage");
                 throw;
             }
-            Log.Information("end GetCurrentUsageData");
         }
     }
 }
