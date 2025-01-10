@@ -258,7 +258,7 @@ namespace ScanTextImage.ConstData
         public static readonly int limitAzureTrasnlatorUsage = 2000000;
         public static readonly int maxCharacterInOneRequest= 50000;
 
-        public static readonly string regexScalePercent = @"^(?<scalePercent>[01]?[0-9]?[0-9]|1[0-9][0-9]|200)(?:%*)$";
+        public static readonly string regexScalePercent = @"^(?<scalePercent>[0-4]?[0-9]?[0-9]|4[0-9][0-9]|500)(?:%*)$";
         public static readonly string regexTimeAutoTranslate = @"^((?<timeDelay>0*[3-9](?:[\.\,][0-9]*)?|10(?:[\.\,]0*)?)[sS]*)$";
     }
 }

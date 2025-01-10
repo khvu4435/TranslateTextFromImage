@@ -27,13 +27,24 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <Grid Grid.Row="0">
-            <Image Name="screenshotImage"
-                   StretchDirection="Both"
-                   HorizontalAlignment="Center"
-                   VerticalAlignment="Center"
-                   RenderOptions.BitmapScalingMode="HighQuality"
-                   SnapsToDevicePixels="True">
-            </Image>
+            <Canvas x:Name="canvasImage"
+                    Background="Black"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Width="{Binding ActualWidth, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}"
+                    Height="{Binding ActualHeight, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}">
+                <Image Name="screenshotImage"
+                       StretchDirection="Both"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center"
+                       RenderOptions.BitmapScalingMode="HighQuality"
+                       SnapsToDevicePixels="True"
+                       MouseLeftButtonDown="screenshotImage_MouseLeftButtonDown"
+                       MouseLeftButtonUp="screenshotImage_MouseLeftButtonUp"
+                       MouseMove="screenshotImage_MouseMove">
+                </Image>
+            </Canvas>
+
         </Grid>
 
 
@@ -108,6 +119,30 @@
                            PreviewMouseDown="cbScale_PreviewMouseDown"
                            PreviewKeyDown="cbScale_PreviewKeyDown"
                            LostFocus="cbScale_LostFocus">
+                    <ComboBoxItem Tag="5"
+                                  Content="500%" />
+                    <ComboBoxItem Tag="4.75"
+                                  Content="475%" />
+                    <ComboBoxItem Tag="4.5"
+                                  Content="450%" />
+                    <ComboBoxItem Tag="4.25"
+                                  Content="425%" />
+                    <ComboBoxItem Tag="4"
+                                  Content="400%" />
+                    <ComboBoxItem Tag="3.75"
+                                  Content="375%" />
+                    <ComboBoxItem Tag="3.5"
+                                  Content="350%" />
+                    <ComboBoxItem Tag="3.25"
+                                  Content="325%" />
+                    <ComboBoxItem Tag="3"
+                                  Content="300%" />
+                    <ComboBoxItem Tag="2.75"
+                                  Content="275%" />
+                    <ComboBoxItem Tag="2.5"
+                                  Content="250%" />
+                    <ComboBoxItem Tag="2.25"
+                                  Content="225%" />
                     <ComboBoxItem Tag="2"
                                   Content="200%" />
                     <ComboBoxItem Tag="1.75"

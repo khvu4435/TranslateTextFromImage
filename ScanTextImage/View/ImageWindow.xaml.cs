@@ -29,7 +29,7 @@ namespace ScanTextImage.View
 
         private double scale = 1.0; // origin scale
         private double minScale = 0.5; // min scale
-        private double maxScale = 2.0; // max scale
+        private double maxScale = 5.0; // max scale
 
         private int rotationAngle = 0; // rotation angle of image
         private RotateTransform currRotation = null;
@@ -37,6 +37,9 @@ namespace ScanTextImage.View
 
         private bool dragStarted = false; // flag check if drag the thumb's slider
         private bool isSelected = false; // flag check is selected item
+
+        private bool isDragImage = false;
+        private Point lastPos;
 
         private ISaveDataService _saveDataService;
 
@@ -59,7 +62,16 @@ namespace ScanTextImage.View
             currScale = new ScaleTransform(scale, scale, screenshotImage.ActualWidth / 2, screenshotImage.ActualHeight / 2);
 
             DisplayLabelScalePercent();
+
+            this.Loaded += ImageWindow_Loaded;
         }
+
+        private void ImageWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            CenterImage();
+        }
+
+
 
         private void Window_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
         {
@@ -163,6 +175,12 @@ namespace ScanTextImage.View
 
             DisplayLabelScalePercent();
 
+            // center image
+            Dispatcher.BeginInvoke(DispatcherPriority.Loaded, new Action(() =>
+            {
+                CenterImage();
+            }));
+
             Log.Information("end Button Origin Scale clicked");
         }
 
@@ -254,6 +272,7 @@ namespace ScanTextImage.View
 
         private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
         {
+
             // make the image always in center of window
             screenshotImage.HorizontalAlignment = HorizontalAlignment.Center;
             screenshotImage.VerticalAlignment = VerticalAlignment.Center;
@@ -266,6 +285,13 @@ namespace ScanTextImage.View
                        new RotateTransform(rotationAngle, screenshotImage.ActualWidth  / 2, screenshotImage.ActualHeight / 2)
                     }
             };
+
+            // center image - make a delay that ensure actual height and widht has updated
+            Dispatcher.BeginInvoke(DispatcherPriority.Loaded, new Action(() =>
+            {
+                CenterImage();
+            }));
+
         }
 
         private void Window_PreviewMouseDown(object sender, MouseButtonEventArgs e)
@@ -415,5 +441,117 @@ namespace ScanTextImage.View
         }
 
 
+        #region Move Image inside window
+        private void screenshotImage_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+
+            try
+            {
+                isDragImage = true;
+                Image image = sender as Image;
+                if (image == null)
+                {
+                    Log.Warning("drag image is null");
+                    return;
+                }
+                lastPos = e.GetPosition(canvasImage);
+                image.CaptureMouse();
+                Mouse.OverrideCursor = Cursors.SizeAll;
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Error hold image to drag");
+                MessageBox.Show("Error hold image to drag, " + ex.Message, "Error Drag Image", MessageBoxButton.OK, MessageBoxImage.Error);
+                throw;
+            }
+        }
+
+        private void screenshotImage_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            try
+            {
+                isDragImage = false;
+                Image image = sender as Image;
+                if (image == null)
+                {
+                    Log.Warning("relase drag image is null");
+                    return;
+                }
+                image.ReleaseMouseCapture();
+                Mouse.OverrideCursor = Cursors.Arrow;
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Error relase drag image");
+                MessageBox.Show("Error relase drag image, " + ex.Message, "Error Drag Image", MessageBoxButton.OK, MessageBoxImage.Error);
+                throw;
+            }
+        }
+
+        private void screenshotImage_MouseMove(object sender, MouseEventArgs e)
+        {
+            try
+            {
+                if (!isDragImage) return;
+
+                Image image = sender as Image;
+                if (image == null)
+                {
+                    Log.Warning("relase drag image is null");
+                    return;
+                }
+                Point currPoint = e.GetPosition(canvasImage);
+
+                // cal offset
+                double deltaX = currPoint.X - lastPos.X;
+                double deltaY = currPoint.Y - lastPos.Y;
+                Log.Information("offset: " + deltaX + " - " + deltaY);
+
+                // get curr canvas pos
+                double left = Canvas.GetLeft(image);
+                double top = Canvas.GetTop(image);
+
+                // handle initial pos if not set
+                if (double.IsNaN(left)) left = 0;
+                if (double.IsNaN(top)) top = 0;
+                Log.Information("curr canvas pos: " + left + " - " + top);
+
+                // cal new pos
+                double newLeft = left + deltaX;
+                double newTop = top + deltaY;
+
+                // boundary check to keep image inside canvas
+                newLeft = Math.Max(0,Math.Min(newLeft, canvasImage.ActualWidth - image.ActualWidth));
+                newTop = Math.Max(0, Math.Min(newTop, canvasImage.ActualHeight - image.ActualHeight));
+
+                Log.Information("new canvas pos: " + newLeft + " - " + newTop);
+
+                // update image pos
+                Canvas.SetLeft(image, newLeft);
+                Canvas.SetTop(image, newTop);
+
+                lastPos = currPoint;
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Error when trying to move image");
+                MessageBox.Show("Error when trying to move image, " + ex.Message, "Error Drag Image", MessageBoxButton.OK, MessageBoxImage.Error);
+                throw;
+            }
+        }
+
+
+        #endregion Move Image inside window
+
+        private void CenterImage()
+        {
+            double left = (canvasImage.ActualWidth - screenshotImage.ActualWidth) / 2;
+            double top = (canvasImage.ActualHeight - screenshotImage.ActualHeight) / 2;
+            Log.Information("set image in the center: " + left + " - " + top);
+
+            // Set image position
+            Canvas.SetLeft(screenshotImage, left);
+            Canvas.SetTop(screenshotImage, top);
+        }
     }
 }

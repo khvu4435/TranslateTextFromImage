@@ -50,7 +50,7 @@
         <Setter Property="Minimum"
                 Value="0.1" />
         <Setter Property="Maximum"
-                Value="2.0" />
+                Value="5.0" />
         <Setter Property="Value"
                 Value="1" />
         <Setter Property="IsMoveToPointEnabled"

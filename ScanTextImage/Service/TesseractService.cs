@@ -57,8 +57,8 @@ namespace ScanTextImage.Service
 
             // calculate histogram to analyze intensity distribution
             using var hist = new Mat();
-            int[] histSize = { 256 };
-            Rangef[] ranges = { new Rangef(0, 256) };
+            int[] histSize = { 256 }; // 256 -> gray scales have 256 intensity levels
+            Rangef[] ranges = { new Rangef(0, 256) }; // 0 to 256 -> cover all possible pixel values
             Cv2.CalcHist(new Mat[] { gray }, new int[] { 0 }, null, hist, 1, histSize, ranges);
 
             // find the two highest peaks in histogram
@@ -76,15 +76,22 @@ namespace ScanTextImage.Service
                 Log.Information("Processing light text on dark background");
 
                 // apply CLAHE (Contrast Limited Adaptive Histogram Equalization)
+                // clipLimit = 3.0 -> controls contrast enhancement -> higher values = more contrast but will increase noise
+                // size 8x8 -> Grid size for local histogram equalization. 8x8 is a common choice balancing local detail vs processing time
                 using var clahe = Cv2.CreateCLAHE(3.0, new OpenCvSharp.Size(8, 8));
                 using var claheResult = new Mat();
                 clahe.Apply(gray, claheResult);
 
                 // bilateral filtering to reduce noise white preserving edges
                 using var bilateral = new Mat();
+                // 9: Diameter of pixel neighborhood - larger values smooth more but are slower
+                // 75: Color sigma - controls how much different colors are mixed
+                // 75: Space sigma - controls how much distant pixels influence each other
                 Cv2.BilateralFilter(claheResult, bilateral, 9, 75, 75);
 
                 // otsu's thresholding with inverse binary
+                // 0: Initial threshold - ignored when using Otsu's method
+                // 255: Maximum value for pixels that pass the threshold
                 double ostuThresh = Cv2.Threshold(bilateral, binary, 0, 255, ThresholdTypes.Binary | ThresholdTypes.Otsu);
                 Cv2.BitwiseNot(binary, binary);
             }
@@ -96,11 +103,17 @@ namespace ScanTextImage.Service
                 using var bilateral = new Mat();
                 Cv2.BilateralFilter(gray, bilateral, 9, 75, 75);
 
+                // 255: Maximum value for pixels that pass the threshold
+                // 11: Block size - must be odd. Larger values consider more surrounding pixels
+                // 2: C constant subtracted from mean. Adjusts how aggressively to threshold
                 Cv2.AdaptiveThreshold(bilateral, binary, 255, AdaptiveThresholdTypes.GaussianC, ThresholdTypes.Binary, 11, 2);
             }
 
             Log.Information("Denoise");
             using var denoise = new Mat();
+            // 10: Filter strength (h) - higher values remove more noise but might blur details
+            // 7: Template window size - area used to compute weights
+            // 21: Search window size - area to search for similar pixels
             Cv2.FastNlMeansDenoising(binary, denoise, 10, 7, 21);
 
             Log.Information("Dilate to enhance text connectivity");
