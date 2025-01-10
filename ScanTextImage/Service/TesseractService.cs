@@ -55,28 +55,61 @@ namespace ScanTextImage.Service
             double mean = Cv2.Mean(gray).Val0;
             bool isDarkBackgrond = mean < 127;
 
+            // calculate histogram to analyze intensity distribution
+            using var hist = new Mat();
+            int[] histSize = { 256 };
+            Rangef[] ranges = { new Rangef(0, 256) };
+            Cv2.CalcHist(new Mat[] { gray }, new int[] { 0 }, null, hist, 1, histSize, ranges);
+
+            // find the two highest peaks in histogram
+            float[] histData = new float[256];
+            hist.GetArray(out histData);
+            var sortdPeaks = histData.Select((value, index) => new { Value = value, Index = index })
+                .OrderByDescending(x => x.Value)
+                .Take(2)
+                .ToList();
+
+            using var binary = new Mat();
+
             if (isDarkBackgrond)
             {
-                Log.Information("Light text in dark background");
-                // invert the image for light text on dark background
+                Log.Information("Processing light text on dark background");
 
-                Cv2.BitwiseNot(gray, gray);
+                // apply CLAHE (Contrast Limited Adaptive Histogram Equalization)
+                using var clahe = Cv2.CreateCLAHE(3.0, new OpenCvSharp.Size(8, 8));
+                using var claheResult = new Mat();
+                clahe.Apply(gray, claheResult);
+
+                // bilateral filtering to reduce noise white preserving edges
+                using var bilateral = new Mat();
+                Cv2.BilateralFilter(claheResult, bilateral, 9, 75, 75);
+
+                // otsu's thresholding with inverse binary
+                double ostuThresh = Cv2.Threshold(bilateral, binary, 0, 255, ThresholdTypes.Binary | ThresholdTypes.Otsu);
+                Cv2.BitwiseNot(binary, binary);
             }
+            else
+            {
+                Log.Information("Processing dark text on light background");
 
-            Log.Information("Apply adaptive thresholding");
-            using var binary = new Mat();
-            Cv2.AdaptiveThreshold(gray, binary, 255, AdaptiveThresholdTypes.GaussianC, ThresholdTypes.Binary, 11, 2);
+                // standard processing for dark text
+                using var bilateral = new Mat();
+                Cv2.BilateralFilter(gray, bilateral, 9, 75, 75);
+
+                Cv2.AdaptiveThreshold(bilateral, binary, 255, AdaptiveThresholdTypes.GaussianC, ThresholdTypes.Binary, 11, 2);
+            }
 
             Log.Information("Denoise");
             using var denoise = new Mat();
-            Cv2.FastNlMeansDenoising(binary, denoise);
+            Cv2.FastNlMeansDenoising(binary, denoise, 10, 7, 21);
 
-            Log.Information("Improve contrast");
-            using var contrast = new Mat();
-            Cv2.EqualizeHist(denoise, contrast);
+            Log.Information("Dilate to enhance text connectivity");
+            var kernel = Cv2.GetStructuringElement(MorphShapes.Rect, new OpenCvSharp.Size(2, 2));
+            using var dilated = new Mat();
+            Cv2.Dilate(denoise, dilated, kernel, iterations: 1);
 
             Log.Information("Convert from Mat to Bitmap");
-            using var processedBitmap = MatToBitmap(contrast);
+            using var processedBitmap = MatToBitmap(dilated);
 
             using (var engine = new TesseractEngine(tessdataPath, langCode, EngineMode.Default))
             {
@@ -253,7 +286,7 @@ namespace ScanTextImage.Service
                     throw new FileNotFoundException("not found file");
                 }
 
-                foreach(var file in deleteFiles)
+                foreach (var file in deleteFiles)
                 {
                     var path = Path.Combine(tessdataPath, file + ".traineddata");
                     if (!File.Exists(path))
@@ -310,7 +343,7 @@ namespace ScanTextImage.Service
                     }
 
                     using HttpResponseMessage response = await httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
-                    if(!response.IsSuccessStatusCode)
+                    if (!response.IsSuccessStatusCode)
                     {
                         Log.Warning("Downloading file is not success " + response.StatusCode);
                         item.progressStatus = "Failed to download file";
@@ -330,19 +363,19 @@ namespace ScanTextImage.Service
 
                     Log.Information("size of file - " + totalBytes);
 
-                    using (Stream contentStream = await response.Content.ReadAsStreamAsync(), 
+                    using (Stream contentStream = await response.Content.ReadAsStreamAsync(),
                         fileStream = new FileStream(localFilePath, System.IO.FileMode.Create, FileAccess.Write, FileShare.None))
                     {
                         long totalRead = 0;
                         byte[] buffer = new byte[8192];
                         int read;
-                        
-                        while((read = await contentStream.ReadAsync(buffer)) > 0)
+
+                        while ((read = await contentStream.ReadAsync(buffer)) > 0)
                         {
                             await fileStream.WriteAsync(buffer.AsMemory(0, read));
                             totalRead += read;
 
-                            if(totalBytes.HasValue)
+                            if (totalBytes.HasValue)
                             {
                                 var progress = (double)totalRead / totalBytes * 100;
                                 item.progressPercent = progress.Value;
