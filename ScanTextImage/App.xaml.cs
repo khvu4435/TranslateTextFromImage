@@ -129,7 +129,6 @@ namespace ScanTextImage
             serviceCollection.AddScoped<ITesseractService, TesseractService>();
             serviceCollection.AddScoped<ITranslateService, TranslateService>();
             serviceCollection.AddScoped<ISaveDataService, SaveDataService>();
-            serviceCollection.AddScoped<IConfigService, ConfigSerivce>();
             serviceCollection.AddScoped<ICaptureService, CaptureService>();
             serviceCollection.AddScoped<INavigationWindowService, NavigationWindowService>();
             serviceCollection.AddScoped<IAzureClientService, AzureClientService>();

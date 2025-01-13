@@ -32,7 +32,6 @@ namespace ScanTextImage.View
     public partial class ConfigWindow : Window
     {
         #region Service
-        private IConfigService _configService;
         private ISaveDataService _saveDataService;
         #endregion
 
@@ -45,11 +44,10 @@ namespace ScanTextImage.View
         private TextBox currFocusTextBox = null;
 
 
-        public ConfigWindow(IConfigService configService, ISaveDataService saveDataService, MainWindow mainWindow)
+        public ConfigWindow(ISaveDataService saveDataService, MainWindow mainWindow)
         {
             InitializeComponent();
 
-            _configService = configService;
             _saveDataService = saveDataService;
             _mainWindow = mainWindow;
 

@@ -71,7 +71,6 @@ namespace ScanTextImage
         private ITesseractService _tesseractService;
         private ITranslateService _translateService;
         private ISaveDataService _saveDataService;
-        private IConfigService _configService;
         private ICaptureService _captureService;
         private INavigationWindowService _navigationWindowService;
 
@@ -79,7 +78,6 @@ namespace ScanTextImage
             ITesseractService tesseractService,
             ITranslateService translateService,
             ISaveDataService saveDataService,
-            IConfigService configService,
             ICaptureService captureService,
             INavigationWindowService navigationWindowService)
         {
@@ -89,7 +87,6 @@ namespace ScanTextImage
             _tesseractService = tesseractService;
             _translateService = translateService;
             _saveDataService = saveDataService;
-            _configService = configService;
             _captureService = captureService;
             _navigationWindowService = navigationWindowService;
 
@@ -556,7 +553,7 @@ namespace ScanTextImage
         private void clearBtn_Click(object sender, RoutedEventArgs e)
         {
             Log.Information("start clearBtn_Click");
-            croppedBitmap = new();
+            croppedBitmap = null;
 
             textFromImage.Text = string.Empty;
             textTranslateTo.Text = string.Empty;
@@ -671,7 +668,7 @@ namespace ScanTextImage
             try
             {
                 Log.Information("start configBtn_Click");
-                ConfigWindow configWindow = new ConfigWindow(_configService, _saveDataService, this);
+                ConfigWindow configWindow = new ConfigWindow(_saveDataService, this);
                 configWindow.ShowDialog();
                 Log.Information("end configBtn_Click");
             }
