@@ -243,9 +243,9 @@ namespace ScanTextImage.ConstData
 
         public static readonly Dictionary<List<string>, string> extenstionFilePair = new Dictionary<List<string>, string>
         {
-            {new List<string> {".gif"}, "gif"} ,
-            {new List<string> {".jpg", ".jpeg",".jfif",".pjeg",".jpp"}, "jpeg"} ,
             {new List<string> {".png"}, "png"} ,
+            {new List<string> {".jpg", ".jpeg",".jfif",".pjeg",".jpp"}, "jpeg"} ,
+            {new List<string> {".gif"}, "gif"} ,
             {new List<string> {".bmp"}, "bmp"} ,
             {new List<string> {".tiff"}, "tiff"}
         };
@@ -256,7 +256,7 @@ namespace ScanTextImage.ConstData
 
         public static readonly string azureTranslatorNameUsage = "TextTranslation";
         public static readonly int limitAzureTrasnlatorUsage = 2000000;
-        public static readonly int maxCharacterInOneRequest= 50000;
+        public static readonly int maxCharacterInOneRequest = 50000;
 
         public static readonly string regexScalePercent = @"^(?<scalePercent>[0-4]?[0-9]?[0-9]|4[0-9][0-9]|500)(?:%*)$";
         public static readonly string regexTimeAutoTranslate = @"^((?<timeDelay>0*[3-9](?:[\.\,][0-9]*)?|10(?:[\.\,]0*)?)[sS]*)$";

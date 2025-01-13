@@ -28,11 +28,15 @@
         </Grid.RowDefinitions>
         <Grid Grid.Row="0">
             <Canvas x:Name="canvasImage"
-                    Background="Black"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
-                    Width="{Binding ActualWidth, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}"
-                    Height="{Binding ActualHeight, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}">
+                    Width="{Binding ActualWidth, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Grid}}}"
+                    Height="{Binding ActualHeight, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Grid}}}">
+
+                <Canvas.Background>
+                    <SolidColorBrush Color="Black"
+                                     Opacity="0.8" />
+                </Canvas.Background>
                 <Image Name="screenshotImage"
                        StretchDirection="Both"
                        HorizontalAlignment="Center"
@@ -65,17 +69,67 @@
                 <ColumnDefinition Width="650" />
             </Grid.ColumnDefinitions>
 
-            <Button Grid.Column="0"
-                    x:Name="btnSaveAs"
-                    Click="btnSaveAs_Click">
-                <Image Style="{StaticResource styleImageBtn}">
-                    <Image.Source>
-                        <BitmapImage UriSource="../Image/down-arrow.png"
-                                     DecodePixelWidth="24"
-                                     DecodePixelHeight="24" />
-                    </Image.Source>
-                </Image>
-            </Button>
+            <Grid Grid.Column="0">
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <Button  Grid.Column="0"
+                         x:Name="btnSaveAs"
+                         Click="btnSaveAs_Click">
+                    <Image Style="{StaticResource styleImageBtn}">
+                        <Image.Source>
+                            <BitmapImage UriSource="../Image/down-arrow.png"
+                                         DecodePixelWidth="24"
+                                         DecodePixelHeight="24" />
+                        </Image.Source>
+                    </Image>
+                </Button>
+
+                <Line Grid.Column="0"
+                      X1="50"
+                      Y1="0"
+                      X2="50"
+                      Y2="30"
+                      Stroke="Gray"
+                      StrokeThickness="1"
+                      VerticalAlignment="Center"
+                      HorizontalAlignment="Left"
+                      StrokeStartLineCap="Round"
+                      StrokeEndLineCap="Round" />
+
+
+                <Grid Grid.Column="1"
+                      Margin="5 0 0 0">
+
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <Image Grid.Column="0"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
+                           IsEnabled="False"
+                           Style="{StaticResource styleImageBtn}"
+                           Source="../Image/crop.png">
+                    </Image>
+
+                    <Label x:Name="lblSizeImage"
+                           Grid.Column="1"
+                           Content="0 x 0"
+                           HorizontalContentAlignment="Center"
+                           VerticalContentAlignment="Center"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
+                           FontSize="13"/>
+                </Grid>
+
+            </Grid>
+
+
 
             <Grid Grid.Column="2">
 

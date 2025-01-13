@@ -131,7 +131,7 @@ namespace ScanTextImage.Service
                 //engine.SetVariable("tessedit_pageseg_mode", "3"); // Set PSM mode to 3
                 engine.DefaultPageSegMode = PageSegMode.SingleBlock;
 
-                using (var pix = PixConverter.ToPix(bitmap))
+                using (var pix = PixConverter.ToPix(processedBitmap))
                 {
                     using (var page = engine.Process(pix))
                     {

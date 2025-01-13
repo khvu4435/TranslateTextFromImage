@@ -56,6 +56,7 @@ namespace ScanTextImage.View
             if (croppedBitmap != null)
             {
                 screenshotImage.Source = croppedBitmap;
+                lblSizeImage.Content = croppedBitmap.PixelWidth + " x " + croppedBitmap.PixelHeight;
             }
 
             currRotation = new RotateTransform(rotationAngle, screenshotImage.RenderSize.Width / 2, screenshotImage.ActualHeight / 2);
@@ -225,6 +226,7 @@ namespace ScanTextImage.View
                         filterFile += filter;
                     }
                 }
+                filterFile += "|All files|*.*";
 
                 Log.Information($"Filter file: {filterFile}");
 
@@ -521,8 +523,8 @@ namespace ScanTextImage.View
                 double newTop = top + deltaY;
 
                 // boundary check to keep image inside canvas
-                newLeft = Math.Max(0,Math.Min(newLeft, canvasImage.ActualWidth - image.ActualWidth));
-                newTop = Math.Max(0, Math.Min(newTop, canvasImage.ActualHeight - image.ActualHeight));
+                newLeft = Math.Max(0 - (image.ActualWidth / 2), Math.Min(newLeft, canvasImage.ActualWidth - (image.ActualWidth/2)));
+                newTop = Math.Max(0 - (image.ActualHeight / 2), Math.Min(newTop, canvasImage.ActualHeight - (image.ActualHeight/2)));
 
                 Log.Information("new canvas pos: " + newLeft + " - " + newTop);
 
