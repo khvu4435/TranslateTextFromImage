@@ -1,4 +1,4 @@
-name: Relases app
+name: Releases app
 
 on:
   workflow_dispatch:
@@ -11,14 +11,16 @@ env:
 
 jobs:
   deploy:
-    name: deploy wpf app
+    name: deploy WPF app
     runs-on: window-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4.2.2
+        uses: actions/checkout@v2
       
       - name : Setup dotnet
-        uses: actions/setup-dotnet@v4.2.0
+        uses: actions/setup-dotnet@v1
+        with: 
+          dotnet-version: 3.1.x
 
       - name: Run scripts build and publish
         run: |
