@@ -1,7 +1,38 @@
-name: Release
+name: Relases app
 
 on:
   workflow_dispatch:
   push:
     tags:
       - 'v*' # push event match the regex v* i.e. v1.0, v1.0.1    
+
+env: 
+  PROJECT_PATH: ScanTextImage/ScanTextImage.csproj
+
+jobs:
+  deploy:
+    name: deploy wpf app
+    run-on: window-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4.2.2
+      
+      - name : Setup dotnet
+        uses: actions/setup-dotnet@v4.2.0
+
+      - name: Run scripts build and publish
+        run: |
+          dotnet restore ${{env.PROJECT_PATH}}
+          dotnet run build ${{env.PROJECT_PATH}} -c Release --no-restore
+          dotnet publish ${{env.PROJECT_PATH}} -c Release --self-contained -r win-x64 -p:PublishSingleFile=true --no-build
+
+      - name: Create release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, do not need to create own token
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          body: TODO
+          draft: true
+          prerelease: false

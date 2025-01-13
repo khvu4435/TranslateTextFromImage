@@ -47,7 +47,6 @@ namespace ScanTextImage.View
         {
             InitializeComponent();
 
-
             this.Owner = App.Current.MainWindow;
             this.WindowStartupLocation = WindowStartupLocation.CenterOwner;
 
