@@ -1,0 +1,7 @@
+name: Release
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - 'v*' # push event match the regex v* i.e. v1.0, v1.0.1    
