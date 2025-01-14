@@ -34,21 +34,21 @@ jobs:
       - name: test
         run: dir -s
       
-      # - name: Create release
-      #   id: create_release
-      #   uses: actions/create-release@v1
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, do not need to create own token
-      #   with:
-      #     tag_name: ${{ github.ref }}
-      #     release_name: Release ${{ github.ref }}
-      #     body: TODO
-      #     draft: true
-      #     prerelease: false
+      - name: Create release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, do not need to create own token
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          body: TODO
+          draft: true
+          prerelease: false
       
-      # - name: Upload release assert
-      #   uses: csexton/release-asset-action@v3
-      #   with:
-      #     pattern: ScanTextImage/bin/Release/net8.0-windows/publish/*/exe
-      #     github-token: ${{ secrets.GITHUB_TOKEN }}
-      #     release-url: ${{ steps.create_release.outputs.upload_url }}
+      - name: Upload release assert
+        uses: csexton/release-asset-action@v3
+        with:
+          pattern: ScanTextImage/*.zip
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          release-url: ${{ steps.create_release.outputs.upload_url }}
