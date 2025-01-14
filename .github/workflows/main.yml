@@ -31,6 +31,12 @@ jobs:
         with:
           dotnet-version: '3.1.x'
         
+      - name: Generate changelog
+        id: changelog
+        uses: metcalfc/changelog-generator@v4.2.0
+        with:
+          myToken: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Restore, build and publish project
         run: |
           dotnet restore ${{env.PROJECT_PATH}}
@@ -60,7 +66,9 @@ jobs:
         with:
           tag_name: ${{ github.ref_name  }}
           release_name: Release ${{ github.ref_name  }}
-          body: TODO
+          body: |
+            ## What's Changed
+            ${{ steps.changelog.outputs.changelog }}
           draft: ${{ github.event_name == 'workflow_dispatch' && inputs.draft || steps.release_config.outputs.is_draft }}
           prerelease: ${{ steps.release_config.outputs.is_prerelease }}
           files: ScanTextImage/ScanTextFromImage.zip
