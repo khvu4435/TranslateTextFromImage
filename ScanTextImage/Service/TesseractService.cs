@@ -8,6 +8,7 @@ using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Net.Http;
+using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using Tesseract;
 using Path = System.IO.Path;
@@ -18,9 +19,11 @@ namespace ScanTextImage.Service
     {
         private readonly string tessdataPath;
         private readonly GitHubClient client;
+        private readonly ISaveDataService saveDataService;
 
-        public TesseractService()
+        public TesseractService(ISaveDataService saveDataService)
         {
+            this.saveDataService = saveDataService;
             tessdataPath = Const.tessdataPath;
             client = new GitHubClient(new ProductHeaderValue(Const.repositoryGit));
         }
@@ -37,25 +40,48 @@ namespace ScanTextImage.Service
                 throw new DirectoryNotFoundException("Not found the tessdata directory");
             }
 
+            Mat img, processedImg, gray, hist, binary, denoise, dilated, sharpen;
+            Bitmap processedBitmap;
+
+            ProcessImage(bitmap, out img, out processedImg, out gray, out hist, out binary, out denoise, out dilated, out sharpen, out processedBitmap);
+
+            using (var engine = new TesseractEngine(tessdataPath, langCode, EngineMode.Default))
+            {
+
+                // Performance and accuracy configurations
+                //engine.SetVariable("tessedit_pageseg_mode", "3"); // Set PSM mode to 3
+                engine.DefaultPageSegMode = PageSegMode.SingleBlock;
+
+                using (var pix = PixConverter.ToPix(processedBitmap))
+                {
+                    using (var page = engine.Process(pix))
+                    {
+                        string text = page.GetText();
+                        return text;
+                    }
+                }
+            }
+        }
+
+        private void ProcessImage(Bitmap bitmap, out Mat img, out Mat processedImg, out Mat gray, out Mat hist, out Mat binary, out Mat denoise, out Mat dilated, out Mat sharpen, out Bitmap processedBitmap)
+        {
             Log.Information("Convert bitmap to mat");
-            using var img = BitmapToMat(bitmap);
+            img = BitmapToMat(bitmap);
             if (img.Empty())
                 throw new Exception("Could not convert bitmap to Mat");
 
             Log.Information("Create a copy for processing");
-            using var processedImg = new Mat();
+            processedImg = new Mat();
             img.CopyTo(processedImg);
 
             Log.Information("Convert to grayscale");
-            using var gray = new Mat();
+            gray = new Mat();
             Cv2.CvtColor(processedImg, gray, ColorConversionCodes.BGR2GRAY);
 
             // check if the image might have light text
             double mean = Cv2.Mean(gray).Val0;
             bool isDarkBackgrond = mean < 127;
-
-            // calculate histogram to analyze intensity distribution
-            using var hist = new Mat();
+            hist = new Mat();
             int[] histSize = { 256 }; // 256 -> gray scales have 256 intensity levels
             Rangef[] ranges = { new Rangef(0, 256) }; // 0 to 256 -> cover all possible pixel values
             Cv2.CalcHist(new Mat[] { gray }, new int[] { 0 }, null, hist, 1, histSize, ranges);
@@ -67,9 +93,7 @@ namespace ScanTextImage.Service
                 .OrderByDescending(x => x.Value)
                 .Take(2)
                 .ToList();
-
-            using var binary = new Mat();
-
+            binary = new Mat();
             if (isDarkBackgrond)
             {
                 Log.Information("Processing light text on dark background");
@@ -109,7 +133,7 @@ namespace ScanTextImage.Service
             }
 
             Log.Information("Denoise");
-            using var denoise = new Mat();
+            denoise = new Mat();
             // 10: Filter strength (h) - higher values remove more noise but might blur details
             // 7: Template window size - area used to compute weights
             // 21: Search window size - area to search for similar pixels
@@ -117,28 +141,29 @@ namespace ScanTextImage.Service
 
             Log.Information("Dilate to enhance text connectivity");
             var kernel = Cv2.GetStructuringElement(MorphShapes.Rect, new OpenCvSharp.Size(2, 2));
-            using var dilated = new Mat();
+            dilated = new Mat();
             Cv2.Dilate(denoise, dilated, kernel, iterations: 1);
+            sharpen = new Mat();
+            var sharpenKernel = new Mat(3, 3, MatType.CV_32FC1);
+            float[] kernelData = new float[]
+            {
+                0, -1,  0,
+               -1,  5, -1,
+                0, -1,  0
+            };
+            Marshal.Copy(kernelData, 0, sharpenKernel.Data, kernelData.Length);
+            Cv2.Filter2D(dilated, sharpen, -1, sharpenKernel);
 
             Log.Information("Convert from Mat to Bitmap");
-            using var processedBitmap = MatToBitmap(dilated);
+            processedBitmap = MatToBitmap(sharpen);
 
-            using (var engine = new TesseractEngine(tessdataPath, langCode, EngineMode.Default))
+            // save image after process
+            string folderDraft = Path.GetDirectoryName(Const.draftScreenshotPath) ?? throw new Exception("folder path is null");
+            if (!Directory.Exists(folderDraft))
             {
-
-                // Performance and accuracy configurations
-                //engine.SetVariable("tessedit_pageseg_mode", "3"); // Set PSM mode to 3
-                engine.DefaultPageSegMode = PageSegMode.SingleBlock;
-
-                using (var pix = PixConverter.ToPix(processedBitmap))
-                {
-                    using (var page = engine.Process(pix))
-                    {
-                        string text = page.GetText();
-                        return text;
-                    }
-                }
+                Directory.CreateDirectory(folderDraft);
             }
+            processedBitmap.Save(Const.draftScreenshotPath, System.Drawing.Imaging.ImageFormat.Png);
         }
 
         private Bitmap MatToBitmap(Mat mat)

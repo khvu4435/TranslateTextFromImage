@@ -201,6 +201,9 @@ namespace ScanTextImage.ConstData
 
         public static readonly string tessdataPath = @"./tessdata";
 
+        public static readonly string draftScreenshotPath = @"./Draft/screenshot.png";
+
+
         public static readonly string regexSaveFileName = @"(?:.*)data_(?'idSave'[1-9]).json";
 
         public static readonly Double miniWidth = 658;

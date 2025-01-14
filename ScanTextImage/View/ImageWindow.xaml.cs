@@ -34,11 +34,11 @@ namespace ScanTextImage.View
 
         private ISaveDataService _saveDataService;
 
-        public ImageWindow(ISaveDataService saveDataService, CroppedBitmap? croppedBitmap = null)
+        public ImageWindow(MainWindow mainWindow, ISaveDataService saveDataService, CroppedBitmap? croppedBitmap = null)
         {
             InitializeComponent();
 
-            this.Owner = App.Current.MainWindow;
+            this.Owner = mainWindow;
             this.WindowStartupLocation = WindowStartupLocation.CenterOwner;
 
             _saveDataService = saveDataService;
