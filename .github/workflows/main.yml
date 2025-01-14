@@ -7,7 +7,7 @@ on:
       - 'v*' # push event match the regex v* i.e. v1.0, v1.0.1    
 
 env: 
-  PROJECT_PATH: TranslateTextFromImage/ScanTextImage/ScanTextImage.csproj
+  PROJECT_PATH: ScanTextImage/ScanTextImage.csproj
 
 jobs:
   deploy:
@@ -26,7 +26,9 @@ jobs:
         run: dotnet restore ${{env.PROJECT_PATH}}
 
       - name: Build project
-        run: dotnet run build ${{env.PROJECT_PATH}} -c Release --no-restore
+        run: |
+          dir -s
+          dotnet run build ${{env.PROJECT_PATH}} -c Release --no-restore
 
       - name: Publish project
         run: dotnet publish ${{env.PROJECT_PATH}} -c Release --self-contained false --no-build
