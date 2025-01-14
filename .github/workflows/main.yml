@@ -2,9 +2,18 @@ name: Releases app
 
 on:
   workflow_dispatch:
+    inputs:
+      drafg:
+        description: 'Create as draft release'
+        type: boolean
+        default: true
+        
   push:
     tags:
-      - 'v*' # push event match the regex v* i.e. v1.0, v1.0.1    
+      - 'v*' # main release
+      # draft release
+      - 'v*beta'
+      - 'v*alpha'
 
 env: 
   PROJECT_PATH: ScanTextImage/ScanTextImage.csproj
@@ -31,9 +40,18 @@ jobs:
       - name: zip folder
         run: Compress-Archive -Path ScanTextImage/bin/Release/net8.0-windows/publish/* -Destination ScanTextImage/ScanTextFromImage.zip
 
-      - name: test
-        run: dir -s
-      
+      - name: Set release conditions
+        id: release_config
+        run: |
+          if [[ ${{ github.ref }} = *"beta"* ]] || [[ ${{ github.ref }} == *"alpha"* ]]; then
+            echo "is_prerelease=true" >> $GITHUB_OUTPUT
+            echo "is_draft=true" >> $GITHUB_OUTPUT
+          else
+            echo "is_prerelease=false" >> $GITHUB_OUTPUT
+            echo "is_draft=false" >> $GITHUB_OUTPUT
+          fi
+        shell: bash
+            
       - name: Create release
         id: create_release
         uses: softprops/action-gh-release@v1
@@ -43,8 +61,9 @@ jobs:
           tag_name: ${{ github.ref_name  }}
           release_name: Release ${{ github.ref_name  }}
           body: TODO
-          draft: true
-          prerelease: false
+          draft: ${{ github.event_name == 'workflow_dispatch' && inputs.draft || steps.release_config.outputs.is_draft }}
+          prerelease: ${{ steps.release_config.outputs.is_prerelease }}
+          files: ScanTextImage/ScanTextFromImage.zip
       
       - name: Upload release assert
         uses: csexton/release-asset-action@v3
