@@ -22,26 +22,37 @@ jobs:
         with:
           dotnet-version: '3.1.x'
         
-      - name: Restore project
+      - name: Restore, build and publish projectproject
         run: |
-          Get-Location
           dotnet restore ${{env.PROJECT_PATH}}
+          ddotnet build ${{env.PROJECT_PATH}} -c Release --no-restor
+          dotnet publish ${{env.PROJECT_PATH}} -c Release --self-contained false --no-build
 
-      - name: Build project
-        run: |
-          Get-Location
-          dotnet build ${{env.PROJECT_PATH}} -c Release --no-restore
+      - name: Install zip
+        uses: montudor/action-zip@v1  
 
-      - name: Publish project
-        run: dotnet publish ${{env.PROJECT_PATH}} -c Release --self-contained false --no-build
-          
-      # - name: Create release
-      #   uses: actions/create-release@v1
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, do not need to create own token
-      #   with:
-      #     tag_name: ${{ github.ref }}
-      #     release_name: Release ${{ github.ref }}
-      #     body: TODO
-      #     draft: true
-      #     prerelease: false
+      - name: zip file
+        run: zip -qq -r ScanTextFromImage.zip publish
+        working-directory: ScanTextImage/bin/Release/net8.0-windows
+
+      - name: test
+        run: dir -s
+      
+      - name: Create release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, do not need to create own token
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          body: TODO
+          draft: true
+          prerelease: false
+      
+      - name: Upload release assert
+        uses: csexton/release-asset-action@v3
+        with:
+          pattern: ScanTextImage/bin/Release/net8.0-windows/publish/*/exe
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          release-url: ${{ steps.create_release.outputs.upload_url }}
