@@ -28,12 +28,8 @@ jobs:
           dotnet build ${{env.PROJECT_PATH}} -c Release --no-restore
           dotnet publish ${{env.PROJECT_PATH}} -c Release --self-contained false --no-build
 
-      - name: Install zip
-        uses: montudor/action-zip@v1  
-
-      - name: zip file
-        run: zip -qq -r ScanTextFromImage.zip publish
-        working-directory: ScanTextImage/bin/Release/net8.0-windows
+      - name: zip folder
+        run: Compress-Archive -Path ScanTextImage/bin/Release/net8.0-windows/publish/* -Destination ScanTextFromImage.zip
 
       - name: test
         run: dir -s
