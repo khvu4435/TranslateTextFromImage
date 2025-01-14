@@ -2,9 +2,18 @@ name: Releases app
 
 on:
   workflow_dispatch:
+    inputs:
+      drafg:
+        description: 'Create as draft release'
+        type: boolean
+        default: true
+        
   push:
     tags:
-      - 'v*' # push event match the regex v* i.e. v1.0, v1.0.1    
+      - 'v*' # main release
+      # draft release
+      - 'v*-beta'
+      - 'v*-alpha'
 
 env: 
   PROJECT_PATH: ScanTextImage/ScanTextImage.csproj
@@ -31,9 +40,18 @@ jobs:
       - name: zip folder
         run: Compress-Archive -Path ScanTextImage/bin/Release/net8.0-windows/publish/* -Destination ScanTextImage/ScanTextFromImage.zip
 
-      - name: test
-        run: dir -s
-      
+      - name: Set release conditions
+        id: release_config
+        run: |
+          if [[ ${{github.ref}} =~ -beta ]] || [[ ${{github.ref}} =~ -alpha ]]
+            echo "is_prerelease = true" >> $GITHUB_OUTPUT
+            echo "is_prerelease = true" >> $GITHUB_OUTPUT
+          else
+            echo "is_prerelease = true" >> $GITHUB_OUTPUT
+            echo "is_prerelease = true" >> $GITHUB_OUTPUT
+          fi
+        shell: bash
+            
       - name: Create release
         id: create_release
         uses: softprops/action-gh-release@v1
