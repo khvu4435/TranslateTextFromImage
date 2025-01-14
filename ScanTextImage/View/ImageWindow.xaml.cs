@@ -66,23 +66,26 @@ namespace ScanTextImage.View
 
         private void Window_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
         {
-
-            if (e.Delta > 0)
+            if(!isSelected)
             {
-                scale += 0.1;
+                if (e.Delta > 0)
+                {
+                    scale += 0.1;
+                }
+                else
+                {
+                    scale -= 0.1;
+                }
+
+                scale = Math.Min(Math.Max(scale, minScale), maxScale); // prevent scale out of range (0.5 - 2.0)
+
+                Log.Information($"Scale of image: {scale}");
+
+                UpdateScaleImage();
+
+                DisplayLabelScalePercent();
             }
-            else
-            {
-                scale -= 0.1;
-            }
 
-            scale = Math.Min(Math.Max(scale, minScale), maxScale); // prevent scale out of range (0.5 - 2.0)
-
-            Log.Information($"Scale of image: {scale}");
-
-            UpdateScaleImage();
-
-            DisplayLabelScalePercent();
         }
 
         private void btnZoom_Click(object sender, RoutedEventArgs e)
@@ -289,13 +292,16 @@ namespace ScanTextImage.View
         private void Window_PreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
             // Check if the currently focused element is a TextBox
-            if (Keyboard.FocusedElement is TextBox)
+            if (Keyboard.FocusedElement is TextBox || Keyboard.FocusedElement is ComboBox)
             {
                 // Remove focus from the TextBox
                 Keyboard.ClearFocus();
 
                 // Optionally set focus to the parent container or window
                 FocusManager.SetFocusedElement(this, null);
+
+                // set is selected change is false
+                isSelected = false;
             }
         }
 
