@@ -63,7 +63,6 @@ jobs:
           body: TODO
           draft: ${{ github.event_name == 'workflow_dispatch' && inputs.draft || steps.release_config.outputs.is_draft }}
           prerelease: ${{ steps.release_config.outputs.is_prerelease }}
-          files: ScanTextImage/ScanTextFromImage.zip
       
       - name: Upload release assert
         uses: csexton/release-asset-action@v3
