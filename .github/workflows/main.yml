@@ -23,7 +23,9 @@ jobs:
           dotnet-version: '3.1.x'
         
       - name: Restore project
-        run: dotnet restore ${{env.PROJECT_PATH}}
+        run: |
+          Get-Location
+          dotnet restore ${{env.PROJECT_PATH}}
 
       - name: Build project
         run: |
