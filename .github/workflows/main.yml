@@ -12,8 +12,8 @@ on:
     tags:
       - 'v*' # main release
       # draft release
-      - 'v*-beta'
-      - 'v*-alpha'
+      - 'v*beta'
+      - 'v*alpha'
 
 env: 
   PROJECT_PATH: ScanTextImage/ScanTextImage.csproj
@@ -43,7 +43,7 @@ jobs:
       - name: Set release conditions
         id: release_config
         run: |
-          if [[ ${{ github.ref }} =~ -beta ]] || [[ ${{ github.ref }} =~ -alpha ]]; then
+          if [[ ${{ github.ref }} = *"beta"* ]] || [[ ${{ github.ref }} == *"alpha"* ]]; then
             echo "is_prerelease=true" >> $GITHUB_OUTPUT
             echo "is_draft=true" >> $GITHUB_OUTPUT
           else
