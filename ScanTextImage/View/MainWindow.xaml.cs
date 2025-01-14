@@ -1,34 +1,17 @@
-﻿using Newtonsoft.Json.Linq;
-using ScanTextImage.ConstData;
+﻿using ScanTextImage.ConstData;
 using ScanTextImage.Interface;
 using ScanTextImage.Model;
-using ScanTextImage.Service;
 using ScanTextImage.View;
-using ScanTextImage.View.Command;
-using ScanTextImage.View.Helper;
 using Serilog;
-using System;
-using System.CodeDom;
 using System.Collections.ObjectModel;
-using System.ComponentModel.Design;
-using System.Diagnostics;
 using System.Drawing;
-using System.Drawing.Imaging;
 using System.IO;
 using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Interop;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using static System.Net.Mime.MediaTypeNames;
 using Point = System.Windows.Point;
 
 namespace ScanTextImage
@@ -656,7 +639,7 @@ namespace ScanTextImage
             }
             catch (Exception ex)
             {
-                Log.Error(ex ,"Error when trying to saving data: ");
+                Log.Error(ex, "Error when trying to saving data: ");
                 MessageBox.Show("Error when trying to saving data: " + ex.Message, "Some thing happen when saving", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
@@ -838,7 +821,7 @@ namespace ScanTextImage
                     var bmpSource = Clipboard.GetImage();
 
                     Log.Information("convert to crop type");
-                    croppedBitmap = new CroppedBitmap(bmpSource, new Int32Rect(0,0, bmpSource.PixelWidth, bmpSource.PixelHeight));
+                    croppedBitmap = new CroppedBitmap(bmpSource, new Int32Rect(0, 0, bmpSource.PixelWidth, bmpSource.PixelHeight));
 
                     Log.Information("get text from image and translate it");
                     ExtractTextFromImage(croppedBitmap);
@@ -852,7 +835,7 @@ namespace ScanTextImage
                     return;
                 }
             }
-            else if(Clipboard.ContainsText())
+            else if (Clipboard.ContainsText())
             {
                 try
                 {
@@ -880,7 +863,7 @@ namespace ScanTextImage
         {
             Log.Information("start textFromImage_PreviewKeyDown");
 
-            if(e.Key == Key.V && (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+            if (e.Key == Key.V && (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
             {
                 ApplicationCommands.Paste.Execute(null, textFromImage);
                 e.Handled = true;

@@ -5,14 +5,7 @@ using ScanTextImage.ConstData;
 using ScanTextImage.Interface;
 using ScanTextImage.Options;
 using Serilog;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Navigation;
 
 namespace ScanTextImage.Service
 {
@@ -78,7 +71,7 @@ namespace ScanTextImage.Service
                 Log.Error(ex, "Error when trying to get quota");
                 throw;
             }
-           
+
         }
 
         public async Task<string> TranslateTo(string from, string langaugeTo, string? languageFrom = null)

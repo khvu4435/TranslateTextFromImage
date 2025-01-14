@@ -1,16 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Interop;
-using System.Windows.Media.Imaging;
-using System.Windows.Media;
-using System.Windows;
-using System.Runtime.InteropServices;
-using ScanTextImage.Interface;
-using Tesseract;
+﻿using ScanTextImage.Interface;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
+using System.Windows;
+using System.Windows.Interop;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace ScanTextImage.Service
 {
@@ -70,7 +64,7 @@ namespace ScanTextImage.Service
             double virtualScreenTop = SystemParameters.VirtualScreenTop;
             double virtualScreenWidth = SystemParameters.VirtualScreenWidth;
             double virtualScreenHeight = SystemParameters.VirtualScreenHeight;
-            
+
             PresentationSource src = PresentationSource.FromVisual(Application.Current.MainWindow);
             double dpiX = 1.0, dpiY = 1.0;
 

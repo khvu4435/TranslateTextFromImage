@@ -1,25 +1,13 @@
 ﻿using ScanTextImage.Interface;
-using ScanTextImage.View;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Media.Imaging;
+using Serilog;
+using System.Runtime.InteropServices;
 using System.Windows;
-using System.Windows.Shapes;
-using ScanTextImage.Model;
-using ScanTextImage.View.Command;
-using System.IO;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.ComponentModel;
-using System.Runtime.InteropServices;
-using System.Threading;
 using System.Windows.Interop;
-using System.Diagnostics;
-using Serilog;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Shapes;
 
 namespace ScanTextImage.Service
 {
@@ -283,7 +271,7 @@ namespace ScanTextImage.Service
             // adjust dpi
             var source = PresentationSource.FromVisual(Application.Current.MainWindow) as HwndSource;
             double dpiX = 1, dpiY = 1;
-            if(source != null)
+            if (source != null)
             {
                 dpiX = source.CompositionTarget.TransformFromDevice.M11;
                 dpiY = source.CompositionTarget.TransformFromDevice.M22;

@@ -1,19 +1,11 @@
-﻿using Microsoft.Win32;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using ScanTextImage.Interface;
 using ScanTextImage.Model;
 using Serilog;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
-using System.Xml.Linq;
 
 namespace ScanTextImage.Service
 {
@@ -248,14 +240,14 @@ namespace ScanTextImage.Service
                 var path = ConstData.Const.pathUsageData;
                 var folderPath = Path.GetDirectoryName(path);
 
-                if(string.IsNullOrWhiteSpace(folderPath))
+                if (string.IsNullOrWhiteSpace(folderPath))
                 {
                     Log.Warning("Folder path is empty");
                     throw new ArgumentNullException(nameof(folderPath) + " is null");
                 }
 
                 // create a new folder if not exist
-                if(!Directory.Exists(folderPath))
+                if (!Directory.Exists(folderPath))
                 {
                     Log.Information(folderPath + " is not exist -> create new");
                     Directory.CreateDirectory(folderPath);
@@ -300,7 +292,7 @@ namespace ScanTextImage.Service
                 // read data
                 string json = File.ReadAllText(path);
                 var dic = JsonConvert.DeserializeObject<Dictionary<string, int>>(json);
-                if(dic == null)
+                if (dic == null)
                 {
                     Log.Information("Not have any data in usage file");
                     return 0;
@@ -309,7 +301,7 @@ namespace ScanTextImage.Service
                 Log.Information("end GetCurrentUsageData");
 
                 return dic.Values.FirstOrDefault();
-                
+
             }
             catch (Exception ex)
             {

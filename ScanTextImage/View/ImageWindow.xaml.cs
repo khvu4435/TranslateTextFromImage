@@ -1,22 +1,13 @@
 ﻿using Microsoft.Win32;
 using ScanTextImage.ConstData;
 using ScanTextImage.Interface;
-using ScanTextImage.Service;
 using Serilog;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 using System.Windows.Threading;
 
 namespace ScanTextImage.View
@@ -522,8 +513,8 @@ namespace ScanTextImage.View
                 double newTop = top + deltaY;
 
                 // boundary check to keep image inside canvas
-                newLeft = Math.Max(0 - (image.ActualWidth / 2), Math.Min(newLeft, canvasImage.ActualWidth - (image.ActualWidth/2)));
-                newTop = Math.Max(0 - (image.ActualHeight / 2), Math.Min(newTop, canvasImage.ActualHeight - (image.ActualHeight/2)));
+                newLeft = Math.Max(0 - (image.ActualWidth / 2), Math.Min(newLeft, canvasImage.ActualWidth - (image.ActualWidth / 2)));
+                newTop = Math.Max(0 - (image.ActualHeight / 2), Math.Min(newTop, canvasImage.ActualHeight - (image.ActualHeight / 2)));
 
                 Log.Information("new canvas pos: " + newLeft + " - " + newTop);
 

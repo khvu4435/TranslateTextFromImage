@@ -1,11 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using ScanTextImage.Interface;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 
 namespace ScanTextImage.Service
@@ -24,7 +19,7 @@ namespace ScanTextImage.Service
 
             var window = _serviceProvider.GetService<T>();
 
-            if(window == null)
+            if (window == null)
             {
                 throw new Exception("error in open window");
             }

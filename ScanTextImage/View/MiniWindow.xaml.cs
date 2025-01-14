@@ -1,23 +1,14 @@
-﻿using OpenCvSharp.XPhoto;
-using ScanTextImage.ConstData;
+﻿using ScanTextImage.ConstData;
 using ScanTextImage.Interface;
 using ScanTextImage.Model;
-using ScanTextImage.View.Command;
-using ScanTextImage.View.Helper;
 using Serilog;
-using System.Collections.ObjectModel;
 using System.Drawing;
 using System.IO;
-using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
-using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Interop;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using Brushes = System.Windows.Media.Brushes;
 
 namespace ScanTextImage.View
 {
@@ -732,7 +723,7 @@ namespace ScanTextImage.View
         {
 
             // prevent more loop create in thread
-            if(isStartAutoTranslate) { return; }
+            if (isStartAutoTranslate) { return; }
 
             isStartAutoTranslate = true; // set flag
             cancellationTokenSource = new CancellationTokenSource(); // create new resouces
@@ -834,7 +825,7 @@ namespace ScanTextImage.View
         {
             // set flag to create new loop
             isStartAutoTranslate = false;
-            if(cancellationTokenSource != null)
+            if (cancellationTokenSource != null)
             {
                 cancellationTokenSource.Cancel();
                 cancellationTokenSource.Dispose();

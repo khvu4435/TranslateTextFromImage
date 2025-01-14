@@ -1,21 +1,11 @@
 ﻿using ScanTextImage.Interface;
 using ScanTextImage.Model;
-using ScanTextImage.Service;
 using Serilog;
-using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace ScanTextImage.View
 {
@@ -286,7 +276,7 @@ namespace ScanTextImage.View
             {
                 Log.Information("start tbFromLanguage_MouseEnter");
 
-                if(IsTextOverflowing(tbFromLanguage))
+                if (IsTextOverflowing(tbFromLanguage))
                 {
                     Log.Information("text is overflowing");
                     tbFromLanguage.ToolTip = tbFromLanguage.Text;

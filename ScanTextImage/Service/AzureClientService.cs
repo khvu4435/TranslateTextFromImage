@@ -7,11 +7,6 @@ using Microsoft.Extensions.Options;
 using ScanTextImage.Interface;
 using ScanTextImage.Options;
 using Serilog;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ScanTextImage.Service
 {

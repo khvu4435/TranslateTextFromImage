@@ -6,10 +6,6 @@ using ScanTextImage.Options;
 using ScanTextImage.Service;
 using ScanTextImage.View;
 using Serilog;
-using System;
-using System.ComponentModel.DataAnnotations;
-using System.Configuration;
-using System.Data;
 using System.IO;
 using System.Windows;
 
@@ -82,7 +78,7 @@ namespace ScanTextImage
                 // Shutdown the application gracefully
                 Shutdown(-1);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Log.Error(ex, "failed to handler error");
                 throw;

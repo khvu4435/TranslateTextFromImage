@@ -9,7 +9,6 @@ using System.Globalization;
 using System.IO;
 using System.Net.Http;
 using System.Text.RegularExpressions;
-using System.Windows.Shapes;
 using Tesseract;
 using Path = System.IO.Path;
 

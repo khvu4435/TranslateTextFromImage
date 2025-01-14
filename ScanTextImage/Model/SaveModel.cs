@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ScanTextImage.Model
+﻿namespace ScanTextImage.Model
 {
     public class SaveModel
     {
@@ -18,7 +12,7 @@ namespace ScanTextImage.Model
 
             set
             {
-                if(value < 0 || value > 9)
+                if (value < 0 || value > 9)
                 {
                     throw new ArgumentException("id data save should be in the range from 1 - 9");
                 }
