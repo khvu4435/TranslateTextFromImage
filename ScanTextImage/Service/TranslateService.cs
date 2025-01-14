@@ -103,19 +103,19 @@ namespace ScanTextImage.Service
                     return string.Empty;
                 }
 
-                // store the usage to local
-                //saveDataService.SaveCurrentUsageData(numberCharaterUsed);
+                //store the usage to local
+                saveDataService.SaveCurrentUsageData(numberCharaterUsed);
 
-                // transfer the full name to iso format
-                //string langToIso = GetIsoFormatCountryName(langaugeTo);
-                //string langFromIso = GetIsoFormatCountryName(languageFrom, true);
+                //transfer the full name to iso format
+                string langToIso = GetIsoFormatCountryName(langaugeTo);
+                string langFromIso = GetIsoFormatCountryName(languageFrom, true);
 
-                //var response = await translationClient.TranslateAsync(langToIso, from, langFromIso);
-                //var translations = response.Value;
-                //var result = translations?.FirstOrDefault()?.Translations?.FirstOrDefault()?.Text;
+                var response = await translationClient.TranslateAsync(langToIso, from, langFromIso);
+                var translations = response.Value;
+                var result = translations?.FirstOrDefault()?.Translations?.FirstOrDefault()?.Text;
 
-                //return result ?? string.Empty;
-                return string.Empty;
+                return result ?? string.Empty;
+                //return string.Empty;
             }
             catch (Exception ex)
             {
