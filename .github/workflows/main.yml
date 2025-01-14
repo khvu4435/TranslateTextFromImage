@@ -27,7 +27,7 @@ jobs:
 
       - name: Build project
         run: |
-          dir -s
+          cd
           dotnet run build ${{env.PROJECT_PATH}} -c Release --no-restore
 
       - name: Publish project
