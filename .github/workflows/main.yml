@@ -35,9 +35,22 @@ jobs:
         
       - name: Generate changelog
         id: changelog
-        uses: metcalfc/changelog-generator@v4.2.0
-        with:
-          myToken: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Get the previous tag
+          PREVIOUS_TAG=$(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || echo "")
+          if [ -z "$PREVIOUS_TAG" ]; then
+            # If no previous tag exists, get all commits
+            CHANGELOG=$(git log --pretty=format:"* %s" --no-merges)
+          else
+            # Get commits between tags
+            CHANGELOG=$(git log --pretty=format:"* %s" --no-merges ${PREVIOUS_TAG}..HEAD)
+          fi
+          # Save changelog to file and output
+          echo "$CHANGELOG" > changelog.txt
+          echo "changelog<<EOF" >> $GITHUB_OUTPUT
+          echo "$CHANGELOG" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+        shell: bash
 
       - name: Restore, build and publish project
         run: |
@@ -51,11 +64,9 @@ jobs:
       - name: Set release conditions
         id: release_config
         run: |
-          if [[ ${{ github.ref }} = *"beta"* ]] || [[ ${{ github.ref }} == *"alpha"* ]]; then
-            echo "is_prerelease=true" >> $GITHUB_OUTPUT
+          if [[ ${{ github.ref }} = *"beta"* ]] || [[ ${{ github.ref }} == *"alpha"* ]] || ${{ github.event_name == 'workflow_dispatch' && inputs.draft }}; then
             echo "is_draft=true" >> $GITHUB_OUTPUT
           else
-            echo "is_prerelease=false" >> $GITHUB_OUTPUT
             echo "is_draft=false" >> $GITHUB_OUTPUT
           fi
         shell: bash
@@ -71,8 +82,8 @@ jobs:
           body: |
             ## What's Changed
             ${{ steps.changelog.outputs.changelog }}
-          draft: ${{ github.event_name == 'workflow_dispatch' && inputs.draft || steps.release_config.outputs.is_draft }}
-          prerelease: ${{ steps.release_config.outputs.is_prerelease }}
+          draft: ${{ steps.release_config.outputs.is_draft }}
+          prerelease: false
           files: ScanTextImage/ScanTextFromImage.zip
       
       # - name: Upload release assert
