@@ -62,8 +62,8 @@ namespace ScanTextImage.View
             _translateService.displayUsageEvent += translateService_displayUsageEvent;
 
             // get data usage from local save
-            int currUsaged = _saveDataService.GetCurrentUsageData();
-            Log.Information("current usaged from local: " + currUsaged);
+            var currUsaged = _saveDataService.GetCurrentUsageData();
+            Log.Information("current usaged from local: " + currUsaged.currentValue);
             translateService_displayUsageEvent(currUsaged); // display usaged
 
             //set auto time data
@@ -74,9 +74,9 @@ namespace ScanTextImage.View
             LoadCommandBinding();
         }
 
-        private void translateService_displayUsageEvent(int numberCharacter)
+        private void translateService_displayUsageEvent(UsageModel numberCharacter)
         {
-            lblUsageData.Content = numberCharacter.ToString("N0") + " / " + Const.limitAzureTrasnlatorUsage.ToString("N0");
+            lblUsageData.Content = numberCharacter.currentValue.ToString("N0") + " / " + numberCharacter.limitValue.ToString("N0");
         }
 
         #region Load Data

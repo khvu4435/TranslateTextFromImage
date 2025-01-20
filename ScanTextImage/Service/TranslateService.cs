@@ -3,6 +3,7 @@ using Azure.ResourceManager.CognitiveServices;
 using Microsoft.Extensions.Options;
 using ScanTextImage.ConstData;
 using ScanTextImage.Interface;
+using ScanTextImage.Model;
 using ScanTextImage.Options;
 using Serilog;
 using System.Globalization;
@@ -17,8 +18,8 @@ namespace ScanTextImage.Service
         private readonly CognitiveServicesAccountResource cognitiveServicesAccountResource;
         private readonly AzureTranslatorResource azureTranslatorResource;
         private readonly AzureResource azureResource;
-        private int numberCharaterUsed = 0;
-        public event Action<int>? displayUsageEvent;
+        private UsageModel? usageModel = null;
+        public event Action<UsageModel>? displayUsageEvent;
 
         private readonly ISaveDataService saveDataService;
 
@@ -34,6 +35,13 @@ namespace ScanTextImage.Service
 
             displayUsageEvent = null;
 
+            usageModel = new UsageModel
+            {
+                nextResetUsageTime = DateTime.MinValue,
+                currentValue = 0,
+                limitValue = 0
+            };
+
             // get the number of character used in the current month
             GetNumberCharacterUsed();
 
@@ -48,34 +56,57 @@ namespace ScanTextImage.Service
                 if (usageData == null)
                 {
                     Log.Information("usage data is null");
-                    numberCharaterUsed = 0;
+                    usageModel = new UsageModel
+                    {
+                        nextResetUsageTime = DateTime.MinValue,
+                        currentValue = 0,
+                        limitValue = 0
+                    };
                 }
                 else
                 {
                     Log.Information("usage data is not null - curr usage: " + usageData.CurrentValue);
-                    numberCharaterUsed = Convert.ToInt32(usageData.CurrentValue);
+                    usageModel = new UsageModel
+                    {
+                        nextResetUsageTime = DateTime.TryParse(usageData.NextResetTime, out DateTime date) ? date : throw new InvalidCastException(),
+                        currentValue = Convert.ToInt32(usageData.CurrentValue),
+                        limitValue = Convert.ToInt32(usageData.Limit)
+                    };
+
                 }
 
-                int localUsage = saveDataService.GetCurrentUsageData();
+                var localUsage = saveDataService.GetCurrentUsageData();
                 Log.Information("usage data from local - curr usage: " + localUsage);
 
-                Log.Information("localUsage > usage from azure => " + (localUsage > numberCharaterUsed) + " -> get the value that greater");
-                numberCharaterUsed = Math.Max(numberCharaterUsed, localUsage);
+                Log.Information("localUsage > usage from azure => " + (localUsage.currentValue > usageModel.currentValue) + " -> get the value that greater");
+                usageModel.nextResetUsageTime = DateTime.Compare(localUsage.nextResetUsageTime, usageModel.nextResetUsageTime) < 0 ? usageModel.nextResetUsageTime : localUsage.nextResetUsageTime;
+                if(DateTime.Now >= usageModel.nextResetUsageTime)
+                {
+                    Log.Information("Usage has been reset");
+                    usageModel.currentValue = Math.Min(localUsage.currentValue, usageModel.currentValue);
+                }
+                else
+                {
+                    Log.Information("Usage has not been reset yet");
+                    usageModel.currentValue = Math.Max(localUsage.currentValue, usageModel.currentValue);
+                }
 
-                // store the usage
-                saveDataService.SaveCurrentUsageData(numberCharaterUsed);
-
+                usageModel.limitValue = Math.Max(localUsage.limitValue, usageModel.limitValue);
             }
             catch (Exception ex)
             {
                 Log.Error(ex, "Error when trying to get quota");
                 throw;
             }
-
         }
 
         public async Task<string> TranslateTo(string from, string langaugeTo, string? languageFrom = null)
         {
+            if (usageModel == null)
+            {
+                Log.Warning("usage data is null");
+                throw new ArgumentNullException("usage data is null");
+            }
             try
             {
                 // prevent exceed limit character in on call ( len < 50000 )
@@ -85,17 +116,17 @@ namespace ScanTextImage.Service
                     from = from.Substring(0, 50000);
                 }
 
-                numberCharaterUsed += from.Length;
+                usageModel.currentValue += from.Length;
 
                 // throw if the total usage character in one month is more than the limit
-                if (numberCharaterUsed >= Const.limitAzureTrasnlatorUsage)
+                if (usageModel.currentValue >= usageModel.limitValue)
                 {
-                    Log.Warning("Exceed the quota limit of azure " + numberCharaterUsed + " / 2000000");
-                    throw new Exception("the total character has been used to translate has exceed 2000000");
+                    Log.Warning("Exceed the quota limit of azure " + usageModel.currentValue + " / " + usageModel.limitValue);
+                    throw new Exception("the total character has been used to translate has exceed " + usageModel.limitValue);
                 }
 
                 // invoke event display usage
-                displayUsageEvent?.Invoke(numberCharaterUsed);
+                displayUsageEvent?.Invoke(usageModel);
 
                 // return empty if text is empty or white space
                 if (string.IsNullOrWhiteSpace(from))
@@ -104,7 +135,7 @@ namespace ScanTextImage.Service
                 }
 
                 //store the usage to local
-                saveDataService.SaveCurrentUsageData(numberCharaterUsed);
+                saveDataService.SaveCurrentUsageData(usageModel);
 
                 //transfer the full name to iso format
                 string langToIso = GetIsoFormatCountryName(langaugeTo);
@@ -121,6 +152,11 @@ namespace ScanTextImage.Service
             {
                 Log.Error(ex, "Error when trying to get translate");
                 throw;
+            }
+            finally
+            {
+                // store the usage even if run fail or not
+                saveDataService.SaveCurrentUsageData(usageModel);
             }
         }
 

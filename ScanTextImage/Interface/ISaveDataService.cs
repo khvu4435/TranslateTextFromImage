@@ -12,7 +12,7 @@ namespace ScanTextImage.Interface
         public List<ShortcutModel> GetShortcutConfig();
         public bool SaveScreenShotImageToLocal(string filePath, BitmapSource srcImage);
 
-        public void SaveCurrentUsageData(int numberCharacterUse);
-        public int GetCurrentUsageData();
+        public void SaveCurrentUsageData(UsageModel usageModel);
+        public UsageModel GetCurrentUsageData();
     }
 }

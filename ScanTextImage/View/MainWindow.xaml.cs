@@ -886,9 +886,9 @@ namespace ScanTextImage
         }
 
 
-        private void _translateService_displayUsageEvent(int numberCharacter)
+        private void _translateService_displayUsageEvent(UsageModel usageModel)
         {
-            lblUsage.Content = numberCharacter.ToString("N0") + " / " + Const.limitAzureTrasnlatorUsage.ToString("N0");
+            lblUsage.Content = usageModel.currentValue.ToString("N0") + " / " + usageModel.limitValue.ToString("N0");
         }
 
     }

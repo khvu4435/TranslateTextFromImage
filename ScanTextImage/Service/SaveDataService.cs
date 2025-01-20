@@ -231,12 +231,12 @@ namespace ScanTextImage.Service
             }
         }
 
-        public void SaveCurrentUsageData(int numberCharacterUse)
+        public void SaveCurrentUsageData(UsageModel usageModel)
         {
             Log.Information("Start saveCurrentUsageData");
             try
             {
-                Log.Information($"current usage: {numberCharacterUse}");
+                Log.Information($"current usage: {usageModel.currentValue}");
                 var path = ConstData.Const.pathUsageData;
                 var folderPath = Path.GetDirectoryName(path);
 
@@ -253,12 +253,7 @@ namespace ScanTextImage.Service
                     Directory.CreateDirectory(folderPath);
                 }
 
-                var dic = new Dictionary<string, int>()
-                {
-                    {"usage", numberCharacterUse}
-                };
-
-                var json = JsonConvert.SerializeObject(dic);
+                var json = JsonConvert.SerializeObject(usageModel);
 
                 using (var file = new FileStream(path, FileMode.OpenOrCreate))
                 {
@@ -276,7 +271,7 @@ namespace ScanTextImage.Service
             Log.Information("end saveCurrentUsageData");
         }
 
-        public int GetCurrentUsageData()
+        public UsageModel GetCurrentUsageData()
         {
             Log.Information("Start GetCurrentUsageData");
             try
@@ -286,21 +281,29 @@ namespace ScanTextImage.Service
                 if (!File.Exists(path))
                 {
                     Log.Information("Not exist file usage data");
-                    return 0;
+                    return new UsageModel
+                    {
+                        currentValue = 0,
+                        limitValue = 0
+                    };
                 }
 
                 // read data
                 string json = File.ReadAllText(path);
-                var dic = JsonConvert.DeserializeObject<Dictionary<string, int>>(json);
-                if (dic == null)
+                var model = JsonConvert.DeserializeObject<UsageModel>(json);
+                if (model == null)
                 {
                     Log.Information("Not have any data in usage file");
-                    return 0;
+                    return new UsageModel
+                    {
+                        currentValue = 0,
+                        limitValue = 0
+                    };
                 }
 
                 Log.Information("end GetCurrentUsageData");
 
-                return dic.Values.FirstOrDefault();
+                return model;
 
             }
             catch (Exception ex)

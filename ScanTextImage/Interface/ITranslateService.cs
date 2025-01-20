@@ -1,8 +1,10 @@
-﻿namespace ScanTextImage.Interface
+﻿using ScanTextImage.Model;
+
+namespace ScanTextImage.Interface
 {
     public interface ITranslateService
     {
-        public event Action<int>? displayUsageEvent;
+        public event Action<UsageModel>? displayUsageEvent;
         public Task<string> TranslateTo(string from, string languageFrom, string langaugeTo);
     }
 }
