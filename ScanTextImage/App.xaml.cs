@@ -128,6 +128,7 @@ namespace ScanTextImage
             serviceCollection.AddScoped<ICaptureService, CaptureService>();
             serviceCollection.AddScoped<INavigationWindowService, NavigationWindowService>();
             serviceCollection.AddScoped<IAzureClientService, AzureClientService>();
+            serviceCollection.AddScoped<IImageProcessService, ImageProcessService>();
             serviceCollection.AddScoped<MainWindow>();
             serviceCollection.AddTransient<MiniWindow>();
         }
