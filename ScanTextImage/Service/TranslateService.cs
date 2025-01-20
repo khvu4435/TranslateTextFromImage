@@ -113,7 +113,7 @@ namespace ScanTextImage.Service
                 if (from.Length > Const.maxCharacterInOneRequest)
                 {
                     Log.Warning("number text in one call has been exceed 50000 - split the text only get 50000");
-                    from = from.Substring(0, 50000);
+                    from = from.Substring(0, 49999);
                 }
 
                 usageModel.currentValue += from.Length;
