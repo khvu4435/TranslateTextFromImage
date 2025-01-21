@@ -8,6 +8,7 @@ using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -41,7 +42,9 @@ namespace ScanTextImage.View
         private Point lastPos;
 
         private List<TextRegion> textRegions = new List<TextRegion>();
+        private string? textTranslate = null;
         private string? langCode = null;
+        private bool isTranslateImage = false;
         private bool isSelectingText = false;
         private Point selectionTextStart;
         private System.Windows.Shapes.Rectangle selectionTextRect;
@@ -49,7 +52,12 @@ namespace ScanTextImage.View
         private ISaveDataService _saveDataService;
         private ITesseractService _tesseractService;
 
-        public ImageWindow(MainWindow mainWindow, ISaveDataService saveDataService, ITesseractService tesseractService, CroppedBitmap? croppedBitmap = null, string? langCode = null)
+        public ImageWindow(MainWindow mainWindow, 
+            ISaveDataService saveDataService, 
+            ITesseractService tesseractService,
+            string? translateText = null,
+            CroppedBitmap? croppedBitmap = null, 
+            string? langCode = null)
         {
             InitializeComponent();
 
@@ -58,6 +66,8 @@ namespace ScanTextImage.View
 
             _saveDataService = saveDataService;
             _tesseractService = tesseractService;
+
+            textTranslate = translateText ?? string.Empty;
 
             if (croppedBitmap != null)
             {
@@ -89,10 +99,11 @@ namespace ScanTextImage.View
         }
 
 
-        private void Window_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+        private async void Window_PreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
             // Check if the currently focused element is a TextBox
-            if (Keyboard.FocusedElement is TextBox || Keyboard.FocusedElement is ComboBox)
+            if (Keyboard.FocusedElement is TextBox || 
+                Keyboard.FocusedElement is ComboBox)
             {
                 // Remove focus from the TextBox
                 Keyboard.ClearFocus();
@@ -102,6 +113,13 @@ namespace ScanTextImage.View
 
                 // set is selected change is false
                 isSelected = false;
+
+                popupAction.IsOpen = false;
+            }
+
+            if(popupAction.IsOpen && !IsClickInsidePopup(e.OriginalSource))
+            {
+                popupAction.IsOpen = false;
             }
         }
 
@@ -635,7 +653,7 @@ namespace ScanTextImage.View
                 if (region.Bounds.IntersectsWith(selectionBounds))
                 {
                     region.IsSelected = true;
-                    region.Highlight.Fill = new SolidColorBrush(Color.FromArgb(50, 51, 153, 255));
+                    region.Highlight.Fill = new SolidColorBrush(Color.FromArgb(50, 47, 85, 255));
                     Canvas.SetZIndex(region.Highlight, 1);
                     if (!canvasImage.Children.Contains(region.Highlight))
                     {
@@ -645,7 +663,7 @@ namespace ScanTextImage.View
                 else
                 {
                     region.IsSelected = false;
-                    region.Highlight.Fill = new SolidColorBrush(Color.FromArgb(50, 51, 153, 255));
+                    region.Highlight.Fill = new SolidColorBrush(Color.FromArgb(0, 47, 85, 255));
                 }
             }
 
@@ -661,7 +679,74 @@ namespace ScanTextImage.View
             Log.Information("end Start CanvasImage_MouseLeftButtonUp");
         }
 
+        #region popup copy text and translate
+        private void canvasImage_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            popupAction.IsOpen = true;
+        }
 
+        private void btnCopyText_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var selecetedText = string.Join(" ", textRegions.Where(data => data.IsSelected).
+                    Select(data => !isTranslateImage ? data.Text : data.TranslationText));
+
+                Clipboard.SetText(selecetedText);
+
+                Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    popupAction.IsOpen = false;
+                }), DispatcherPriority.Input);
+            }
+            catch(Exception ex)
+            {
+                Log.Error(ex, "error when trying to copy selected text");
+                throw;
+            }
+        }
+
+        private void btnTranslateText_Click(object sender, RoutedEventArgs e)
+        {
+            if(!isTranslateImage)
+            {
+                TranslateTextInImage();
+            }
+            else
+            {
+                CancelTranslateTextInImage();
+            }
+        }
+
+        private void TranslateTextInImage()
+        {
+            btnTranslateText.Content = "Cancel Translate";
+            isTranslateImage = true;
+
+            // display the translate text overlay the origin text
+
+            // close the popup
+            Dispatcher.BeginInvoke(new Action(() =>
+            {
+                popupAction.IsOpen = false;
+            }), DispatcherPriority.Input);
+        }
+
+        private void CancelTranslateTextInImage()
+        {
+            btnTranslateText.Content = "Translate";
+            isTranslateImage = false;
+
+            // remove the overlay translate text
+
+            // close the popup
+            Dispatcher.BeginInvoke(new Action(() =>
+            {
+                popupAction.IsOpen = false;
+            }), DispatcherPriority.Input);
+        }
+
+        #endregion popup copy text and translate
 
         #endregion
 
@@ -740,6 +825,24 @@ namespace ScanTextImage.View
             var maxX = Math.Max(Math.Max(topLeft.X, topRight.X), Math.Max(bottomLeft.X, bottomRight.X));
             var maxY = Math.Max(Math.Max(topLeft.Y, topRight.Y), Math.Max(bottomLeft.Y, bottomRight.Y));
             return new Rect(minX, minY, maxX - minX, maxY - minY);
+        }
+
+        private bool IsClickInsidePopup(object originalSource)
+        {
+            // Check if the clicked element is inside the popup
+            if (originalSource is DependencyObject dep)
+            {
+                var parent = VisualTreeHelper.GetParent(dep);
+                while (parent != null)
+                {
+                    if ((parent is Popup popup && popup.Name == "popupAction") || (parent is Border border && border.Name == "borderAction"))
+                    {
+                        return true;
+                    }
+                    parent = VisualTreeHelper.GetParent(parent);
+                }
+            }
+            return false;
         }
     }
 }

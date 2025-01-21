@@ -26,12 +26,14 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <Grid Grid.Row="0" x:Name="gridImage">
+        <Grid Grid.Row="0"
+              x:Name="gridImage">
             <Canvas x:Name="canvasImage"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
                     Width="{Binding ActualWidth, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Grid}}}"
-                    Height="{Binding ActualHeight, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Grid}}}">
+                    Height="{Binding ActualHeight, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Grid}}}"
+                    MouseRightButtonDown="canvasImage_MouseRightButtonDown">
 
                 <Canvas.Background>
                     <SolidColorBrush Color="Black"
@@ -124,7 +126,7 @@
                            VerticalContentAlignment="Center"
                            HorizontalAlignment="Center"
                            VerticalAlignment="Center"
-                           FontSize="13"/>
+                           FontSize="13" />
                 </Grid>
 
             </Grid>
@@ -254,5 +256,42 @@
             </Grid>
 
         </Grid>
+
+        <Popup x:Name="popupAction"
+               Placement="MousePoint"
+               StaysOpen="True"
+               AllowsTransparency="True"
+               IsOpen="False">
+            <Border CornerRadius="3"
+                    x:Name="borderAction">
+                <Border.Background>
+                    <SolidColorBrush Color="LightGray"
+                                     Opacity="0.5" />
+                </Border.Background>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <Button x:Name="btnCopyText"
+                            Content="Copy"
+                            Grid.Row="0"
+                            Width="100"
+                            Height="30"
+                            IsEnabled=" true"
+                            Click="btnCopyText_Click"/>
+
+                    <Button x:Name="btnTranslateText"
+                            Content="Translate"
+                            Grid.Row="1"
+                            Width="100"
+                            Height="30"
+                            IsEnabled=" true"
+                            Click="btnTranslateText_Click"/>
+                </Grid>
+
+            </Border>
+        </Popup>
     </Grid>
 </Window>

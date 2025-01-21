@@ -622,7 +622,7 @@ namespace ScanTextImage
                 imageWindow.Close();
                 imageWindow = null;
             }
-            imageWindow = new ImageWindow(this,_saveDataService, _tesseractService, croppedBitmap, saveData.languageTranslateFrom.LangCode);
+            imageWindow = new ImageWindow(this,_saveDataService, _tesseractService, textTranslateTo.Text ,croppedBitmap, saveData.languageTranslateFrom.LangCode);
             imageWindow.Show();
 
             Log.Information("end viewImageBtn_Click");

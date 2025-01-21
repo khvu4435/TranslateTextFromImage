@@ -127,8 +127,7 @@ namespace ScanTextImage.Service
                                     {
                                         Width = wpfRect.Width,
                                         Height = wpfRect.Height,
-                                        Fill = new SolidColorBrush(System.Windows.Media.Color.FromArgb(0, 51, 153, 255))
-                                        //Fill = new SolidColorBrush((System.Windows.Media.Color.FromArgb(50, 51, 153, 255)))
+                                        Fill = new SolidColorBrush(System.Windows.Media.Color.FromArgb(0, 47, 85, 255))
                                     };
 
                                     Canvas.SetLeft(highlight, wpfRect.X +offsetX);
