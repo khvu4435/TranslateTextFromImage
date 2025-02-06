@@ -280,15 +280,7 @@
                             Width="100"
                             Height="30"
                             IsEnabled=" true"
-                            Click="btnCopyText_Click"/>
-
-                    <Button x:Name="btnTranslateText"
-                            Content="Translate"
-                            Grid.Row="1"
-                            Width="100"
-                            Height="30"
-                            IsEnabled=" true"
-                            Click="btnTranslateText_Click"/>
+                            Click="btnCopyText_Click" />
                 </Grid>
 
             </Border>

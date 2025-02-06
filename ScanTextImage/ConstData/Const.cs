@@ -250,9 +250,14 @@ namespace ScanTextImage.ConstData
 
         public static readonly string azureTranslatorNameUsage = "TextTranslation";
         public static readonly int limitAzureTrasnlatorUsage = 2000000;
-        public static readonly int maxCharacterInOneRequest = 50000;
+        public static readonly int maxCharacterInOneRequest = 50000;        
 
         public static readonly string regexScalePercent = @"^(?<scalePercent>[0-4]?[0-9]?[0-9]|4[0-9][0-9]|500)(?:%*)$";
         public static readonly string regexTimeAutoTranslate = @"^((?<timeDelay>0*[3-9](?:[\.\,][0-9]*)?|10(?:[\.\,]0*)?)[sS]*)$";
-    }
+
+        public static readonly Dictionary<string, string> SpecialCharacters = new()
+        {
+            { "\r\n", "\n"}
+        };
+     }
 }

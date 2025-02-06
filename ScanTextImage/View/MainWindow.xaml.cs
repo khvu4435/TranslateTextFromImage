@@ -5,6 +5,7 @@ using ScanTextImage.View;
 using Serilog;
 using System.Collections.ObjectModel;
 using System.Drawing;
+using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Text.RegularExpressions;
@@ -56,12 +57,14 @@ namespace ScanTextImage
         private ISaveDataService _saveDataService;
         private ICaptureService _captureService;
         private INavigationWindowService _navigationWindowService;
+        private IImageProcessService _imageProcessService;
 
         public MainWindow(IScreenshotService screenshotService,
             ITesseractService tesseractService,
             ITranslateService translateService,
             ISaveDataService saveDataService,
             ICaptureService captureService,
+            IImageProcessService imageProcessService,
             INavigationWindowService navigationWindowService)
         {
             InitializeComponent();
@@ -72,6 +75,7 @@ namespace ScanTextImage
             _saveDataService = saveDataService;
             _captureService = captureService;
             _navigationWindowService = navigationWindowService;
+            _imageProcessService = imageProcessService;
 
             _captureService.SetInteractiveWindow(this, () => this.Show(), () => this.Hide()); // set the current interact window
             _captureService.onScreenTaken += onScreenshotTaken; // create a event that will get the image capture
@@ -622,7 +626,7 @@ namespace ScanTextImage
                 imageWindow.Close();
                 imageWindow = null;
             }
-            imageWindow = new ImageWindow(this,_saveDataService, _tesseractService, textTranslateTo.Text ,croppedBitmap, saveData.languageTranslateFrom.LangCode);
+            imageWindow = new ImageWindow(this,_saveDataService, _tesseractService, _imageProcessService, textTranslateTo.Text ,croppedBitmap, saveData.languageTranslateFrom.LangCode);
             imageWindow.Show();
 
             Log.Information("end viewImageBtn_Click");
@@ -869,7 +873,33 @@ namespace ScanTextImage
                 e.Handled = true;
             }
 
-            Log.Information("emd textFromImage_PreviewKeyDown");
+            Log.Information("end textFromImage_PreviewKeyDown");
+        }
+
+        private void textFromImage_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            var text = textFromImage.Text;
+
+            if (text.Length > Const.maxCharacterInOneRequest)
+            {
+                var change = e.Changes.FirstOrDefault();
+                if (change != null)
+                {
+                    int removeIndex = change.Offset;
+                    int removeLength = change.AddedLength;
+                    textFromImage.Text = text.Remove(removeIndex, removeLength);
+                    textFromImage.CaretIndex = removeIndex;
+                }
+            }
+
+            // replace the special character with corresponding character
+            foreach (var specialChar in Const.SpecialCharacters)
+            {
+                text = text.Replace(specialChar.Key, specialChar.Value);
+            }
+
+            // display length of translate text
+            lblCharacterCount.Content = text.Length.ToString("N0") + " / " + Const.maxCharacterInOneRequest.ToString("N0");
         }
 
         private void Window_PreviewMouseDown(object sender, MouseButtonEventArgs e)
@@ -888,8 +918,9 @@ namespace ScanTextImage
 
         private void _translateService_displayUsageEvent(UsageModel usageModel)
         {
-            lblUsage.Content = usageModel.currentValue.ToString("N0") + " / " + usageModel.limitValue.ToString("N0");
+            tbUsageData.Text = usageModel.currentValue.ToString("N0") + " / " + usageModel.limitValue.ToString("N0");
         }
+
 
     }
 }

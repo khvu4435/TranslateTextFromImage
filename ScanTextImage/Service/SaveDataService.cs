@@ -277,15 +277,10 @@ namespace ScanTextImage.Service
             try
             {
                 var path = ConstData.Const.pathUsageData;
-
                 if (!File.Exists(path))
                 {
                     Log.Information("Not exist file usage data");
-                    return new UsageModel
-                    {
-                        currentValue = 0,
-                        limitValue = 0
-                    };
+                    return new UsageModel();
                 }
 
                 // read data
@@ -294,11 +289,7 @@ namespace ScanTextImage.Service
                 if (model == null)
                 {
                     Log.Information("Not have any data in usage file");
-                    return new UsageModel
-                    {
-                        currentValue = 0,
-                        limitValue = 0
-                    };
+                    return new UsageModel();
                 }
 
                 Log.Information("end GetCurrentUsageData");

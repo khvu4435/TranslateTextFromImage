@@ -100,6 +100,7 @@
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
 
                     <GroupBox Grid.Row="0"
@@ -241,7 +242,7 @@
                                   VerticalAlignment="Center"
                                   HorizontalAlignment="Right"
                                   StrokeStartLineCap="Square"
-                                  StrokeEndLineCap="Round"/>
+                                  StrokeEndLineCap="Round" />
 
                             <Grid Grid.Row="2">
 
@@ -288,7 +289,7 @@
                             <Button Grid.Column="0"
                                     Name="translate"
                                     Click="translate_Click"
-                                    ToolTip="Click to translate the text again">
+                                    ToolTip="Click to translate text">
                                 <Image Width="30"
                                        Height="30">
                                     <Image.Source>
@@ -324,7 +325,7 @@
                             <Button Grid.Column="3"
                                     Name="clearBtn"
                                     Click="clearBtn_Click"
-                                    ToolTip="Click to clear all text and image that has been selected, extract text or translated">
+                                    ToolTip="Click to clear all text and image that has been selected, text from image and translated">
                                 <Image Width="30"
                                        Height="30">
                                     <Image.Source>
@@ -335,6 +336,49 @@
                         </Grid>
                     </GroupBox>
 
+                    <Border Grid.Row="5"
+                            Background="GhostWhite"
+                            CornerRadius="3"
+                            Margin="0 5 0 0">
+                        <Border.Effect>
+                            <DropShadowEffect BlurRadius="10"
+                                              ShadowDepth="3"
+                                              Color="Black"
+                                              Opacity="0.4" />
+                        </Border.Effect>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+
+                            <Label x:Name="lblUsageData"
+                                   Grid.Column="0"
+                                   Margin="5"
+                                   FontSize="13"
+                                   FontWeight="Bold"
+                                   Content="Usage Data:" />
+
+                            <TextBlock x:Name="tbUsageData"
+                                       Grid.Column="1"
+                                       Margin="5"
+                                       HorizontalAlignment="Right"
+                                       VerticalAlignment="Center"
+                                       FontSize="13"
+                                       FontWeight="Bold"
+                                       Text="0 / 2,000,000" />
+
+                            <TextBlock Grid.Column="2"
+                                       Margin="5"
+                                       FontSize="10"
+                                       FontStyle="Italic"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"
+                                       Text="(Per characters)" />
+
+                        </Grid>
+                    </Border>
                 </Grid>
             </StackPanel>
 
@@ -348,20 +392,18 @@
                 <Grid Grid.Row="0">
                     <TextBox Name="textFromImage"
                              Margin="10"
-                             PreviewKeyDown="textFromImage_PreviewKeyDown" />
-                    <Label x:Name="lblUsage"
-                           Content="12 / 200000"
+                             PreviewKeyDown="textFromImage_PreviewKeyDown"
+                             TextChanged="textFromImage_TextChanged"/>
+                    <Label x:Name="lblCharacterCount"
+                           Content="0 / 50,000"
                            FontStyle="Italic"
                            FontWeight="Bold"
                            Foreground="Gray"
                            Opacity="0.6"
                            HorizontalAlignment="Right"
                            VerticalAlignment="Bottom"
-                           Margin="0,0,10,10"/>
+                           Margin="0,0,10,10" />
                 </Grid>
-
-
-
 
                 <TextBox Grid.Row="2"
                          Name="textTranslateTo"

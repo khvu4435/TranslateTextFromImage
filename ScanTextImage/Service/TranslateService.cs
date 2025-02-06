@@ -37,7 +37,7 @@ namespace ScanTextImage.Service
 
             usageModel = new UsageModel
             {
-                nextResetUsageTime = DateTime.MinValue,
+                nextResetUsageTime = DateTimeOffset.MinValue,
                 currentValue = 0,
                 limitValue = 0
             };
@@ -68,7 +68,7 @@ namespace ScanTextImage.Service
                     Log.Information("usage data is not null - curr usage: " + usageData.CurrentValue);
                     usageModel = new UsageModel
                     {
-                        nextResetUsageTime = DateTime.TryParse(usageData.NextResetTime, out DateTime date) ? date : throw new InvalidCastException(),
+                        nextResetUsageTime = DateTimeOffset.TryParse(usageData.NextResetTime, out DateTimeOffset date) ? date : throw new InvalidCastException(),
                         currentValue = Convert.ToInt32(usageData.CurrentValue),
                         limitValue = Convert.ToInt32(usageData.Limit)
                     };
@@ -79,8 +79,7 @@ namespace ScanTextImage.Service
                 Log.Information("usage data from local - curr usage: " + localUsage);
 
                 Log.Information("localUsage > usage from azure => " + (localUsage.currentValue > usageModel.currentValue) + " -> get the value that greater");
-                usageModel.nextResetUsageTime = DateTime.Compare(localUsage.nextResetUsageTime, usageModel.nextResetUsageTime) < 0 ? usageModel.nextResetUsageTime : localUsage.nextResetUsageTime;
-                if(DateTime.Now >= usageModel.nextResetUsageTime)
+                if(DateTime.Now >= localUsage.nextResetUsageTime)
                 {
                     Log.Information("Usage has been reset");
                     usageModel.currentValue = Math.Min(localUsage.currentValue, usageModel.currentValue);
@@ -90,8 +89,11 @@ namespace ScanTextImage.Service
                     Log.Information("Usage has not been reset yet");
                     usageModel.currentValue = Math.Max(localUsage.currentValue, usageModel.currentValue);
                 }
-
+                usageModel.nextResetUsageTime = DateTimeOffset.Compare(localUsage.nextResetUsageTime, usageModel.nextResetUsageTime) < 0 ? usageModel.nextResetUsageTime : localUsage.nextResetUsageTime;
                 usageModel.limitValue = Math.Max(localUsage.limitValue, usageModel.limitValue);
+
+                //store the usage to local
+                saveDataService.SaveCurrentUsageData(usageModel);
             }
             catch (Exception ex)
             {
@@ -102,13 +104,15 @@ namespace ScanTextImage.Service
 
         public async Task<string> TranslateTo(string from, string langaugeTo, string? languageFrom = null)
         {
-            if (usageModel == null)
-            {
-                Log.Warning("usage data is null");
-                throw new ArgumentNullException("usage data is null");
-            }
             try
             {
+
+                if (usageModel == null)
+                {
+                    Log.Warning("usage data is null");
+                    throw new ArgumentNullException("usage data is null");
+                }
+
                 // prevent exceed limit character in on call ( len < 50000 )
                 if (from.Length > Const.maxCharacterInOneRequest)
                 {
