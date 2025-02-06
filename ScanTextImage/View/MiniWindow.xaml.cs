@@ -836,5 +836,33 @@ namespace ScanTextImage.View
         #endregion
 
         #endregion Auto Translate
+
+        private void tbxFrom_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            var text = tbxFrom.Text;
+
+            // prevent text translate is exceed 50000 in one call translate
+            if (text.Length > Const.maxCharacterInOneRequest)
+            {
+                Log.Information("text translate in one call more than 50000 characters");
+                var change = e.Changes.FirstOrDefault();
+                if (change != null)
+                {
+                    int removeIndex = change.Offset;
+                    int removeLength = change.AddedLength;
+                    tbxFrom.Text = text.Remove(removeIndex, removeLength);
+                    tbxFrom.CaretIndex = removeIndex;
+                }
+            }
+
+            // replace the special character with corresponding character
+            foreach (var specialChar in Const.SpecialCharacters)
+            {
+                text = text.Replace(specialChar.Key, specialChar.Value);
+            }
+
+            // display length of translate text
+            lblCharacterCount.Content = text.Length.ToString("N0") + " / " + Const.maxCharacterInOneRequest.ToString("N0");
+        }
     }
 }

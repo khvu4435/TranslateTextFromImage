@@ -11,8 +11,6 @@
            BasedOn="{StaticResource btnStyleTemplate}">
         <Setter Property="Background"
                 Value="GhostWhite" />
-        <Setter Property="BorderBrush"
-                Value="Black" />
         <Setter Property="Margin"
                 Value="1" />
         <Setter Property="Width"

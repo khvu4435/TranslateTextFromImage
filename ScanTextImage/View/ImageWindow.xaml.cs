@@ -77,6 +77,8 @@ namespace ScanTextImage.View
                 this.langCode = langCode;
             }
 
+            btnSaveAs.IsEnabled = croppedBitmap != null;
+
             currRotation = new RotateTransform(rotationAngle, screenshotImage.RenderSize.Width / 2, screenshotImage.ActualHeight / 2);
             currScale = new ScaleTransform(scale, scale, screenshotImage.ActualWidth / 2, screenshotImage.ActualHeight / 2);
 

@@ -237,15 +237,37 @@
             </Grid>
 
             <Grid Grid.Row="1">
-                <TextBox x:Name="tbxFrom" />
-                <Label x:Name="lblUsageData"
-                       Content="1,000,000 / 2,000,000"
-                       Foreground="Gray"
-                       Opacity="0.5"
-                       FontStyle="Italic"
-                       FontWeight="Bold"
-                       HorizontalAlignment="Right"
-                       VerticalAlignment="Bottom" />
+                <TextBox x:Name="tbxFrom"
+                         TextChanged="tbxFrom_TextChanged"/>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <Label x:Name="lblCharacterCount"
+                           Content="0 / 50,000"
+                           Foreground="Gray"
+                           Opacity="0.5"
+                           FontStyle="Italic"
+                           FontWeight="Bold"
+                           HorizontalAlignment="Right"
+                           VerticalAlignment="Bottom"
+                           Grid.Row="0" />
+
+                    <Label x:Name="lblUsageData"
+                           Content="1,000,000 / 2,000,000"
+                           Foreground="Gray"
+                           Opacity="0.5"
+                           FontStyle="Italic"
+                           FontWeight="Bold"
+                           HorizontalAlignment="Right"
+                           VerticalAlignment="Bottom" 
+                           Grid.Row="1"/>
+                    
+
+                </Grid>
+
             </Grid>
             
             <Grid x:Name="gridAutoTranslate" Grid.Row="1"

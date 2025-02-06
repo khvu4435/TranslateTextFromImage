@@ -22,8 +22,10 @@
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsEnabled"
                                  Value="False">
-                            <Setter Property="Opacity"
-                                    Value="0.5" />
+                            <!--<Setter Property="Opacity"
+                                    Value="0.5" />-->
+                            <Setter Property="Background"
+                                    Value="#b8b8be" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                         
