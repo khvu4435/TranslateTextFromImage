@@ -48,7 +48,7 @@
         "Key": "F6"
     },
     {
-        "DisplayName": "loadSave1",
+        "DisplayName": "Load Save 1",
         "Name": "loadSave1",
         "IsControlKey": true,
         "IsShiftKey": true,
@@ -56,7 +56,7 @@
         "Key": "1"
     },
     {
-        "DisplayName": "loadSave2",
+        "DisplayName": "Load Save 2",
         "Name": "loadSave2",
         "IsControlKey": true,
         "IsShiftKey": true,
@@ -64,7 +64,7 @@
         "Key": "2"
     },
     {
-        "DisplayName": "loadSave3",
+        "DisplayName": "Load Save 3",
         "Name": "loadSave3",
         "IsControlKey": true,
         "IsShiftKey": true,
@@ -72,7 +72,7 @@
         "Key": "3"
     },
     {
-        "DisplayName": "loadSave4",
+        "DisplayName": "Load Save 4",
         "Name": "loadSave4",
         "IsControlKey": true,
         "IsShiftKey": true,
@@ -80,7 +80,7 @@
         "Key": "4"
     },
     {
-        "DisplayName": "loadSave5",
+        "DisplayName": "Load Save 5",
         "Name": "loadSave5",
         "IsControlKey": true,
         "IsShiftKey": true,
@@ -88,7 +88,7 @@
         "Key": "5"
     },
     {
-        "DisplayName": "loadSave6",
+        "DisplayName": "Load Save 6",
         "Name": "loadSave6",
         "IsControlKey": true,
         "IsShiftKey": true,
@@ -96,7 +96,7 @@
         "Key": "6"
     },
     {
-        "DisplayName": "loadSave7",
+        "DisplayName": "Load Save 7",
         "Name": "loadSave7",
         "IsControlKey": true,
         "IsShiftKey": true,
@@ -104,7 +104,7 @@
         "Key": "7"
     },
     {
-        "DisplayName": "loadSave8",
+        "DisplayName": "Load Save 8",
         "Name": "loadSave8",
         "IsControlKey": true,
         "IsShiftKey": true,
@@ -112,7 +112,7 @@
         "Key": "8"
     },
     {
-        "DisplayName": "loadSave9",
+        "DisplayName": "Load Save 9",
         "Name": "loadSave9",
         "IsControlKey": true,
         "IsShiftKey": true,

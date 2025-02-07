@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ScanTextImage.View"
         mc:Ignorable="d"
-        Title="ConfigWindow"
+        Title="Config Shortcuts"
         Height="450"
         Width="400"
         ResizeMode="NoResize">
