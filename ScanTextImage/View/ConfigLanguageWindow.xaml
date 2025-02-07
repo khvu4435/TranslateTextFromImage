@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ScanTextImage.View"
         mc:Ignorable="d"
-        Title="ConfigLanguageWindow"
+        Title="Config Language"
         Height="500"
         Width="900"
         ResizeMode="NoResize">
@@ -319,8 +319,7 @@
 
             <ListView  Grid.Row="1"
                        x:Name="lvLanguagesNotAdd"
-                       Margin="10"
-                       SelectionMode="Multiple">
+                       Margin="10">
                 <ListView.ItemContainerStyle>
                     <Style TargetType="ListViewItem">
                         <Setter Property="Focusable"
@@ -331,6 +330,13 @@
                     <GridView>
                         <GridViewColumn x:Name="gvLanguageNotAddCheckBox"
                                         Width="30">
+                            <GridViewColumnHeader>
+                                <TextBlock HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           TextAlignment="Center"
+                                           Text="0 / 5"
+                                           x:Name="tbSelectedLanguage" />
+                            </GridViewColumnHeader>
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
                                     <CheckBox x:Name="cbLanguageNotAddSelected"
@@ -371,8 +377,11 @@
                             </GridViewColumn.Header>
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBlock Text="{Binding LanguageModel.LangName}"
-                                               Margin="3" />
+                                    <TextBlock x:Name="tbNotAddLangugage"
+                                               Text="{Binding LanguageModel.LangName}"
+                                               Margin="3"
+                                               MouseLeftButtonDown="tbNotAddLangugage_MouseLeftButtonDown" />
+
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
@@ -523,8 +532,10 @@
                                 </GridViewColumn.Header>
                                 <GridViewColumn.CellTemplate>
                                     <DataTemplate>
-                                        <TextBlock Text="{Binding LanguageModel.LangName}"
-                                                   Margin="3" />
+                                        <TextBlock x:Name="tbAddedLangugage"
+                                            Text="{Binding LanguageModel.LangName}"
+                                                   Margin="3"
+                                                   MouseLeftButtonDown="tbAddedLangugage_MouseLeftButtonDown"/>
                                     </DataTemplate>
                                 </GridViewColumn.CellTemplate>
                             </GridViewColumn>

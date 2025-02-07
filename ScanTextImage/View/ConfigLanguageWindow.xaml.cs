@@ -5,6 +5,7 @@ using ScanTextImage.ViewMode;
 using Serilog;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Runtime.InteropServices.Marshalling;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -193,6 +194,8 @@ namespace ScanTextImage.View
                     downloadLanguage.Add(data);
 
                     notDownloadLanguage.Remove(notDownloadLanguage.First(lang => lang.LanguageModel.LangCode.Equals(data.LanguageModel.LangCode, StringComparison.OrdinalIgnoreCase)));
+                    // display number of selected desired language
+                    tbSelectedLanguage.Text = "0 / 5";
                 }
 
                 Log.Information("end btnAddLanguage_Click");
@@ -300,7 +303,7 @@ namespace ScanTextImage.View
             int countListNotDownload = notDownloadLanguage.Count(data => data.isSelected);
 
             // enable bnAddLanguage when selected item to deleted is less than 0
-            btnAddLanguage.IsEnabled = countListDownload <= 0 && countListNotDownload > 0;
+            SetEnableDownloadButton(countListNotDownload, countListDownload);
 
             if (countListDownload <= 0)
             {
@@ -333,7 +336,7 @@ namespace ScanTextImage.View
             int countAddSelected = downloadLanguage.Count(data => data.isSelected);
 
             Log.Information($"enable button add: add language selected - {countNotAddSelected} &&  delete language selected - {countAddSelected}");
-            btnAddLanguage.IsEnabled = countNotAddSelected > 0 && countAddSelected <= 0;
+            SetEnableDownloadButton(countNotAddSelected, countAddSelected);
 
             if (countNotAddSelected > 5)
             {
@@ -344,9 +347,13 @@ namespace ScanTextImage.View
                     cb.IsChecked = false;
                 }
                 Log.Warning($"The number of language want to download is exceed 5");
-                MessageBox.Show("The number of language want to download is exceed 5", "Warning Config Language", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show("The number of language want to download is exceed 5 languages", "Warning Config Language", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
+
+            // display number of selected desired language
+            DisplayNumberSelectedNotAddLanguages(countNotAddSelected);
+
             Log.Information("end cbLanguageNotAddSelected_Click");
         }
 
@@ -564,5 +571,100 @@ namespace ScanTextImage.View
         }
 
         #endregion Filter Selected Language
+
+        private void tbNotAddLangugage_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            try
+            {
+                if (sender == null || 
+                    sender is not TextBlock textBlock ||
+                    textBlock.DataContext is not ConfigLanguageList config)
+                {
+                    Log.Warning("sender trigger event does not have correct type data");
+                    throw new Exception("sender trigger event does not have correct type data");
+                }
+
+                config.isSelected = !config.isSelected;
+
+                var listSelected = notDownloadLanguage.Where(data => data.isSelected).ToList();
+                var countAdd = listSelected.Count;
+                var countDelete = downloadLanguage.Count(data => data.isSelected);
+
+                // set enable for download button
+                SetEnableDownloadButton(countAdd, countDelete);
+
+                // remove the last selected
+                if (countAdd > 5)
+                {
+                    var lastItem = listSelected.LastOrDefault();
+                    if (lastItem != null)
+                    {
+                        lastItem.isSelected = false;
+                    }
+
+                    Log.Warning("selected add language more than 5");
+                    MessageBox.Show("The number of language want to download is exceed 5 languages", "Warning Config Language", MessageBoxButton.OK, MessageBoxImage.Warning);
+                }
+
+                DisplayNumberSelectedNotAddLanguages(countAdd);
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show("Error when trying to config language, " + ex.Message, "Error Language Config", MessageBoxButton.OK, MessageBoxImage.Error);
+                throw;
+            }
+        }
+
+        private void tbAddedLangugage_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            if (sender == null ||
+                sender is not TextBlock textBlock ||
+                textBlock.DataContext is not ConfigLanguageList config)
+            {
+                Log.Warning("sender trigger event does not have correct type data");
+                throw new Exception("sender trigger event does not have correct type data");
+            }
+
+            config.isSelected = !config.isSelected;
+
+            var countAdd = notDownloadLanguage.Count(data => data.isSelected);
+            var countDelete = downloadLanguage.Count(data => data.isSelected);
+
+            // set enable for download button
+            SetEnableDownloadButton(countAdd, countDelete);
+
+            // set state for check all
+            if (countDelete <= 0)
+            {
+                Log.Information($"set check box all to be false - not have any checked item left");
+                cbDeleteAllLanguage.IsChecked = false;
+                btnDeleteSelectedLanguage.Visibility = Visibility.Hidden;
+
+                return;
+            }
+
+            if (countDelete > 0 && countDelete < downloadLanguage.Count())
+            {
+                Log.Information($"set check box all to be null (second state) - {countDelete} | {downloadLanguage.Count}");
+                cbDeleteAllLanguage.IsChecked = null;
+                btnDeleteSelectedLanguage.Visibility = Visibility.Visible;
+                return;
+            }
+
+            Log.Information($"set check box all to be true - selected all");
+            cbDeleteAllLanguage.IsChecked = true;
+            btnDeleteSelectedLanguage.Visibility = Visibility.Visible;
+            Log.Information("end cbLanguageAddSelected_Click");
+        }
+
+        private void SetEnableDownloadButton(int countAdd, int countDelete)
+        {
+            btnAddLanguage.IsEnabled = countAdd > 0 && countDelete <= 0;
+        }
+
+        private void DisplayNumberSelectedNotAddLanguages(int selectedNumber)
+        {
+            tbSelectedLanguage.Text = Math.Min(selectedNumber, 5) + " / 5";
+        }
     }
 }
