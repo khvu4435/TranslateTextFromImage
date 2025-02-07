@@ -85,10 +85,13 @@ namespace ScanTextImage.View
             DisplayLabelScalePercent();
 
             this.Loaded += ImageWindow_Loaded;
+            this.KeyDown += ImageWindow_KeyDown;
             canvasImage.MouseLeftButtonDown += CanvasImage_MouseLeftButtonDown;
             canvasImage.MouseMove += CanvasImage_MouseMove; ;
             canvasImage.MouseLeftButtonUp += CanvasImage_MouseLeftButtonUp; ;
         }
+
+
 
         private void ImageWindow_Loaded(object sender, RoutedEventArgs e)
         {
@@ -102,6 +105,14 @@ namespace ScanTextImage.View
             }
         }
 
+        private void ImageWindow_KeyDown(object sender, KeyEventArgs e)
+        {
+            if(croppedBitmap != null && e.Key == Key.C && e.KeyboardDevice.Modifiers == ModifierKeys.Control)
+            {
+                var copyText = string.Join(" ", textRegions.Where(data => data.IsSelected).Select(data => data.Text));
+                Clipboard.SetText(copyText);
+            }
+        }
 
         private async void Window_PreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
@@ -709,77 +720,6 @@ namespace ScanTextImage.View
                 throw;
             }
         }
-
-        // remove this function
-        //private void btnTranslateText_Click(object sender, RoutedEventArgs e)
-        //{
-        //    var bitmapSrc = screenshotImage.Source as BitmapSource;
-        //    var bitmap = ConvertToBitmap(bitmapSrc);
-
-        //    if (!isTranslateImage)
-        //    {
-        //        TranslateTextInImage(bitmap);
-        //    }
-        //    else
-        //    {
-        //        CancelTranslateTextInImage();
-        //    }
-        //}
-
-        //private void TranslateTextInImage(Bitmap bitmap)
-        //{
-        //    btnTranslateText.Content = "Cancel Translate";
-        //    isTranslateImage = true;
-
-        //    // detect the color background and foreground
-        //    var color = _imageProcessService.DetectColors(bitmap);
-        //    var background = color.background.Color;
-        //    var foreground = color.text.Color;
-        //    var fontSize = _imageProcessService.EstimateTextFontSize(bitmap, !color.background.IsDark);
-
-        //    tbxDisplayTranslate.Text = textTranslate;
-        //    tbxDisplayTranslate.Visibility = Visibility.Visible;
-        //    tbxDisplayTranslate.Background = new SolidColorBrush(Color.FromRgb(background.R, background.G, background.B));
-        //    tbxDisplayTranslate.Foreground = new SolidColorBrush(Color.FromRgb(foreground.R, foreground.G, foreground.B));
-        //    tbxDisplayTranslate.FontSize = fontSize;
-
-        //    // close the popup
-        //    Dispatcher.BeginInvoke(new Action(() =>
-        //    {
-        //        popupAction.IsOpen = false;
-        //    }), DispatcherPriority.Input);
-        //}
-
-        //private void CancelTranslateTextInImage()
-        //{
-        //    btnTranslateText.Content = "Translate";
-        //    isTranslateImage = false;
-
-        //    // remove the overlay translate text
-
-        //    // close the popup
-        //    Dispatcher.BeginInvoke(new Action(() =>
-        //    {
-        //        popupAction.IsOpen = false;
-        //    }), DispatcherPriority.Input);
-        //}
-
-        //private Bitmap ConvertToBitmap(BitmapSource bitmapSrc)
-        //{
-        //    Log.Information("start ConvertToBitmap");
-        //    Bitmap bitmap;
-        //    using (MemoryStream memoryStream = new MemoryStream())
-        //    {
-        //        BitmapEncoder enc = new BmpBitmapEncoder();
-        //        enc.Frames.Add(BitmapFrame.Create(bitmapSrc));
-        //        enc.Save(memoryStream);
-        //        bitmap = new Bitmap(memoryStream);
-        //    }
-
-        //    Log.Information("end ConvertToBitmap");
-
-        //    return bitmap;
-        //}
 
         #endregion popup copy text and translate
 
