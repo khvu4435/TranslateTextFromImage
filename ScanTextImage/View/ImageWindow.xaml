@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:ScanTextImage.View"
         xmlns:Const="clr-namespace:ScanTextImage.ConstData"
         mc:Ignorable="d"
-        Title="ImageWindow"
+        Title="Screenshot"
         Height="450"
         Width="800"
         SizeChanged="Window_SizeChanged"

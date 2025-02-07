@@ -557,6 +557,8 @@ namespace ScanTextImage.View
                     bitmap = new Bitmap(memoryStream);
                 }
 
+                bitmap = ResizeImage(bitmap, bitmap.Width * 2, bitmap.Height * 2);
+
                 return bitmap;
             }
             catch (Exception ex)
@@ -565,6 +567,18 @@ namespace ScanTextImage.View
                 throw;
             }
 
+        }
+
+        Bitmap ResizeImage(Bitmap image, int width, int height)
+        {
+            var resized = new Bitmap(width, height);
+            using (var g = Graphics.FromImage(resized))
+            {
+                g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+                g.DrawImage(image, 0, 0, width, height);
+            }
+
+            return resized;
         }
 
         private async Task TranslateText(string from)
