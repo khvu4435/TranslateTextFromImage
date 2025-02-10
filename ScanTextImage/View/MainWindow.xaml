@@ -313,7 +313,7 @@
                             <Button Grid.Column="2"
                                     Name="viewImageBtn"
                                     Click="viewImageBtn_Click"
-                                    ToolTip="Click to see image that just selected">
+                                    ToolTip="Click to view the screenshot">
                                 <Image Width="30"
                                        Height="30">
                                     <Image.Source>
@@ -325,7 +325,7 @@
                             <Button Grid.Column="3"
                                     Name="clearBtn"
                                     Click="clearBtn_Click"
-                                    ToolTip="Click to clear all text and image that has been selected, text from image and translated">
+                                    ToolTip="Click to clear all screenshot and text from text box">
                                 <Image Width="30"
                                        Height="30">
                                     <Image.Source>
