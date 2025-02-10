@@ -38,8 +38,11 @@ namespace ScanTextImage.Service
 
         private Window screenshotWindow;
         private Rectangle selectionRectangle;
+        private Rectangle overlay;
         private Point startPoint;
         private CroppedBitmap croppedBitmap;
+
+        //private Rect bounds;
 
         private Window interactWindow = null;
         private Action showInteractWindow = null;
@@ -67,9 +70,9 @@ namespace ScanTextImage.Service
             Log.Information("create a selection range default");
             selectionRectangle = new Rectangle
             {
-                Stroke = Brushes.Blue,
-                StrokeThickness = 1,
-                Fill = new SolidColorBrush(Color.FromArgb(50, 173, 216, 230))
+                Stroke = Brushes.White,
+                StrokeThickness = 2,
+                Fill = Brushes.Transparent
             };
 
             Log.Information("get a total bounds of screen");
@@ -108,12 +111,20 @@ namespace ScanTextImage.Service
                     CommandBindingCancelScreenShoot_Executed
                 ));
 
-            Canvas canvas = new Canvas
+            //Canvas canvas = new Canvas
+            //{
+            //    Background = new SolidColorBrush(Color.FromArgb(100, 173, 216, 230)),
+            //};
+            Canvas canvas = new();
+            overlay = new()
             {
-                Background = new SolidColorBrush(Color.FromArgb(100, 173, 216, 230)),
+                Width = bounds.Width,
+                Height = bounds.Height,
+                Fill = new SolidColorBrush(Color.FromArgb(100, 173, 216, 230)),
             };
 
             canvas.Children.Add(selectionRectangle);
+            canvas.Children.Add(overlay);
 
             screenshotWindow.Content = canvas;
 
@@ -213,6 +224,17 @@ namespace ScanTextImage.Service
                     Canvas.SetTop(selectionRectangle, currentPoint.Y);
                     selectionRectangle.Height = -height;
                 }
+
+                var selectionGeometry = new RectangleGeometry(new Rect(
+                    Canvas.GetLeft(selectionRectangle),
+                    Canvas.GetTop(selectionRectangle),
+                    selectionRectangle.Width,
+                    selectionRectangle.Height));
+
+                var screenGeometry = new RectangleGeometry(new Rect(0,0, overlay.Width, overlay.Height));
+                var combineGeometry = new CombinedGeometry(GeometryCombineMode.Exclude, screenGeometry, selectionGeometry);
+                overlay.Clip = combineGeometry;
+
             }
             Log.Information("end Canvas_MouseMove");
         }
