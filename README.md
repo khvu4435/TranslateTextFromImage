@@ -23,3 +23,4 @@
 ```
 - All the data in it gets from the service of Azure
 > When you clone the project, it will have a file name appsettings_template.json, so you can base on it to create or just edit it
+> File appsettings.json should be inside folder ScanTextImage
