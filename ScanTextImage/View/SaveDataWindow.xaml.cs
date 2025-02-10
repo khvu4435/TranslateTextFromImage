@@ -61,13 +61,18 @@ namespace ScanTextImage.View
             if (listSaveData.Count <= 0)
             {
                 btnEditData.IsEnabled = false;
+                cmbSaveData.IsEnabled = false;
+            }
+            else
+            {
+                // load list data save
+                cmbSaveData.IsEnabled = true;
+                cmbSaveData.ItemsSource = listSaveData;
+                cmbSaveData.DisplayMemberPath = nameof(SaveModel.nameSave);
+                cmbSaveData.SelectedValuePath = nameof(SaveModel.id);
+                cmbSaveData.SelectedIndex = (_saveModel.id ?? 0) - 1;
             }
 
-            // load list data save
-            cmbSaveData.ItemsSource = listSaveData;
-            cmbSaveData.DisplayMemberPath = nameof(SaveModel.nameSave);
-            cmbSaveData.SelectedValuePath = nameof(SaveModel.id);
-            cmbSaveData.SelectedIndex = (_saveModel.id ?? 0) - 1;
 
             LoadLanguageSaveData(saveModel);
 

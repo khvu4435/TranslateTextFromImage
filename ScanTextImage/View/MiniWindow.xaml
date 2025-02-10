@@ -7,7 +7,7 @@
         xmlns:data="clr-namespace:ScanTextImage.ConstData"
         xmlns:customCommand="clr-namespace:ScanTextImage.View.Command"
         mc:Ignorable="d"
-        Title="MiniWindow"
+        Title="MiniMode"
         Height="235"
         Width="658"
         MinHeight="{x:Static data:Const.miniCollapseHeight}"

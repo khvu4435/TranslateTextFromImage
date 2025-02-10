@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ScanTextImage.View"
         mc:Ignorable="d"
-        Title="SaveDataWindow"
+        Title="Save Data"
         Height="223"
         Width="666"
         ResizeMode="NoResize"
@@ -86,7 +86,8 @@
                                   Name="cmbSaveData"
                                   SelectionChanged="cmbSaveData_SelectionChanged"
                                   VerticalContentAlignment="Center"
-                                  FontSize="14" />
+                                  FontSize="14"
+                                  IsEnabled="True"/>
 
                         <Grid Grid.Row="1">
 
