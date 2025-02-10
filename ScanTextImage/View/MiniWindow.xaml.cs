@@ -686,6 +686,10 @@ namespace ScanTextImage.View
                 // prevent click it again
                 btnStartAuto.IsEnabled = false;
                 btnPauseAuto.IsEnabled = true;
+
+                // force the UI to update
+                Application.Current.Dispatcher.Invoke(() => { }, System.Windows.Threading.DispatcherPriority.Render);
+
                 StartAutoTranslate();
             }
             catch (Exception ex)
@@ -706,6 +710,9 @@ namespace ScanTextImage.View
                 tbxTimeAuto.IsEnabled = true;
                 btnStartAuto.IsEnabled = true; // enable start auto translate
                 btnPauseAuto.IsEnabled = false; // set disable pause
+
+                Application.Current.Dispatcher.Invoke(() => { }, System.Windows.Threading.DispatcherPriority.Render);
+
                 StopAutoTranslate(); // stop auto translate
             }
             catch (Exception ex)

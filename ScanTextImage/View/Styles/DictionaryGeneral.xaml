@@ -2,7 +2,8 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <!--Style button-->
-    <Style TargetType="Button" x:Key="btnStyleTemplate">
+    <Style TargetType="Button"
+           x:Key="btnStyleTemplate">
         <Setter Property="Background"
                 Value="GhostWhite" />
         <Setter Property="BorderThickness"
@@ -12,7 +13,8 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Button}">
-                    <Border Background="{TemplateBinding Background}"
+                    <Border x:Name="PART_Border"
+                            Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}">
                         <ContentPresenter HorizontalAlignment="Center"
@@ -25,10 +27,11 @@
                             <!--<Setter Property="Opacity"
                                     Value="0.5" />-->
                             <Setter Property="Background"
-                                    Value="#b8b8be" />
+                                    Value="#b8b8be"
+                                    TargetName="PART_Border" />
                         </Trigger>
                     </ControlTemplate.Triggers>
-                        
+
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
