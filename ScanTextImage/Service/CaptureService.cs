@@ -42,8 +42,6 @@ namespace ScanTextImage.Service
         private Point startPoint;
         private CroppedBitmap croppedBitmap;
 
-        //private Rect bounds;
-
         private Window interactWindow = null;
         private Action showInteractWindow = null;
         private Action hideInteractWindow = null;
@@ -71,9 +69,10 @@ namespace ScanTextImage.Service
             selectionRectangle = new Rectangle
             {
                 Stroke = Brushes.White,
-                StrokeThickness = 2,
-                Fill = Brushes.Transparent
+                StrokeThickness = 1,
+                Fill = new SolidColorBrush(Color.FromArgb(50, 255, 255, 255)),
             };
+            Panel.SetZIndex(selectionRectangle, 1);
 
             Log.Information("get a total bounds of screen");
             var bounds = GetTotalScreenBounds();
@@ -120,7 +119,7 @@ namespace ScanTextImage.Service
             {
                 Width = bounds.Width,
                 Height = bounds.Height,
-                Fill = new SolidColorBrush(Color.FromArgb(100, 173, 216, 230)),
+                Fill = new SolidColorBrush(Color.FromArgb(100, 0, 0, 0)),
             };
 
             canvas.Children.Add(selectionRectangle);
@@ -201,40 +200,35 @@ namespace ScanTextImage.Service
                 Log.Information("Calculate width and height with correct direction");
                 double width = currentPoint.X - startPoint.X;
                 double height = currentPoint.Y - startPoint.Y;
+                double left = 0;
+                double top = 0;
 
                 Log.Information("Update selection rectangle with signed width and height");
                 if (width >= 0)
                 {
-                    Canvas.SetLeft(selectionRectangle, startPoint.X);
-                    selectionRectangle.Width = width;
+                    left = startPoint.X;
                 }
                 else
                 {
-                    Canvas.SetLeft(selectionRectangle, currentPoint.X);
-                    selectionRectangle.Width = -width;
+                    left = currentPoint.X;
+                    width = -width;
+
                 }
 
                 if (height >= 0)
                 {
-                    Canvas.SetTop(selectionRectangle, startPoint.Y);
-                    selectionRectangle.Height = height;
+                    top = startPoint.Y;
                 }
                 else
                 {
-                    Canvas.SetTop(selectionRectangle, currentPoint.Y);
-                    selectionRectangle.Height = -height;
+                    top = currentPoint.Y;
+                    height = -height;
                 }
 
-                var selectionGeometry = new RectangleGeometry(new Rect(
-                    Canvas.GetLeft(selectionRectangle),
-                    Canvas.GetTop(selectionRectangle),
-                    selectionRectangle.Width,
-                    selectionRectangle.Height));
-
-                var screenGeometry = new RectangleGeometry(new Rect(0,0, overlay.Width, overlay.Height));
-                var combineGeometry = new CombinedGeometry(GeometryCombineMode.Exclude, screenGeometry, selectionGeometry);
-                overlay.Clip = combineGeometry;
-
+                Canvas.SetLeft(selectionRectangle, left);
+                selectionRectangle.Width = width;
+                Canvas.SetTop(selectionRectangle, top);
+                selectionRectangle.Height = height;
             }
             Log.Information("end Canvas_MouseMove");
         }
